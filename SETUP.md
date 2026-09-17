@@ -18,10 +18,10 @@ Compte 30 à 40 minutes, une seule fois. Tout est gratuit.
 1. Publication sur GitHub Pages (dépôt public ; il ne contient que la clé anon, faite pour être publique) :
    crée un dépôt vide `lecture-ecran` sur GitHub, puis dans ce dossier :
    ```bash
-   git remote add origin https://github.com/TON_COMPTE/lecture-ecran.git && git push -u origin main
+   git remote add origin https://github.com/NatNaat/lecture-ecran.git && git push -u origin main
    ```
    puis sur GitHub : **Settings › Pages › Deploy from a branch › main / (root)**.
-2. Sur l'iPhone, ouvre `https://TON_COMPTE.github.io/lecture-ecran/` dans **Safari**, connecte-toi, puis **Partager › Sur l'écran d'accueil**.
+2. Sur l'iPhone, ouvre `https://NatNaat.github.io/lecture-ecran/` dans **Safari**, connecte-toi, puis **Partager › Sur l'écran d'accueil**.
 3. Onglet **Livres** : ajoute le livre que tu lis, avec la page où tu en es.
 4. Onglet **Réglages** : vérifie la liste des applis bloquées (le nom doit être exactement celui que tu donneras aux automatisations).
 
