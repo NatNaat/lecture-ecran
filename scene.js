@@ -138,6 +138,16 @@ function loadCover(url) {
   }));
   return covers.get(url);
 }
+function progressTex(ratio) {
+  return canvasTex(256, 40, (g, w, h) => { g.clearRect(0, 0, w, h); const x0 = 18, x1 = w - 18, y = h / 2, r = 5;
+    const bar = (a, b, c) => { g.fillStyle = c; g.beginPath(); g.roundRect(a, y - r, Math.max(2 * r, b - a), 2 * r, r); g.fill(); };
+    bar(x0, x1, "rgba(0,0,0,.55)"); bar(x0, x0 + (x1 - x0) * Math.max(.03, Math.min(1, ratio)), "#e3c47c"); });
+}
+function paperTex() {
+  return canvasTex(512, 934, (g, w, h) => { g.fillStyle = "#efe6d0"; g.fillRect(0, 0, w, h); const r = rnd(8);
+    for (let i = 0; i < 1400; i++) { g.fillStyle = r() > .5 ? "#fff" : "#8a7a55"; g.globalAlpha = .05; g.fillRect(r() * w, r() * h, 1 + r() * 2, 1 + r() * 2); } g.globalAlpha = 1;
+    const v = g.createRadialGradient(w / 2, h / 2, h * .25, w / 2, h / 2, h * .7); v.addColorStop(0, "rgba(120,90,40,0)"); v.addColorStop(1, "rgba(120,90,40,.16)"); g.fillStyle = v; g.fillRect(0, 0, w, h); });
+}
 function labelTex(text) {
   return canvasTex(256, 40, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = "#e3c47c"; g.font = `600 26px ${SANS}`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(text, w / 2, h / 2 + 1); });
 }
@@ -163,7 +173,9 @@ export function createScene(canvas, cb = {}) {
   // Sol, tapis, murs, plafond
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(W + 2, ZF - ZB + 4), floorMat); floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, (ZF + ZB) / 2 + 1); floor.receiveShadow = true; scene.add(floor);
   const rug = new THREE.Mesh(new THREE.PlaneGeometry(3.1, 5.6), new THREE.MeshStandardMaterial({ map: rugTex(), roughness: .95 })); rug.rotation.x = -Math.PI / 2; rug.position.set(0, .006, 1.1); rug.receiveShadow = true; scene.add(rug);
-  box(W + .4, H, .1, woodDark, 0, H / 2, ZB - .05, false);
+  { const d0 = H1 + SLAB, d1 = d0 + 2.3, hw = .5, full = W + .4;   // mur du fond, percé d'une porte à l'étage
+    box(full, d0, .1, woodDark, 0, d0 / 2, ZB - .05, false); box(full, H - d1, .1, woodDark, 0, (H + d1) / 2, ZB - .05, false);
+    for (const sd of [-1, 1]) box(full / 2 - hw, d1 - d0, .1, woodDark, sd * (hw + (full / 2 - hw) / 2), (d0 + d1) / 2, ZB - .05, false); }
   for (const s of [-1, 1]) box(.1, H, ZF - ZB + 2, woodDark, s * (W / 2 + .05), H / 2, (ZF + ZB) / 2 + 1, false);
   box(W + .4, .12, ZF - ZB + 2, woodDark, 0, H + .06, (ZF + ZB) / 2 + 1, false);
   const sky = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 5.4), new THREE.MeshStandardMaterial({ map: skyTex(), emissiveMap: null, emissive: "#ffffff", emissiveIntensity: 0, roughness: 1 }));
@@ -210,7 +222,7 @@ export function createScene(canvas, cb = {}) {
   caseBack(-W / 2 + CASE_D, -.55, y2, 6, .47, R); caseBack(.55, W / 2 - CASE_D, y2, 6, .47, R);
   for (const s of [-1, 1]) caseSide(s, ZB + CASE_D, 1.4, y2, 6, .47, R);
   // porte éclairée à l'étage
-  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.3), new THREE.MeshBasicMaterial({ color: "#e9a45a" })); door.position.set(0, y2 + 1.15, ZB + .04); scene.add(door);
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.3), new THREE.MeshBasicMaterial({ color: "#e9a45a", transparent: true })); door.position.set(0, y2 + 1.15, ZB + .04); scene.add(door);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
   // rambardes (avec une ouverture pour l'échelle)
   const rail = (x0, z0, x1, z1) => { const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(2, Math.round(len / .16)), rot = Math.atan2(x1 - x0, z1 - z0);
@@ -258,7 +270,7 @@ export function createScene(canvas, cb = {}) {
     g.position.set(-1.05, 0, 1.2); g.rotation.y = .5; g.scale.setScalar(.85); scene.add(g); }
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
-  const study = new THREE.Group(); study.visible = false; scene.add(study);
+  const study = new THREE.Group(); study.visible = false; scene.add(study); let sheet3d = null; const deskUp = new THREE.Vector3(0, 0, -1), PAPER = { w: .34, h: .62 };
   const SY = H1 + SLAB, SZ0 = ZB - .15, SZ1 = ZB - 5.4, SW = 2.6, SH = 2.9, DESK = { x: .35, z: -7.25 };
   {
     into = study; const g0 = generic.length, R2 = rnd(29);
@@ -297,10 +309,13 @@ export function createScene(canvas, cb = {}) {
     // livre ouvert, piles, tasse, encrier
     const pageMat = new THREE.MeshStandardMaterial({ color: "#e9dfc4", roughness: .95, emissive: "#e9dfc4", emissiveIntensity: .12 });
     const ob = new THREE.Group(); for (const s of [-1, 1]) { const pg = new THREE.Mesh(unit, pageMat); pg.scale.set(.27, .03, .38); pg.position.set(s * .137, .02, 0); pg.rotation.z = s * -.09; pg.castShadow = true; ob.add(pg); }
-    const cov = new THREE.Mesh(unit, new THREE.MeshStandardMaterial({ color: "#3a2415", roughness: .7 })); cov.scale.set(.6, .012, .41); cov.position.y = .004; ob.add(cov); ob.position.set(-.02, .81, .12); ob.rotation.y = .2; D.add(ob);
-    [["#4a1a1a", .3], ["#d8cba8", .28], ["#1b3629", .31]].forEach(([c, w], i) => { const b = box(w, .05, .22, new THREE.MeshStandardMaterial({ color: c, roughness: .8 }), -.68, .835 + i * .052, -.18); b.rotation.y = .3 - i * .22; });
-    const cup = new THREE.Mesh(new THREE.CylinderGeometry(.04, .028, .05, 18), porcelain); cup.position.set(.42, .84, .3); D.add(cup); const saucer = new THREE.Mesh(new THREE.CylinderGeometry(.07, .05, .012, 20), porcelain); saucer.position.set(.42, .817, .3); D.add(saucer);
-    const tea = new THREE.Mesh(new THREE.CircleGeometry(.036, 18), new THREE.MeshStandardMaterial({ color: "#7a3d12", roughness: .2 })); tea.rotation.x = -Math.PI / 2; tea.position.set(.42, .862, .3); D.add(tea);
+    const cov = new THREE.Mesh(unit, new THREE.MeshStandardMaterial({ color: "#3a2415", roughness: .7 })); cov.scale.set(.6, .012, .41); cov.position.y = .004; ob.add(cov); ob.position.set(-.6, .81, .2); ob.rotation.y = .32; D.add(ob);
+    sheet3d = new THREE.Mesh(new THREE.PlaneGeometry(PAPER.w, PAPER.h), new THREE.MeshStandardMaterial({ map: paperTex(), roughness: .95, emissive: "#efe6d0", emissiveIntensity: .14 })); sheet3d.rotation.x = -Math.PI / 2; sheet3d.position.set(.04, .8125, .07); sheet3d.receiveShadow = true; D.add(sheet3d);
+    const pen = new THREE.Mesh(new THREE.CylinderGeometry(.006, .004, .17, 8), new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .4 })); pen.rotation.set(Math.PI / 2, 0, .35); pen.position.set(.27, .818, .2); D.add(pen);
+    deskUp.applyAxisAngle(new THREE.Vector3(0, 1, 0), D.rotation.y);
+    [["#4a1a1a", .3], ["#d8cba8", .28], ["#1b3629", .31]].forEach(([c, w], i) => { const b = box(w, .05, .22, new THREE.MeshStandardMaterial({ color: c, roughness: .8 }), -.7, .835 + i * .052, -.24); b.rotation.y = .3 - i * .22; });
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(.04, .028, .05, 18), porcelain); cup.position.set(.3, .84, .36); D.add(cup); const saucer = new THREE.Mesh(new THREE.CylinderGeometry(.07, .05, .012, 20), porcelain); saucer.position.set(.3, .817, .36); D.add(saucer);
+    const tea = new THREE.Mesh(new THREE.CircleGeometry(.036, 18), new THREE.MeshStandardMaterial({ color: "#7a3d12", roughness: .2 })); tea.rotation.x = -Math.PI / 2; tea.position.set(.3, .862, .36); D.add(tea);
     // lampe de bureau en laiton, articulée
     const L = new THREE.Group(); L.position.set(.72, .81, -.18); D.add(L);
     const part = (geo, mat, x, y, z, rz = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.z = rz; m.castShadow = true; L.add(m); return m; };
@@ -363,7 +378,7 @@ export function createScene(canvas, cb = {}) {
     cur.slice(0, 6).forEach(b => {
       const w = .3, h = .44, m = bookMesh(w, h, .05, coverTex(b, color(b)), color(b)); m.position.set(x + w / 2, rowY(2) + h / 2 + .005, zFront - .1); m.rotation.x = -.1; m.userData = { id: b.id, home: m.position.clone(), rx: -.1, kind: "face", w, h, d: .05, book: b, color: color(b) }; user.add(m); pickables.push(m);
       dress(m, b);
-      const lab = new THREE.Mesh(new THREE.PlaneGeometry(.3, .047), new THREE.MeshBasicMaterial({ map: labelTex(`p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}`), transparent: true })); lab.material.userData.own = true;
+      const lab = new THREE.Mesh(new THREE.PlaneGeometry(.3, .047), new THREE.MeshBasicMaterial({ map: b.total_pages ? progressTex(b.current_page / b.total_pages) : labelTex(`p. ${b.current_page}`), transparent: true })); lab.material.userData.own = true;
       lab.position.set(x + w / 2, rowY(2) - .02, ZB + CASE_D + .002); user.add(lab); x += w + .09;
     });
     // abandonnés : couchés en pile au bout de la même rangée
@@ -380,21 +395,29 @@ export function createScene(canvas, cb = {}) {
 
   // ───────────── Caméra ─────────────
   const VIEWS = { room: { p: [0, 2.05, 5.7], t: [0, 2.9, ZB] }, ceiling: { p: [0, H - 1.25, .55], t: [0, H, .2] }, study: { p: [-.95, SY + 2.15, -5.45], t: [.3, SY + .7, -7.3] } };
-  let lift = 0;   // dans le cabinet, l'image est remontée pour que le bureau reste visible au-dessus de la fiche
+  let lift = 0;   // 0 → 1 à l'approche de la feuille : la caméra bascule à la verticale du bureau
   let state = "room", shelf = { x: 0, y: 1.75 }, yaw = 0, pull = 0, focusX = BAY.x0 + .6;
   const cam = { p: new THREE.Vector3(...VIEWS.room.p), t: new THREE.Vector3(...VIEWS.room.t) }, from = { p: cam.p.clone(), t: cam.t.clone() }, goal = { p: cam.p.clone(), t: cam.t.clone() };
   let tw = null; const tweens = new Set();
   const SHELF_DIST = 1.55, shelfView = () => ({ p: [shelf.x, shelf.y, ZB + CASE_D + SHELF_DIST], t: [shelf.x, shelf.y - .02, ZB] });
+  function paperWorld() { study.updateMatrixWorld(true); return sheet3d.getWorldPosition(new THREE.Vector3()); }
+  function goStudy(entering) {
+    const pw = paperWorld(), above = pw.clone(); above.y += .56;
+    const P = [new THREE.Vector3(...VIEWS.room.p), new THREE.Vector3(0, SY + 1.45, -1.9), new THREE.Vector3(0, SY + 1.35, ZB - .5), new THREE.Vector3(pw.x * .5, SY + 1.7, pw.z + 1.25), above];
+    const T = [new THREE.Vector3(...VIEWS.room.t), new THREE.Vector3(0, SY + 1.25, ZB - 1.5), new THREE.Vector3(pw.x * .6, SY + 1.0, pw.z + .2), pw.clone(), pw.clone()];
+    if (entering) { P[0] = cam.p.clone(); T[0] = cam.t.clone(); } else { P.reverse(); T.reverse(); }
+    tw = { t0: performance.now(), ms: entering ? 3000 : 2600, smooth: true, entering, cp: new THREE.CatmullRomCurve3(P, false, "centripetal"), ct: new THREE.CatmullRomCurve3(T, false, "centripetal") }; invalidate();
+  }
   function goTo(v, ms = 1100, smooth = false) { from.p.copy(cam.p); from.t.copy(cam.t); goal.p.set(...v.p); goal.t.set(...v.t); tw = { t0: performance.now(), ms, smooth }; invalidate(); }
   function setState(s, opt = {}) {
     if (s === "shelf") { shelf.x = THREE.MathUtils.clamp(opt.x ?? focusX, BAY.x0 + .6, BAY.x1 - .6); shelf.y = 1.75; }
-    const viaDoor = s === "study" || state === "study"; if (s === "study") study.visible = true;
-    state = s; yaw = 0; pull = 0; goTo(s === "shelf" ? shelfView() : VIEWS[s], viaDoor ? 2300 : s === "shelf" ? 1300 : s === "ceiling" ? 1500 : 1200, viaDoor); cb.onState?.(s);
+    const viaDoor = s === "study" || state === "study", entering = s === "study"; if (entering) study.visible = true;
+    state = s; yaw = 0; pull = 0; if (viaDoor) goStudy(entering); else goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1500 : 1200); cb.onState?.(s);
   }
   function applyCamera() {
     camera.position.copy(cam.p); const t = cam.t.clone();
     if (state === "room") { const e = ease(Math.min(1, pull)) * .5; camera.position.lerp(new THREE.Vector3(0, 3.2, 3.2), e); t.lerp(new THREE.Vector3(0, H, .2), e); t.x += yaw * 7; camera.position.x += yaw * 1.2; }
-    const bw = renderer.domElement.width, bh = renderer.domElement.height; if (lift > .001) camera.setViewOffset(bw, bh, 0, Math.round(lift * .3 * bh), bw, bh); else if (camera.view) camera.clearViewOffset();
+    if (lift > .001) camera.up.set(0, 1, 0).lerp(deskUp, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
   }
   function resize() {
@@ -407,7 +430,8 @@ export function createScene(canvas, cb = {}) {
   function invalidate() { if (!raf && alive) raf = requestAnimationFrame(frame); }
   function frame(now) {
     raf = 0; let busy = dragging;
-    if (tw) { const k = Math.min(1, (now - tw.t0) / tw.ms), e = tw.smooth ? io(k) : ease(k); cam.p.lerpVectors(from.p, goal.p, e); cam.t.lerpVectors(from.t, goal.t, e); if (tw.smooth) lift = state === "study" ? e : 1 - e; if (k >= 1) { tw = null; if (state !== "study") study.visible = false; } else busy = true; }
+    if (tw) { const k = Math.min(1, (now - tw.t0) / tw.ms), e = tw.smooth ? io(k) : ease(k); if (tw.cp) { tw.cp.getPoint(e, cam.p); tw.ct.getPoint(e, cam.t); const n = tw.entering ? e : 1 - e; lift = seg(n, .72, 1); door.material.opacity = 1 - seg(n, .12, .4); } else { cam.p.lerpVectors(from.p, goal.p, e); cam.t.lerpVectors(from.t, goal.t, e); }
+      if (k >= 1) { const arrived = tw.cp && tw.entering; tw = null; if (state !== "study") study.visible = false; if (arrived) { applyCamera(); cb.onArrive?.("study"); } } else busy = true; }
     for (const a of tweens) { const k = Math.min(1, (now - a.t0) / a.ms); a.step(a.linear ? k : ease(k)); if (k >= 1) { tweens.delete(a); a.done?.(); } else busy = true; }
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
     applyCamera(); renderer.render(scene, camera); if (busy) invalidate();
@@ -478,6 +502,11 @@ export function createScene(canvas, cb = {}) {
     });
   }
 
+  function paperRect() {
+    applyCamera(); camera.updateMatrixWorld(true); study.updateMatrixWorld(true); const r = canvas.getBoundingClientRect(), xs = [], ys = [];
+    for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = sheet3d.localToWorld(new THREE.Vector3(a * PAPER.w / 2, b * PAPER.h / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
+    return { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
+  }
   addEventListener("resize", resize); resize();
-  return { setBooks, setState, releaseBook, invalidate, get state() { return state; }, dispose() { alive = false; cancelAnimationFrame(raf); removeEventListener("resize", resize); renderer.dispose(); } };
+  return { setBooks, setState, releaseBook, invalidate, paperRect, get state() { return state; }, dispose() { alive = false; cancelAnimationFrame(raf); removeEventListener("resize", resize); renderer.dispose(); } };
 }

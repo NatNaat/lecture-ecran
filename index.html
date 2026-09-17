@@ -116,6 +116,7 @@ body.sky-open .grab { min-height: var(--peek); color: var(--cream); font-size: 1
   background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(255,255,255,.12) 5px, rgba(0,0,0,.3) 8px, transparent 15px, transparent 62%, rgba(0,0,0,.35)); }
 .engraved { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); white-space: nowrap; z-index: 4; font: 600 11px/1 var(--sans); letter-spacing: .05em; color: var(--gold); font-variant-numeric: tabular-nums; }
 
+.engraved.bar { width: 84px; height: 6px; bottom: -28px; border-radius: 3px; background: rgba(0,0,0,.55); overflow: hidden; } .engraved.bar i { display: block; height: 100%; border-radius: 3px; background: var(--gold); transform-origin: left; }
 .spine { position: relative; flex: none; border-radius: 3px 3px 1px 1px; overflow: hidden; color: var(--cream); background: var(--leather), var(--bg); transition: transform .4s var(--ease);
   box-shadow: inset 4px 0 5px -2px rgba(255,255,255,.10), inset -6px 0 9px -3px rgba(0,0,0,.8), inset 0 -40px 30px -20px rgba(0,0,0,.45), 1px 0 0 #000; }
 .spine::before, .spine::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(217,185,114,.75); }
@@ -195,8 +196,20 @@ body.has3d #study { background: none; }
 .backbtn.studyback { display: inline-flex; }
 .sheet { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: min(560px, calc(100% - 20px)); max-height: calc(100dvh - env(safe-area-inset-top) - 70px); overflow-y: auto; -webkit-overflow-scrolling: touch;
   padding: 20px 18px calc(env(safe-area-inset-bottom) + 18px); border-radius: 20px 20px 0 0; color: var(--ink); background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 -20px 50px rgba(0,0,0,.7); animation: sheetin .6s var(--ease) both; }
-body.has3d .sheet { max-height: 66dvh; animation-delay: 1.5s; }
-body.has3d .studyback { animation: card .5s var(--ease) 1.5s both; }
+/* en 3D, la fiche est transparente et calée sur la feuille posée sur le bureau : on écrit vraiment dessus */
+.sheet.onpaper { position: fixed; transform: none; bottom: auto; max-height: none; overflow: visible; padding: 5% 7% 4%; border-radius: 0; background: none; box-shadow: none; animation: none; opacity: 0; transition: opacity .5s var(--ease); display: flex; flex-direction: column; }
+.sheet.onpaper.ready { opacity: 1; }
+.sheet.onpaper h1 { font-size: 21px; padding-bottom: 8px; border-bottom: 1.5px solid var(--ink); }
+.sheet.onpaper label { margin: 10px 0 1px; font-size: 12px; letter-spacing: .02em; }
+.sheet.onpaper input { background: none; border: 0; border-bottom: 1px solid rgba(34,27,20,.45); border-radius: 0; padding: 5px 0 6px; font-size: 16px; }
+.sheet.onpaper input:focus-visible { outline: none; border-bottom: 2px solid var(--ink); }
+.sheet.onpaper .fiche { margin-top: 12px; padding-top: 10px; gap: 12px; } .sheet.onpaper .fiche .noc { width: 54px; height: 81px; }
+.sheet.onpaper .note { font-size: 12px; margin-top: 8px; }
+.sheet.onpaper .inkbtn { margin-top: auto !important; min-height: 46px; }
+.sheet.onpaper .searchwrap { position: relative; }
+.sheet.onpaper #sugg { position: absolute; z-index: 3; left: -4%; right: -4%; top: 100%; max-height: 46dvh; margin: 0; padding: 2px 12px; border-radius: 0 0 10px 10px; background: var(--paper); box-shadow: 0 16px 30px rgba(0,0,0,.5); }
+.sheet.onpaper .hit .noc { width: 38px; height: 57px; font-size: 18px; } .sheet.onpaper .hit b { font-size: 14.5px; } .sheet.onpaper .hit i, .sheet.onpaper .hit small { font-size: 12.5px; }
+body.has3d .studyback { opacity: 0; transition: opacity .5s var(--ease); } body.has3d.study-ready .studyback { opacity: 1; }
 @keyframes sheetin { from { transform: translate(-50%, 105%); } }
 .sheet h1 { font: 700 26px/1.15 var(--sans); letter-spacing: -.02em; margin-bottom: 4px; }
 .sheet label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 14px 0 5px; }
@@ -429,7 +442,7 @@ function updateCountdowns() {
 function faceBook(b) {
   const cv = b.cover_url ? `<img class="cv" src="${esc(b.cover_url)}" alt="" loading="lazy" data-fallback="${esc(b.id)}">` : clothCover(b);
   return `<button class="facebook" data-book="${esc(b.id)}" aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}, page ${b.current_page}${b.total_pages ? " sur " + b.total_pages : ""}">
-    ${cv}<span class="hinge"></span><span class="engraved">p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}</span></button>`;
+    ${cv}<span class="hinge"></span>${b.total_pages ? `<span class="engraved bar" role="img" aria-label="${Math.round(100 * b.current_page / b.total_pages)} % lu"><i style="transform:scaleX(${Math.min(1, b.current_page / b.total_pages)})"></i></span>` : `<span class="engraved">p. ${b.current_page}</span>`}</button>`;
 }
 const clothCover = b => `<span class="cv cloth" style="${cloth(b)}"><span>${esc(b.title)}</span><small>${esc(b.author || "")}</small></span>`;
 function spine(b, lean) {
@@ -681,13 +694,13 @@ const study = $("#study"); let addPick = null, addCtl = null, addTimer = 0;
 function openStudy() {
   addPick = null;
   study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-  <form class="sheet" id="fadd" autocomplete="off"><h1>Nouveau livre</h1>
-    <label for="aq">Cherche un titre, un auteur ou un ISBN</label><input id="aq" type="search" enterkeyhint="search" placeholder="ex. La Peste, Camus…">
-    <div id="sugg" aria-live="polite"></div>
+  <form class="sheet${scene3d ? " onpaper" : ""}" id="fadd" autocomplete="off"><h1>Nouveau livre</h1>
+    <div class="searchwrap"><label for="aq">Cherche un titre, un auteur ou un ISBN</label><input id="aq" type="search" enterkeyhint="search" placeholder="ex. La Peste, Camus…">
+    <div id="sugg" aria-live="polite"></div></div>
     <div class="fiche"><span class="noc" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0">
       <label for="at" style="margin-top:0">Titre</label><input id="at" required>
       <label for="aa">Auteur</label><input id="aa"></div></div>
-    <div class="row"><div><label for="ap">Pages de ton édition</label><input id="ap" type="number" inputmode="numeric" min="1"></div>
+    <div class="row"><div><label for="ap">Nombre de pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div>
     <div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
     <p class="note">Les pages déjà lues avant aujourd'hui ne rapportent pas de minutes.</p>
     <div class="err" id="aerr"></div><button class="inkbtn" style="width:100%;margin-top:12px">Poser sur l'étagère</button></form>`;
@@ -719,7 +732,13 @@ function pickSuggestion(b) {
   $("#athumb").innerHTML = `${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="">` : ""}`; const img = $("#athumb img"); if (img) img.onerror = () => img.remove();
   haptic(); ($("#ap").value ? $("#ac") : $("#ap")).focus();
 }
-function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open"); if (scene3d?.state === "study") scene3d.setState("room"); }
+// La feuille 3D est vue à la verticale : son contour à l'écran est un rectangle, sur lequel on cale le formulaire.
+function placeSheet() {
+  const f = $("#fadd"); if (!f || !scene3d || scene3d.state !== "study") return; const r = scene3d.paperRect();
+  Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" }); f.classList.add("ready"); document.body.classList.add("study-ready");
+}
+addEventListener("resize", () => setTimeout(placeSheet, 60));
+function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open", "study-ready"); if (scene3d?.state === "study") scene3d.setState("room"); }
 
 function dlgEdit(rid) {
   const r = S.readings.find(x => x.id === rid);
@@ -775,7 +794,7 @@ async function initScene() {
   try {
     const { createScene } = await import("./scene.js");
     scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(false); bookview.scrollTop = 0; }, onCeiling: () => setSky(true),
-      onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; } });
+      onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; }, onArrive: v => { if (v === "study") placeSheet(); } });
     document.body.classList.add("has3d"); document.body.dataset.view = "room";
   } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
 }
