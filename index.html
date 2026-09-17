@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pages contre minutes</title>
-<meta name="theme-color" content="#120c08">
+<meta name="theme-color" content="#0b1433">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pages">
@@ -13,219 +13,200 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --wall: #120c08; --wood-0: #1a0f09; --wood-1: #2b190f; --wood-2: #432717; --wood-3: #5e3a22; --wood-hi: #8a5a36;
-  --brass: #d2ab57; --brass-lo: #8c6a2a; --brass-ink: #2a1c07;
-  --paper: #e9d6a8; --paper-2: #d9bf86; --paper-line: #b9a882; --ink: #2a2017; --ink-2: #5c4d3a;
-  --chalk: #efe6d4; --chalk-2: #b9aa90; --chalk-3: #8d7f68; --closet: #17110c; --closet-2: #221911; --closet-line: #3a2c1f;
-  --alert: #ffb08f; --fine: #a9dcc8;
-  --serif: "EB Garamond", "Iowan Old Style", "Palatino", Georgia, serif; --display: "IM Fell English SC", "EB Garamond", "Iowan Old Style", Georgia, serif;
-  --gold: #cfa95a;
-  --stars: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='90'%3E%3Cg fill='%23e2c27a'%3E%3Cpath d='M18 14l1.2 3.3 3.3 1.2-3.3 1.2L18 23l-1.2-3.3-3.3-1.2 3.3-1.2z'/%3E%3Cpath d='M84 40l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z' opacity='.8'/%3E%3Cpath d='M50 66l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z' opacity='.6'/%3E%3Ccircle cx='104' cy='12' r='.9' opacity='.7'/%3E%3Ccircle cx='38' cy='38' r='.7' opacity='.5'/%3E%3Ccircle cx='70' cy='10' r='.6' opacity='.5'/%3E%3Ccircle cx='8' cy='58' r='.8' opacity='.6'/%3E%3Ccircle cx='110' cy='72' r='.7' opacity='.5'/%3E%3C/g%3E%3C/svg%3E");
-  --leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='l' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E");
-  --parchment: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='5' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .26 0 0 0 0 .08 0 0 0 .9 -.32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.22' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.01 0 0 0 1.5 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  --grain-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='600'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22 0.006' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.01 0 0 0 1.5 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --night-0: #050919; --night-1: #0b1433; --night-2: #1a2c63;
+  --wood-0: #0d0806; --wood-1: #1a100a; --wood-2: #2a1a10; --wood-3: #3b2517; --wood-hi: #5a3a24;
+  --gold: #d9b972; --cream: #efe4c8; --cream-2: #bdb094; --cream-3: #8b8069;
+  --paper: #efe6d2; --paper-2: #e4d8bd; --paper-line: #c9bb9b; --ink: #221b14; --ink-2: #62574a;
+  --alert: #ffb59a; --fine: #a9dcc8;
+  --display: "Marcellus", "Iowan Old Style", Georgia, serif;
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.22' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.01 0 0 0 1.2 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='600'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22 0.006' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.01 0 0 0 1.2 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --stars: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120'%3E%3Cg fill='%23f0dca6'%3E%3Cpath d='M22 18l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1z'/%3E%3Cpath d='M112 52l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z' opacity='.75'/%3E%3Ccircle cx='140' cy='14' r='.9' opacity='.7'/%3E%3Ccircle cx='58' cy='44' r='.7' opacity='.55'/%3E%3Ccircle cx='86' cy='12' r='.6' opacity='.5'/%3E%3Ccircle cx='10' cy='76' r='.8' opacity='.6'/%3E%3Ccircle cx='146' cy='96' r='.7' opacity='.5'/%3E%3Ccircle cx='70' cy='92' r='.9' opacity='.65'/%3E%3Ccircle cx='38' cy='106' r='.6' opacity='.45'/%3E%3C/g%3E%3C/svg%3E");
+  --leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='l' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 -.14'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E");
   --ease: cubic-bezier(.16, 1, .3, 1);
-  --row: 184px; --board: 22px; --plinth: 92px;
+  --row: 184px; --board: 18px; --dock: 84px; --skyh: 168px; --peek: 72px;
+  --top: calc(env(safe-area-inset-top) + var(--skyh));
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; background: var(--wall); }
-body { margin: 0; color: var(--chalk); font: 16px/1.5 var(--sans); min-height: 100dvh; overscroll-behavior-y: none; }
-::selection { background: var(--brass); color: var(--brass-ink); }
-input, textarea { caret-color: var(--brass-lo); }
+html { -webkit-text-size-adjust: 100%; background: var(--night-0); }
+body { margin: 0; color: var(--cream); font: 16px/1.5 var(--sans); min-height: 100dvh; overscroll-behavior-y: none; }
+body.sky-open { overflow: hidden; }
+::selection { background: var(--gold); color: #221703; }
+input, textarea { caret-color: var(--gold); }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
 h1, h2, h3, p { margin: 0; }
+[hidden] { display: none !important; }
 
-/* ───────── Le meuble ───────── */
-#case { max-width: 720px; margin: 0 auto; min-height: 100dvh; position: relative; display: flex; flex-direction: column;
-  padding: env(safe-area-inset-top) 16px calc(var(--plinth) + env(safe-area-inset-bottom));
-  /* pilastres cannelés de part et d'autre */
-  background: var(--grain-v), linear-gradient(90deg, #3a2014, #21110a 16px, #0f0805 17px, #0f0805 calc(100% - 17px), #21110a calc(100% - 16px), #3a2014);
-  box-shadow: 0 0 120px 40px #000; }
-#case::before, #case::after { content: ""; position: absolute; top: 0; bottom: 0; width: 16px; pointer-events: none; z-index: 1;
-  background: repeating-linear-gradient(90deg, rgba(0,0,0,.5) 0 1px, rgba(255,255,255,.05) 1px 2px, transparent 2px 5px); }
-#case::before { left: 0; } #case::after { right: 0; }
-/* La voûte étoilée */
-.dome { margin: 0 -16px; padding: 10px 10px 0; position: relative; z-index: 2; background: var(--grain), linear-gradient(180deg, #2c170d, #1c0e08); box-shadow: 0 14px 24px -6px rgba(0,0,0,.9); }
-.sky { position: relative; height: 132px; border-radius: 50% 50% 0 0 / 100% 100% 0 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 40px 16px; text-align: center;
-  background: radial-gradient(90% 120% at 50% 110%, #24407e, #12224d 45%, #070d24 80%);
-  box-shadow: inset 0 0 0 1px rgba(207,169,90,.55), inset 0 0 0 4px #160b06, inset 0 0 0 5px rgba(207,169,90,.3), inset 0 14px 40px rgba(0,0,0,.75); }
-.sky::before { content: ""; position: absolute; inset: 0; background: var(--stars); -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 62%); mask-image: linear-gradient(180deg, #000 30%, transparent 62%); }
-.sky::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 70% at 50% 115%, rgba(255,190,110,.32), transparent 70%); pointer-events: none; animation: candle 5s ease-in-out infinite; }
-@keyframes candle { 0%, 100% { opacity: .85; } 35% { opacity: 1; } 60% { opacity: .7; } 80% { opacity: .95; } }
-.sky > * { position: relative; z-index: 1; }
-.sky .reserve { font: 500 42px/1 var(--serif); color: #f3e3bd; font-variant-numeric: lining-nums tabular-nums; text-shadow: 0 2px 10px rgba(0,0,0,.9); }
-.sky .reserve small { font: italic 400 17px/1 var(--serif); color: var(--gold); margin-left: 7px; letter-spacing: .01em; }
-.sky .hud { margin-top: 7px; font: 400 14px/1.35 var(--serif); color: #cdbf9f; text-shadow: 0 1px 6px #000; font-variant-numeric: tabular-nums; }
-.sky .hud b { font-weight: 500; color: #f3e3bd; }
-.lintel { height: 14px; margin: 0 -10px; background: var(--grain), linear-gradient(180deg, #4a2a18 0 1px, #2e180e 1px 5px, #160b06 5px 6px, #3a2014 6px 8px, #1a0d07 8px); }
+/* ───────── Le ciel : solde en tête, comptes et réglages quand on le tire ───────── */
+#sky { position: fixed; inset: 0; z-index: 0; overflow: hidden; padding: env(safe-area-inset-top) 0 0;
+  background: linear-gradient(180deg, var(--night-2) -12%, var(--night-1) 30%, var(--night-0) 78%); }
+#sky::before { content: ""; position: absolute; inset: 0; background: var(--stars); opacity: .9; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 170px, transparent 300px); mask-image: linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 170px, transparent 300px); animation: twinkle 7s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: .9; } 50% { opacity: .6; } }
+body.sky-open #sky { overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 5; }
+.skyhead { position: relative; height: var(--skyh); max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6px 24px 22px; }
+.reserve { font: 400 50px/1 var(--display); color: #fff6de; font-variant-numeric: lining-nums; letter-spacing: -.01em; }
+.reserve small { font: 400 15px/1 var(--sans); color: var(--gold); margin-left: 8px; letter-spacing: .01em; }
+.hud { margin-top: 8px; font: 400 13px/1.45 var(--sans); color: var(--cream-2); font-variant-numeric: tabular-nums; }
+.hud b { font-weight: 600; color: var(--cream); }
+.hud .due { color: var(--gold); }
+.skybody { position: relative; max-width: 640px; margin: 0 auto; padding: 4px 16px calc(var(--peek) + env(safe-area-inset-bottom) + 28px); opacity: var(--reveal, 0); pointer-events: none; transition: opacity .35s var(--ease); }
+body.sky-open .skybody { opacity: 1; pointer-events: auto; }
+body.dragging .skybody { transition: none; }
+.tabs { display: flex; gap: 6px; padding: 4px; margin: 0 0 22px; border-radius: 12px; background: rgba(255,255,255,.06); }
+.tabs button { flex: 1; min-height: 40px; border-radius: 9px; font: 600 15px var(--sans); color: var(--cream-2); transition: background .25s var(--ease), color .25s; }
+.tabs button[aria-selected="true"] { color: var(--cream); background: rgba(255,255,255,.12); }
+.skybody h2 { font: 400 22px/1.2 var(--display); color: var(--cream); margin: 30px 0 10px; }
+.skybody p { margin: 0 0 10px; } .muted { color: var(--cream-2); } .small { font-size: 13px; }
+.figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.figures > div { padding: 12px; border-radius: 15px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }
+.figures b { display: block; font: 400 28px/1.1 var(--display); color: #fff6de; font-variant-numeric: lining-nums tabular-nums; }
+.figures span { display: block; font-size: 13px; line-height: 1.3; margin-top: 4px; color: var(--cream-2); }
+.panel { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 15px; padding: 16px; margin-bottom: 12px; }
+.panel.flag { border-color: var(--alert); }
+.chart { width: 100%; height: auto; display: block; } .chart text { font: 11px var(--sans); fill: var(--cream-2); } .chart .v { fill: var(--cream); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+td, th { padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } th { font-size: 13px; color: var(--cream-3); font-weight: 600; }
+code.copy { display: block; background: rgba(0,0,0,.35); border-radius: 8px; padding: 10px; font-size: 13px; word-break: break-all; color: var(--cream-2); }
+.skybody label { display: block; font-size: 13px; color: var(--cream-2); margin: 15px 0 6px; }
+.skybody input, .skybody textarea { width: 100%; font: 16px var(--sans); color: var(--cream); background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 12px; }
+.skybody textarea { min-height: 96px; resize: vertical; }
+.row { display: flex; gap: 10px; align-items: flex-end; } .row > * { flex: 1; }
+.chalkbtn { width: 100%; min-height: 48px; border-radius: 12px; font: 600 15px var(--sans); color: var(--cream); background: rgba(255,255,255,.08); transition: transform .2s var(--ease); }
+.chalkbtn.solid { background: var(--gold); color: #221703; }
+.chalkbtn:active { transform: scale(.98); }
+.err { color: var(--alert); font-size: 13px; margin-top: 10px; } .err:empty, .okmsg:empty { display: none; }
+.okmsg { color: var(--fine); font-size: 13px; margin-top: 10px; }
+.page .err, dialog .err, .login form .err { color: #9a2c10; } dialog .okmsg { color: #1d5a45; }
 
+/* ───────── La bibliothèque : une feuille de bois posée sur le ciel ───────── */
+#app { position: relative; z-index: 1; padding-top: var(--top); transform: translateY(var(--pull, 0px)); transition: transform .55s var(--ease); will-change: transform; pointer-events: none; }
+#app > * { pointer-events: auto; }
+body.dragging #app { transition: none; }
+body.sky-open #app { transform: translateY(calc(100dvh - var(--top) - var(--peek) - env(safe-area-inset-bottom) + var(--pull, 0px))); z-index: 6; }
+#case { max-width: 720px; margin: 0 auto; min-height: calc(100dvh - var(--top)); position: relative; display: flex; flex-direction: column; overflow: hidden;
+  padding: 0 15px calc(var(--dock) + env(safe-area-inset-bottom)); border-radius: 26px 26px 0 0;
+  background: var(--grain-v), linear-gradient(90deg, var(--wood-3), var(--wood-1) 14px, var(--wood-1) calc(100% - 14px), var(--wood-3)); box-shadow: 0 -18px 50px rgba(0,0,0,.65); }
+.grab { display: grid; place-items: center; gap: 5px; width: calc(100% + 28px); margin: 0 -15px; min-height: 40px; padding: 9px 0 8px; font: 500 12px/1 var(--sans); color: var(--cream-3); letter-spacing: .02em;
+  background: var(--grain), linear-gradient(180deg, var(--wood-3), var(--wood-2)); box-shadow: 0 8px 15px -4px rgba(0,0,0,.7); position: relative; z-index: 2; touch-action: none; }
+.grab::before { content: ""; width: 40px; height: 4px; border-radius: 2px; background: rgba(239,228,200,.4); }
+body.sky-open .grab { min-height: var(--peek); color: var(--cream); font-size: 15px; }
 .alcove { flex: 1; position: relative; display: flex; flex-direction: column;
-  background: radial-gradient(110% 420px at 50% -40px, rgba(255,176,96,.20), rgba(255,150,70,.05) 55%, transparent 75%), var(--grain-v), linear-gradient(180deg, #170c07, #090503); }
-.shelf { position: relative; min-height: calc(var(--row) + var(--board)); padding: 0 10px var(--board); display: flex; align-items: flex-end; box-shadow: inset 0 40px 30px -18px rgba(0,0,0,.92); }
-.shelf::after { content: ""; position: absolute; left: -2px; right: -2px; bottom: 0; height: var(--board); pointer-events: none;
-  background: var(--grain), linear-gradient(180deg, #6a4125 0 1px, #3b2114 1px 40%, #120905 40% 46%, #2c170d 46% 80%, #140a05);
-  box-shadow: 0 12px 18px rgba(0,0,0,.85); }
-.shelf.front { gap: 0; padding: 26px 0 calc(var(--board) + 6px); --board: 38px; }
+  background: radial-gradient(110% 380px at 50% -60px, rgba(255,186,110,.16), transparent 72%), var(--grain-v), linear-gradient(180deg, #160d08, var(--wood-0)); }
+.shelf { position: relative; min-height: calc(var(--row) + var(--board)); padding: 0 10px var(--board); display: flex; align-items: flex-end; box-shadow: inset 0 36px 28px -18px rgba(0,0,0,.85); }
+.shelf::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--board); pointer-events: none;
+  background: var(--grain), linear-gradient(180deg, var(--wood-hi) 0 1px, var(--wood-3) 1px 55%, var(--wood-1)); box-shadow: 0 10px 16px rgba(0,0,0,.8); }
+.shelf.front { padding: 30px 0 calc(var(--board) + 4px); --board: 36px; }
 .fronts { flex: 1; min-width: 0; display: flex; align-items: flex-end; gap: 18px; padding: 12px 18px 44px; margin-bottom: -44px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 1; }
 .fronts::-webkit-scrollbar { display: none; }
-.shelf-label { position: absolute; left: 18px; top: 6px; font: italic 14px var(--serif); color: #8d7c5f; }
+.shelf-label { position: absolute; left: 18px; top: 9px; font: 500 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--cream-3); }
 .stacks { position: relative; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-end; row-gap: var(--board); padding: 0 12px var(--board); min-height: calc((var(--row) + var(--board)) * 2); flex: 1;
-  background: repeating-linear-gradient(180deg, rgba(0,0,0,.92) 0, rgba(0,0,0,.25) 46px, transparent 90px, transparent var(--row), #6a4125 var(--row), #3b2114 calc(var(--row) + 1px), #3b2114 calc(var(--row) + 8px), #120905 calc(var(--row) + 8px), #120905 calc(var(--row) + 10px), #2c170d calc(var(--row) + 10px), #140a05 calc(var(--row) + var(--board))); }
+  background: repeating-linear-gradient(180deg, rgba(0,0,0,.9) 0, rgba(0,0,0,.22) 46px, transparent 90px, transparent var(--row), var(--wood-hi) var(--row), var(--wood-3) calc(var(--row) + 1px), var(--wood-3) calc(var(--row) + 10px), var(--wood-1) calc(var(--row) + var(--board))); }
 .slot { height: var(--row); display: flex; align-items: flex-end; }
 
-/* Livre de face : plein cuir, encadrement doré */
 .facebook { flex: none; width: 98px; position: relative; text-align: left; transition: transform .4s var(--ease); }
 .facebook:active { transform: translateY(-6px); }
-.facebook .cv { display: block; width: 98px; height: 148px; border-radius: 2px 4px 4px 2px; object-fit: cover; position: relative; overflow: hidden; filter: saturate(.85) brightness(.92);
-  box-shadow: 10px 4px 16px -4px rgba(0,0,0,.9), -1px 0 0 rgba(0,0,0,.6); }
-.facebook .cv.cloth { padding: 22px 12px 14px 16px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; overflow-wrap: anywhere; hyphens: auto; filter: none;
-  font: 400 12.5px/1.25 var(--display); letter-spacing: .04em; color: var(--gold); background: var(--leather), var(--bg);
-  box-shadow: 10px 4px 16px -4px rgba(0,0,0,.9), inset 0 0 0 6px var(--bg), inset 0 0 0 7px rgba(207,169,90,.7), inset 0 0 0 9px var(--bg), inset 0 0 0 10px rgba(207,169,90,.35); }
-.facebook .cv.cloth small { font: italic 400 11.5px/1.2 var(--serif); letter-spacing: 0; color: #bfa365; }
-.facebook .hinge { position: absolute; left: 0; top: 0; width: 98px; height: 148px; pointer-events: none; border-radius: 2px 4px 4px 2px;
-  background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(255,255,255,.12) 5px, rgba(0,0,0,.35) 8px, transparent 15px, transparent 60%, rgba(0,0,0,.4)), linear-gradient(180deg, rgba(255,190,120,.10), transparent 40%, rgba(0,0,0,.35)); }
-.engraved { position: absolute; left: 50%; bottom: -33px; transform: translateX(-50%); white-space: nowrap; z-index: 4; font: 500 13px/1 var(--serif); letter-spacing: .06em; color: var(--gold); text-shadow: 0 1px 0 #000, 0 -1px 0 rgba(255,220,160,.12); font-variant-numeric: lining-nums tabular-nums; }
+.facebook .cv { display: block; width: 98px; height: 148px; border-radius: 2px 5px 5px 2px; object-fit: cover; position: relative; overflow: hidden; box-shadow: 10px 4px 16px -4px rgba(0,0,0,.9), -1px 0 0 rgba(0,0,0,.6); }
+.facebook .cv.cloth { padding: 18px 12px 15px 18px; display: flex; flex-direction: column; justify-content: space-between; overflow-wrap: anywhere; hyphens: auto; color: var(--cream);
+  font: 400 15px/1.15 var(--display); background: var(--leather), var(--bg); box-shadow: 10px 4px 16px -4px rgba(0,0,0,.9), inset 0 0 0 7px var(--bg), inset 0 0 0 8px rgba(217,185,114,.45); }
+.facebook .cv.cloth small { font: 500 10px/1.25 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
+.facebook .hinge { position: absolute; left: 0; top: 0; width: 98px; height: 148px; pointer-events: none; border-radius: 2px 5px 5px 2px;
+  background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(255,255,255,.12) 5px, rgba(0,0,0,.3) 8px, transparent 15px, transparent 62%, rgba(0,0,0,.35)); }
+.engraved { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); white-space: nowrap; z-index: 4; font: 600 11px/1 var(--sans); letter-spacing: .05em; color: var(--gold); font-variant-numeric: tabular-nums; }
 
-/* Dos : cuir sombre, filets et cartouche dorés */
-.spine { position: relative; flex: none; border-radius: 4px 4px 1px 1px; overflow: hidden; color: var(--gold); background: var(--leather), var(--bg); transition: transform .4s var(--ease);
-  box-shadow: inset 4px 0 5px -2px rgba(255,255,255,.10), inset -6px 0 9px -3px rgba(0,0,0,.85), inset 0 -40px 30px -20px rgba(0,0,0,.5), 1px 0 0 #000; }
-.spine::before, .spine::after { content: ""; position: absolute; left: 0; right: 0; height: 7px; border-top: 1px solid rgba(207,169,90,.85); border-bottom: 1px solid rgba(207,169,90,.5); }
-.spine::before { top: 10px; } .spine::after { bottom: 10px; }
+.spine { position: relative; flex: none; border-radius: 3px 3px 1px 1px; overflow: hidden; color: var(--cream); background: var(--leather), var(--bg); transition: transform .4s var(--ease);
+  box-shadow: inset 4px 0 5px -2px rgba(255,255,255,.10), inset -6px 0 9px -3px rgba(0,0,0,.8), inset 0 -40px 30px -20px rgba(0,0,0,.45), 1px 0 0 #000; }
+.spine::before, .spine::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(217,185,114,.75); }
+.spine::before { top: 15px; } .spine::after { bottom: 15px; }
 .spine:active { transform: translateY(-8px); }
-.spine .ttl { position: absolute; inset: 26px 3px 46px; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; white-space: var(--ws, nowrap);
-  font: 400 var(--fs, 12px)/1.08 var(--display); letter-spacing: .06em; background: rgba(0,0,0,.34); box-shadow: inset 0 0 0 1px rgba(207,169,90,.6); padding: 6px 0; }
+.spine .ttl { position: absolute; inset: 24px 2px 24px; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; white-space: var(--ws, nowrap);
+  font: 600 var(--fs, 10.5px)/1.15 var(--sans); letter-spacing: .09em; text-transform: uppercase; }
 .spine .ttl span { overflow: hidden; text-overflow: ellipsis; max-height: 100%; max-width: 100%; text-align: center; }
-.spine .mark { position: absolute; left: 0; right: 0; bottom: 22px; display: grid; place-items: center; }
-.spine .mark svg { width: 14px; height: 14px; fill: none; stroke: var(--gold); stroke-width: 1.1; opacity: .9; }
 .spine.lean { transform: rotate(-5deg); transform-origin: bottom right; margin-left: 10px; }
 .pile { display: flex; flex-direction: column-reverse; margin: 0 12px; }
-.flat { position: relative; width: 150px; height: var(--h, 26px); margin-left: var(--dx, 0); border-radius: 3px 1px 1px 3px; overflow: hidden; color: var(--gold); background: var(--leather), var(--bg); text-align: center;
-  box-shadow: inset 0 3px 4px -1px rgba(255,255,255,.10), inset 0 -5px 7px -2px rgba(0,0,0,.85), inset 12px 0 0 -11px rgba(207,169,90,.7), inset -12px 0 0 -11px rgba(207,169,90,.7), 0 1px 0 #000; }
-.flat span { display: block; padding: 0 18px; font: 400 11px/var(--h, 26px) var(--display); letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.empty-note { align-self: center; margin: 0 auto; max-width: 280px; text-align: center; font: italic 16px/1.5 var(--serif); color: #a8987a; padding: 0 8px 30px; }
+.flat { position: relative; width: 150px; height: var(--h, 26px); margin-left: var(--dx, 0); border-radius: 3px 1px 1px 3px; overflow: hidden; color: var(--cream); background: var(--leather), var(--bg); text-align: center;
+  box-shadow: inset 0 3px 4px -1px rgba(255,255,255,.10), inset 0 -5px 7px -2px rgba(0,0,0,.8), inset 15px 0 0 -13px rgba(217,185,114,.75), inset -15px 0 0 -13px rgba(217,185,114,.75), 0 1px 0 #000; }
+.flat span { display: block; padding: 0 20px; font: 600 9.5px/var(--h, 26px) var(--sans); letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty-note { align-self: center; margin: 0 auto; max-width: 280px; text-align: center; font: 400 15px/1.5 var(--sans); color: var(--cream-2); padding: 0 8px 30px; }
 
-/* ───────── Le socle : outils et porte du cagibi ───────── */
-.plinth { position: fixed; z-index: 20; left: 50%; transform: translateX(-50%); bottom: 0; width: min(720px, 100%); height: calc(var(--plinth) + env(safe-area-inset-bottom)); padding: 0 100px env(safe-area-inset-bottom) 20px;
-  display: flex; align-items: center; gap: 18px; background: var(--grain), linear-gradient(180deg, #6a4125 0 1px, #2e180e 1px 7px, #120905 7px 9px, #24130b 9px, #0d0704);
-  box-shadow: 0 -16px 28px rgba(0,0,0,.85); }
-.tool { display: grid; justify-items: center; gap: 5px; min-width: 56px; font: 400 12px/1 var(--serif); color: #cdbf9f; letter-spacing: .02em; transition: transform .2s var(--ease), color .2s; }
-.tool i { display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(233,220,190,.55); border-radius: 3px; background: rgba(0,0,0,.35); box-shadow: inset 0 0 0 2px rgba(0,0,0,.5), inset 0 0 0 3px rgba(233,220,190,.12); }
-.tool svg { width: 24px; height: 24px; fill: none; stroke: #efe3c4; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
-.tool:active { transform: translateY(2px); } .tool:disabled { opacity: .35; }
-.doorway { position: absolute; right: 22px; bottom: env(safe-area-inset-bottom); width: 58px; height: 76px; perspective: 420px; border-radius: 29px 29px 0 0;
-  background: radial-gradient(90% 70% at 50% 100%, rgba(255,176,96,.75), #1a0b04 60%, #050302 80%); box-shadow: inset 0 0 0 3px #0d0704, 0 0 0 1px rgba(207,169,90,.45), 0 0 0 4px #24130b, 0 0 0 5px rgba(0,0,0,.8); }
-.doorway::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: -1px; height: 3px; background: linear-gradient(90deg, transparent, rgba(255,186,110,.9) 30%, rgba(255,186,110,.9) 70%, transparent); filter: blur(1.5px); pointer-events: none; }
-.door { position: absolute; inset: 3px 3px 2px; border-radius: 26px 26px 0 0; transform-origin: left center; transition: transform .6s var(--ease);
-  background: var(--grain-v), linear-gradient(90deg, #2e180e, #3a2014 50%, #24130b); box-shadow: inset 0 0 0 1px rgba(0,0,0,.7), inset 0 0 18px rgba(0,0,0,.6); }
-.door::before { content: ""; position: absolute; inset: 9px 8px 9px; border-radius: 19px 19px 1px 1px; box-shadow: inset 0 0 0 1px rgba(207,169,90,.4), inset 0 3px 6px rgba(0,0,0,.7); }
-.door::after { content: ""; position: absolute; right: 7px; top: 56%; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f1dca0, #b8923f 60%, #6b4f1c); box-shadow: 1px 2px 3px rgba(0,0,0,.8); }
-.doorway.open .door { transform: rotateY(-78deg); }
-.doornote { position: absolute; right: -6px; top: -20px; font: italic 13px/1 var(--serif); color: var(--gold); white-space: nowrap; text-shadow: 0 1px 4px #000; }
+/* ───────── La barre du bas ───────── */
+#dock { position: fixed; z-index: 20; left: 50%; transform: translateX(-50%); bottom: 0; width: min(720px, 100%); height: calc(var(--dock) + env(safe-area-inset-bottom)); padding: 0 16px env(safe-area-inset-bottom);
+  display: flex; align-items: center; gap: 10px; background: var(--grain), linear-gradient(180deg, var(--wood-hi) 0 1px, var(--wood-2) 1px, var(--wood-0)); box-shadow: 0 -15px 26px rgba(0,0,0,.8); transition: transform .5s var(--ease); }
+body.sky-open #dock, #dock:empty { transform: translate(-50%, 110%); }
+.tool { flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; border-radius: 15px; font: 600 15px/1 var(--sans); transition: transform .2s var(--ease); }
+.tool.primary { background: var(--gold); color: #221703; } .tool.ghost { color: var(--cream); background: rgba(255,255,255,.08); }
+.tool svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tool:active { transform: scale(.97); } .tool:disabled { opacity: .4; }
 
 /* ───────── Le livre ouvert ───────── */
 .overlay { position: fixed; inset: 0; z-index: 40; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-#bookview { background: radial-gradient(100% 60% at 50% 0, rgba(255,190,110,.16), transparent 60%), var(--wall); perspective: 1600px; padding: calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 24px); }
+#bookview { background: var(--night-0); perspective: 1600px; padding: calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 24px); }
 .tome { position: relative; max-width: 640px; margin: 0 auto; }
-.page { position: relative; color: var(--ink); border-radius: 3px 8px 8px 3px; padding: 22px 20px 30px 30px; min-height: calc(100dvh - 60px);
-  background: linear-gradient(90deg, rgba(60,35,10,.4), rgba(60,35,10,.08) 16px, transparent 34px), radial-gradient(ellipse at center, transparent 58%, rgba(96,58,14,.42)), var(--parchment), radial-gradient(120% 90% at 50% 40%, var(--paper), var(--paper-2));
-  box-shadow: 0 18px 50px rgba(0,0,0,.9); }
-.flap { position: absolute; inset: 0; z-index: 2; border-radius: 3px 8px 8px 3px; transform-origin: left center; backface-visibility: hidden; pointer-events: none; background: var(--leather), var(--bg, #3b1414); background-size: auto, cover; background-position: center; color: var(--gold);
-  display: grid; place-items: center; text-align: center; padding: 40px; font: 400 26px/1.2 var(--display); letter-spacing: .05em; box-shadow: inset 14px 0 18px -8px rgba(0,0,0,.6); animation: openflap .9s var(--ease) .05s both; }
+.page { position: relative; color: var(--ink); border-radius: 4px 15px 15px 4px; padding: 18px 20px 30px 28px; min-height: calc(100dvh - 60px);
+  background: linear-gradient(90deg, rgba(60,40,15,.28), rgba(60,40,15,.06) 14px, transparent 30px), linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 18px 50px rgba(0,0,0,.9); }
+.flap { position: absolute; inset: 0; z-index: 2; border-radius: 4px 15px 15px 4px; transform-origin: left center; backface-visibility: hidden; pointer-events: none; background: var(--leather), var(--bg, #3b1414); background-size: auto, cover; background-position: center; color: var(--cream);
+  display: grid; place-items: center; text-align: center; padding: 40px; font: 400 28px/1.15 var(--display); animation: openflap .9s var(--ease) .05s both; }
 @keyframes openflap { from { transform: rotateY(0); opacity: 1; } 70% { opacity: 1; } to { transform: rotateY(-118deg); opacity: 0; } }
-.page .close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font: italic 15px var(--serif); color: var(--ink-2); }
-.page .close svg, .closet .close svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.titlepage { text-align: center; padding: 18px 6px 22px; border-bottom: 1px solid var(--paper-line); margin-bottom: 8px; }
-.titlepage h1 { font: 400 28px/1.15 var(--display); letter-spacing: .03em; text-wrap: balance; }
-.crest { width: 44px; height: 52px; margin: 0 auto 12px; display: block; fill: none; stroke: #5a3a16; stroke-width: 1.2; stroke-linejoin: round; stroke-linecap: round; }
-.titlepage .by { font: italic 19px/1.4 var(--serif); color: var(--ink-2); margin-top: 8px; }
-.titlepage .facts { font: 13px/1.5 var(--sans); color: var(--ink-2); margin-top: 14px; font-variant-numeric: tabular-nums; }
-.gauge { height: 5px; margin: 12px auto 0; max-width: 240px; background: rgba(60,40,15,.18); border-radius: 3px; overflow: hidden; }
+.page .close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font: 500 15px var(--sans); color: var(--ink-2); }
+.page .close svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.titlepage { padding: 15px 0 20px; border-bottom: 1px solid var(--paper-line); margin-bottom: 8px; }
+.titlepage h1 { font: 400 32px/1.1 var(--display); letter-spacing: -.01em; text-wrap: balance; }
+.titlepage .by { font: 400 18px/1.4 var(--sans); color: var(--ink-2); margin-top: 8px; }
+.titlepage .facts { font: 13px/1.5 var(--sans); color: var(--ink-2); margin-top: 15px; font-variant-numeric: tabular-nums; }
+.gauge { height: 4px; margin: 12px 0 0; background: rgba(60,40,15,.16); border-radius: 2px; overflow: hidden; }
 .gauge i { display: block; height: 100%; width: 100%; background: var(--ink); transform-origin: left; }
 .inkrow { display: flex; gap: 10px; margin: 16px 0 6px; } .inkrow > * { flex: 1; }
-.inkbtn { min-height: 48px; padding: 0 14px; border-radius: 2px; font: 500 17px/1 var(--serif); letter-spacing: .01em; color: var(--paper); background: var(--ink); box-shadow: 0 2px 0 rgba(0,0,0,.35); transition: transform .2s var(--ease); }
-.inkbtn.line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
-.inkbtn:active { transform: translateY(1px); } .inkbtn:disabled { opacity: .45; }
-.page h2 { font: italic 400 15px/1.3 var(--serif); color: var(--ink-2); text-align: center; margin: 30px 0 16px; }
-.page h2::before, .page h2::after { content: "—"; margin: 0 10px; color: var(--paper-line); }
+.inkbtn { min-height: 48px; padding: 0 15px; border-radius: 12px; font: 600 15px/1 var(--sans); color: var(--paper); background: var(--ink); transition: transform .2s var(--ease); }
+.inkbtn.line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px rgba(34,27,20,.55); }
+.inkbtn:active { transform: scale(.98); } .inkbtn:disabled { opacity: .4; }
+.page h2 { font: 400 24px/1.2 var(--display); margin: 32px 0 15px; }
 .entry { margin: 0 0 26px; }
-.entry .fol { display: flex; justify-content: space-between; align-items: baseline; font: 700 13px/1.4 var(--sans); font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--paper-line); padding-bottom: 4px; margin-bottom: 8px; }
+.entry .fol { display: flex; justify-content: space-between; align-items: baseline; font: 600 13px/1.4 var(--sans); letter-spacing: .02em; font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--paper-line); padding-bottom: 4px; margin-bottom: 8px; }
 .entry .fol time { font-weight: 400; color: var(--ink-2); }
-.entry .txt { font: 19.5px/1.55 var(--serif); white-space: pre-wrap; max-width: 62ch; hyphens: auto; }
-.entry .txt::first-letter { font-size: 1.9em; line-height: 1; font-weight: 700; padding-right: 2px; }
-.textlink { min-height: 44px; font: italic 14px var(--serif); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
-.page .quiet { font: italic 16px/1.5 var(--serif); color: var(--ink-2); text-align: center; padding: 10px 20px; }
+.entry .txt { font: 18px/1.62 var(--serif); white-space: pre-wrap; max-width: 62ch; hyphens: auto; }
+.textlink { min-height: 44px; font: 500 13px var(--sans); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.page .quiet { font: 15px/1.5 var(--sans); color: var(--ink-2); padding: 4px 0; }
 
-/* ───────── Le cagibi ───────── */
-#closet { background: var(--stars) 0 calc(env(safe-area-inset-top) + 4px) / 120px 90px repeat-x, linear-gradient(180deg, #0b1230, #070a1c 320px, #0a0705 700px); color: var(--chalk);
-  clip-path: circle(0 at calc(100% - 50px) calc(100% - 40px)); transition: clip-path .7s var(--ease); padding: calc(env(safe-area-inset-top) + 92px) 16px calc(env(safe-area-inset-bottom) + 40px); }
-#closet.in { clip-path: circle(160% at calc(100% - 50px) calc(100% - 40px)); }
-.closet { max-width: 640px; margin: 0 auto; }
-.closet .close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font: italic 15px var(--serif); color: var(--chalk-2); }
-.closet h1 { font: 400 28px/1.15 var(--display); letter-spacing: .04em; color: #f3e3bd; margin: 4px 0 14px; }
-.tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--closet-line); margin-bottom: 20px; }
-.tabs button { min-height: 46px; font: 500 18px var(--serif); color: var(--chalk-3); border-bottom: 2px solid transparent; margin-bottom: -1px; }
-.tabs button[aria-selected="true"] { color: var(--chalk); border-bottom-color: var(--brass); }
-.closet h2 { font: italic 400 19px/1.3 var(--serif); color: var(--chalk-2); margin: 30px 0 10px; }
-.closet p { margin: 0 0 10px; } .muted { color: var(--chalk-2); } .small { font-size: 13px; }
-.figures { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--closet-line); border-bottom: 1px solid var(--closet-line); }
-.figures > div { padding: 14px 10px 12px 0; } .figures > div + div { border-left: 1px solid var(--closet-line); padding-left: 12px; }
-.figures b { display: block; font: 500 30px/1.1 var(--serif); color: #f3e3bd; font-variant-numeric: lining-nums tabular-nums; font-variant-numeric: tabular-nums; }
-.figures span { display: block; font-size: 13px; line-height: 1.3; margin-top: 4px; color: var(--chalk-2); }
-.panel { background: rgba(0,0,0,.35); border: 1px solid rgba(207,169,90,.35); box-shadow: inset 0 0 0 3px rgba(0,0,0,.4), inset 0 0 0 4px rgba(207,169,90,.14); border-radius: 2px; padding: 16px; margin-bottom: 12px; }
-.panel.flag { border-color: var(--alert); }
-.chart { width: 100%; height: auto; display: block; } .chart text { font: 11px var(--sans); fill: var(--chalk-2); } .chart .v { fill: var(--chalk); font-weight: 600; }
-table { width: 100%; border-collapse: collapse; font-size: 15px; }
-td, th { padding: 8px 4px; border-bottom: 1px solid var(--closet-line); text-align: left; }
-td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } th { font-size: 13px; color: var(--chalk-3); font-weight: 600; }
-code.copy { display: block; background: #0e0a07; border-radius: 4px; padding: 10px; font-size: 13px; word-break: break-all; color: var(--chalk-2); }
-.closet label { display: block; font-size: 13px; color: var(--chalk-2); margin: 14px 0 6px; }
-.closet input, .closet textarea { width: 100%; font: 16px var(--sans); color: var(--chalk); background: #0e0a07; border: 1px solid var(--closet-line); border-radius: 4px; padding: 12px; }
-.closet textarea { min-height: 96px; resize: vertical; }
-.row { display: flex; gap: 10px; align-items: flex-end; } .row > * { flex: 1; }
-.chalkbtn { width: 100%; min-height: 48px; border-radius: 2px; font: 500 17px var(--serif); color: var(--chalk); box-shadow: inset 0 0 0 1.5px var(--chalk-3); }
-.chalkbtn.solid { background: var(--brass); color: var(--brass-ink); box-shadow: none; }
-.err { color: var(--alert); font-size: 13px; margin-top: 10px; } .err:empty, .okmsg:empty { display: none; }
-.okmsg { color: var(--fine); font-size: 13px; margin-top: 10px; }
-.page .err, dialog .err { color: #8f2a10; } dialog .okmsg { color: #1d5a45; }
-
-/* ───────── Fiches (dialogues) ───────── */
-dialog { border: 0; border-radius: 4px; color: var(--ink); width: min(560px, calc(100vw - 20px)); max-height: 90dvh; padding: 22px 18px 18px; overflow-y: auto;
-  background: radial-gradient(ellipse at center, transparent 58%, rgba(96,58,14,.4)), var(--parchment), radial-gradient(120% 90% at 50% 30%, var(--paper), var(--paper-2)); box-shadow: 0 30px 70px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.5); }
-dialog::backdrop { background: rgba(8,5,3,.72); }
-dialog[open] { animation: card .45s var(--ease); } @keyframes card { from { transform: translateY(24px) rotate(-1.2deg); opacity: 0; } }
-dialog h1 { font: 400 22px/1.2 var(--display); letter-spacing: .04em; text-align: center; padding-bottom: 10px; border-bottom: 1px solid rgba(90,58,22,.45); margin-bottom: 6px; }
-dialog label { display: block; font: italic 16px var(--serif); color: var(--ink-2); margin: 14px 0 4px; }
-dialog input, dialog textarea, dialog select { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,246,220,.45); border: 1px solid var(--paper-line); border-radius: 3px; padding: 11px; }
-dialog textarea { min-height: 160px; resize: vertical; line-height: 1.45; font-family: var(--serif); font-size: 19px; }
-dialog .count { font: 13px var(--sans); font-style: normal; font-variant-numeric: tabular-nums; }
+/* ───────── Fiches ───────── */
+dialog { border: 0; border-radius: 20px; color: var(--ink); width: min(560px, calc(100vw - 20px)); max-height: 90dvh; padding: 22px 18px 18px; overflow-y: auto; background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 30px 70px rgba(0,0,0,.9); }
+dialog::backdrop { background: rgba(5,9,25,.72); }
+dialog[open] { animation: card .45s var(--ease); } @keyframes card { from { transform: translateY(24px); opacity: 0; } }
+dialog h1 { font: 400 26px/1.15 var(--display); margin-bottom: 6px; }
+dialog label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 15px 0 5px; }
+dialog input, dialog textarea, dialog select { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
+dialog textarea { min-height: 160px; resize: vertical; line-height: 1.5; font-family: var(--serif); font-size: 18px; }
+dialog .count { font: 13px var(--sans); font-variant-numeric: tabular-nums; }
 .hit { display: flex; gap: 12px; width: 100%; text-align: left; padding: 10px 0; border-bottom: 1px solid var(--paper-line); align-items: flex-start; }
-.hit img, .hit .noc { width: 46px; height: 69px; flex: none; object-fit: cover; border-radius: 2px; box-shadow: 2px 2px 5px rgba(0,0,0,.4); background: var(--paper-2); }
-.hit .noc { position: relative; overflow: hidden; display: grid; place-items: center; font: 700 20px var(--serif); color: var(--ink-2); }
-.hit .noc img { position: absolute; inset: 0; width: 100%; height: 100%; box-shadow: none; }
-.hit b { display: block; font: 500 18px/1.2 var(--serif); } .hit i { display: block; font: italic 16px/1.3 var(--serif); color: var(--ink-2); }
-.hit small { display: block; font: 12.5px/1.4 var(--sans); color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
-.login { max-width: 420px; margin: 0 auto; padding: 18vh 18px 0; } .login h1 { font: 400 30px/1.15 var(--display); letter-spacing: .04em; margin-bottom: 8px; }
-.login form { margin-top: 22px; color: var(--ink); background: linear-gradient(180deg, var(--paper), var(--paper-2)); padding: 8px 18px 18px; border-radius: 4px; box-shadow: 0 20px 40px rgba(0,0,0,.7); }
-.login label { display: block; font: italic 14px var(--serif); color: var(--ink-2); margin: 14px 0 4px; }
-.login input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.5); border: 1px solid var(--paper-line); border-radius: 3px; padding: 11px; }
-[hidden] { display: none !important; }
+.hit .noc { position: relative; overflow: hidden; width: 46px; height: 69px; flex: none; border-radius: 3px; box-shadow: 2px 2px 6px rgba(0,0,0,.35); background: var(--paper-2); display: grid; place-items: center; font: 400 24px var(--display); color: var(--ink-2); }
+.hit .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hit b { display: block; font: 600 15px/1.25 var(--sans); } .hit i { display: block; font: normal 15px/1.3 var(--sans); color: var(--ink-2); }
+.hit small { display: block; font: 13px/1.4 var(--sans); color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.login { position: relative; z-index: 2; max-width: 420px; margin: 0 auto; padding: 4vh 18px 0; pointer-events: auto; } .login h1 { font: 400 34px/1.1 var(--display); margin-bottom: 8px; }
+.login form { margin-top: 22px; color: var(--ink); background: linear-gradient(180deg, var(--paper), var(--paper-2)); padding: 8px 18px 18px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,.7); }
+.login label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 15px 0 5px; }
+.login input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
+.haptic { position: fixed; left: -100px; top: 0; opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
-<!-- DIRECTION — Monde : sa propre bibliothèque, un meuble en noyer sombre sous une lampe de bureau. Premier écran : les livres en cours posés de face
-sur l'étagère du haut, le cadre en laiton du solde à côté, puis les dos des livres finis, les abandonnés couchés en pile. Parcours : toucher un livre
-l'ouvre (la couverture pivote) sur une page de papier où se lit le fil des résumés. Geste signature : la petite porte cintrée dans le socle, en bas à
-droite, qui s'entrouvre sur le cagibi où sont rangés stats et réglages. Risque assumé : le décor prime sur la densité ; rien ne passe par la couleur seule. -->
-<div id="app"><p style="padding:40px 20px;color:#b9aa90">Chargement…</p></div>
+<!-- DIRECTION — Monde : sa bibliothèque la nuit. Un ciel étoilé occupe tout le haut de l'écran, jusqu'au bord du téléphone, et porte le solde de minutes ;
+la bibliothèque en noyer sombre est une feuille posée dessus : livres en cours de face, livres finis sur la tranche, abandonnés couchés en pile.
+Parcours : toucher un livre l'ouvre sur une page de papier où se lit le fil des résumés. Geste signature : tirer la bibliothèque vers le bas agrandit le ciel,
+un cran haptique marque le seuil, et l'on arrive dans les comptes et les réglages. Typographie : un sérif contemporain pour les titres, la police système pour le reste.
+Rien ne passe par la couleur seule. -->
+<div id="sky"></div>
+<div id="app"><p style="padding:40px 20px;color:#bdb094">Chargement…</p></div>
+<nav id="dock" aria-label="Actions"></nav>
+<label class="haptic" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
 <div id="bookview" class="overlay" hidden></div>
-<div id="closet" class="overlay" hidden></div>
 <dialog id="dlg"></dialog>
 
 <script src="config.js"></script>
@@ -323,7 +304,7 @@ function demoApi() {
 }
 
 // ───────────── État et calculs ─────────────
-let S = null, openBook = null, closetTab = "stats", tick = null;
+let S = null, openBook = null, skyTab = "stats", skyOpen = false, tick = null;
 const bookLabel = b => `${b.title} — p. ${b.current_page}`;
 const balance = () => S.ledger.reduce((a, l) => a + l.delta, 0);
 const lastMonday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7); return d; };
@@ -348,11 +329,9 @@ function streak() {
 // Reliures : toile et cuir. Le titre, jamais la teinte, identifie le livre.
 const LEATHERS = ["#3b1414", "#14281f", "#111c33", "#2c1a0f", "#19181a", "#2b1730", "#10292b", "#3a2710", "#31101c", "#1c2a18"];
 const cloth = b => `--bg:${LEATHERS[hash(b.title) % LEATHERS.length]}`;
-const FLEURON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l3 6.5-3 6.5L5 8z"/><path d="M1.5 8h3M11.5 8h3"/><circle cx="8" cy="8" r="1.2"/></svg>`;
-const CREST = `<svg class="crest" viewBox="0 0 44 52" aria-hidden="true"><path d="M4 4h36v24c0 11-8 17-18 21C12 45 4 39 4 28z"/><path d="M22 17c-3-2.4-7-3-11-2.6v14c4-.4 8 .2 11 2.6 3-2.4 7-3 11-2.6v-14c-4-.4-8 .2-11 2.6zM22 17v14"/></svg>`;
 
 // ───────────── La bibliothèque ─────────────
-const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), closet = $("#closet");
+const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), sky = $("#sky"), dock = $("#dock");
 
 function render() {
   clearInterval(tick);
@@ -361,10 +340,7 @@ function render() {
   const dropped = S.books.filter(b => b.status === "abandonne");
   const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), today = byDay(1)[0], st = streak();
   app.innerHTML = `<div id="case">
-    <header class="dome"><div class="sky" role="status" aria-label="${bal < 0 ? `Dette de ${-bal} minutes` : `Solde de ${bal} minutes`}">
-        <div class="reserve">${bal < 0 ? "−" + -bal : bal}<small>${bal < 0 ? `min de dette, soit ${plural(-bal, "page")} à lire` : Math.abs(bal) > 1 ? "minutes en réserve" : "minute en réserve"}</small></div>
-        <div class="hud">${active.length ? active.map(s => `<b>${esc(s.app)}</b> ouvert encore <b data-exp="${esc(s.expires_at)}">…</b>`).join("<br>") : `<b>${today.pages}</b> ${today.pages > 1 ? "pages lues" : "page lue"} aujourd'hui · <b>${st}</b> ${st > 1 ? "jours" : "jour"} d'affilée`}${DEMO ? " · démonstration" : ""}</div>
-      </div><div class="lintel"></div></header>
+    <button class="grab" data-act="toggle-sky" aria-expanded="${skyOpen}" aria-controls="sky"><span class="grablabel">${skyOpen ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"}</span></button>
     <main class="alcove">
       <section class="shelf front" aria-label="En cours de lecture">
         <span class="shelf-label">En cours de lecture</span>
@@ -377,12 +353,10 @@ function render() {
         ${done.length + dropped.length ? "" : `<p class="empty-note">${S.books.length ? "Les livres que tu termines viendront se ranger ici, sur la tranche." : "Tes étagères sont vides. Pose ton premier livre là-haut : une page lue et résumée vaut une minute."}</p>`}
       </section>
     </main>
-    <footer class="plinth">
-      <button class="tool" data-act="log" ${reading.length ? "" : "disabled"}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3c-7 1-12 6-14 14l-2 4 4-2c8-2 13-7 12-16z"/><path d="M6 17c3-4 6-7 10-10"/></svg></i>J'ai lu</button>
-      <button class="tool" data-act="add-book"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM5 18a2 2 0 0 1 2-2h11"/><path d="M11.5 7.5v5M9 10h5"/></svg></i>Ajouter</button>
-      <button class="doorway" id="doorway" data-act="closet" aria-label="Ouvrir le cagibi : stats et réglages">
-        ${auditDue() ? `<span class="doornote">contrôle à faire</span>` : ""}<span class="door"></span></button>
-    </footer></div>`;
+    </div>`;
+  dock.innerHTML = `<button class="tool primary" data-act="log" ${reading.length ? "" : "disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3c-7 1-12 6-14 14l-2 4 4-2c8-2 13-7 12-16z"/><path d="M6 17c3-4 6-7 10-10"/></svg>J'ai lu</button>
+    <button class="tool ghost" data-act="add-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter un livre</button>`;
+  renderSky();
   tick = setInterval(updateCountdowns, 1000); updateCountdowns();
 }
 function updateCountdowns() {
@@ -399,8 +373,8 @@ function faceBook(b) {
 const clothCover = b => `<span class="cv cloth" style="${cloth(b)}"><span>${esc(b.title)}</span><small>${esc(b.author || "")}</small></span>`;
 function spine(b, lean) {
   const h = hash(b.title), w = Math.max(28, Math.min(58, Math.round((b.total_pages || 260) / 9))), ht = 148 + h % 32, two = w >= 40 && b.title.length > 11;
-  return `<div class="slot"><button class="spine${lean ? " lean" : ""}" data-book="${esc(b.id)}" style="${cloth(b)};width:${w}px;height:${ht}px;--fs:${two ? 11.5 : w < 34 ? 11 : 12.5}px;--ws:${two ? "normal" : "nowrap"}"
-    aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}, fini"><span class="ttl"><span>${esc(b.title)}</span></span><span class="mark">${FLEURON}</span></button></div>`;
+  return `<div class="slot"><button class="spine${lean ? " lean" : ""}" data-book="${esc(b.id)}" style="${cloth(b)};width:${w}px;height:${ht}px;--fs:${two ? 9.5 : w < 34 ? 9.5 : 10.5}px;--ws:${two ? "normal" : "nowrap"}"
+    aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}, fini"><span class="ttl"><span>${esc(b.title)}</span></span></button></div>`;
 }
 const flatBook = (b, i) => `<button class="flat" data-book="${esc(b.id)}" style="${cloth(b)};--h:${Math.max(22, Math.min(34, Math.round((b.total_pages || 260) / 14)))}px;--dx:${(hash(b.title) % 14) - 4}px" aria-label="${esc(b.title)}, abandonné"><span>${esc(b.title)}</span></button>`;
 
@@ -414,7 +388,7 @@ function showBook(animate = true) {
     ${animate ? `<div class="flap" style="${cloth(b)}${b.cover_url ? `;background-image:url('${esc(b.cover_url)}')` : ""}">${b.cover_url ? "" : esc(b.title)}</div>` : ""}
     <article class="page">
       <button class="close" data-act="close-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reposer sur l'étagère</button>
-      <header class="titlepage">${CREST}<h1>${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p>
+      <header class="titlepage"><h1>${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p>
         <p class="facts">Page ${b.current_page}${b.total_pages ? ` sur ${b.total_pages} · ${pct} %` : ""} · ${status}<br>commencé le ${fmtDate(b.started_at)} · ${plural(rs.reduce((a, r) => a + r.pages, 0), "page")} résumées</p>
         ${pct !== null ? `<div class="gauge" role="img" aria-label="${pct} % lu"><i style="transform:scaleX(${pct / 100})"></i></div>` : ""}</header>
       <div class="inkrow">${b.status === "en_cours" ? `<button class="inkbtn" data-act="log" data-id="${esc(b.id)}">J'ai lu</button>` : `<button class="inkbtn" data-act="status" data-v="en_cours">Reprendre</button>`}
@@ -431,28 +405,71 @@ function showBook(animate = true) {
 }
 function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; }
 
-// ───────────── Le cagibi ─────────────
-function openCloset() {
-  $("#doorway")?.classList.add("open"); renderCloset(); closet.hidden = false;
-  requestAnimationFrame(() => requestAnimationFrame(() => closet.classList.add("in")));
+// ───────────── Le ciel : solde, puis comptes et réglages quand on le tire ─────────────
+function renderSky() {
+  const bal = balance(), today = byDay(1)[0], st = streak(), active = S.sessions.filter(s => new Date(s.expires_at) > new Date());
+  const keep = sky.scrollTop;
+  sky.innerHTML = `<header class="skyhead" role="status" aria-label="${bal < 0 ? `Dette de ${-bal} minutes` : `Solde de ${bal} minutes`}">
+      <div class="reserve">${bal < 0 ? "−" + -bal : bal}<small>${bal < 0 ? `min de dette · ${plural(-bal, "page")} à lire` : Math.abs(bal) > 1 ? "minutes en réserve" : "minute en réserve"}</small></div>
+      <div class="hud">${active.length ? active.map(s => `<b>${esc(s.app)}</b> ouvert encore <b data-exp="${esc(s.expires_at)}">…</b>`).join("<br>") : `<b>${today.pages}</b> ${today.pages > 1 ? "pages lues" : "page lue"} aujourd'hui · <b>${st}</b> ${st > 1 ? "jours" : "jour"} d'affilée`}${auditDue() ? `<br><span class="due">Contrôle de la semaine à faire</span>` : ""}${DEMO ? " · démonstration" : ""}</div>
+    </header>
+    <div class="skybody" ${skyOpen ? "" : "inert"}><div class="tabs" role="tablist">
+      <button role="tab" aria-selected="${skyTab === "stats"}" data-ctab="stats">Comptes</button>
+      <button role="tab" aria-selected="${skyTab === "settings"}" data-ctab="settings">Réglages</button></div>
+    ${skyTab === "stats" ? viewStats() : viewSettings()}</div>`;
+  sky.scrollTop = keep; updateCountdowns();
 }
-function closeCloset() {
-  closet.classList.remove("in"); $("#doorway")?.classList.remove("open");
-  setTimeout(() => { if (!closet.classList.contains("in")) closet.hidden = true; }, 600);
+// Retour haptique : iOS n'expose pas navigator.vibrate ; basculer un interrupteur natif (Safari 17.4+) déclenche le même petit cran.
+function haptic() { try { if (navigator.vibrate) navigator.vibrate(12); else document.querySelector(".haptic").click(); } catch {} }
+function setSky(open) {
+  skyOpen = open; document.body.classList.toggle("sky-open", open); document.documentElement.style.removeProperty("--pull"); document.documentElement.style.removeProperty("--reveal");
+  if (open) window.scrollTo(0, 0); else sky.scrollTop = 0;
+  const g = document.querySelector(".grab"); if (g) { g.setAttribute("aria-expanded", open); g.querySelector(".grablabel").textContent = open ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"; }
+  sky.querySelector(".skybody")?.toggleAttribute("inert", !open);
 }
-function renderCloset() {
-  closet.innerHTML = `<div class="closet"><button class="close" data-act="close-closet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Refermer la porte</button>
-    <h1>Le cagibi</h1><div class="tabs" role="tablist">
-      <button role="tab" aria-selected="${closetTab === "stats"}" data-ctab="stats">Les comptes</button>
-      <button role="tab" aria-selected="${closetTab === "settings"}" data-ctab="settings">Les réglages</button></div>
-    ${closetTab === "stats" ? viewStats() : viewSettings()}</div>`;
-}
+// Le geste : depuis le haut de la page, tirer vers le bas agrandit le ciel ; au-delà du seuil, on y entre. Depuis le ciel, remonter la poignée ramène la bibliothèque.
+(() => {
+  const THRESHOLD = 96; let y0 = null, armed = false, mode = null;
+  const root = document.documentElement;
+  document.addEventListener("touchstart", e => {
+    if (!S || dlg.open || !bookview.hidden || e.touches.length > 1) return;
+    const onGrab = e.target.closest(".grab");
+    if (skyOpen ? onGrab : (window.scrollY <= 0 && !e.target.closest(".fronts"))) { y0 = e.touches[0].clientY; mode = skyOpen ? "close" : "open"; armed = false; }
+  }, { passive: true });
+  document.addEventListener("touchmove", e => {
+    if (y0 === null) return;
+    const dy = e.touches[0].clientY - y0;
+    if (mode === "open") {
+      if (dy <= 0) { if (!document.body.classList.contains("dragging")) y0 = null; else { root.style.setProperty("--pull", "0px"); } return; }
+      if (e.cancelable) e.preventDefault();
+      document.body.classList.add("dragging");
+      const pull = dy < 220 ? dy * .75 : 165 + (dy - 220) * .25;
+      root.style.setProperty("--pull", pull + "px"); root.style.setProperty("--reveal", Math.min(1, pull / 140).toFixed(2));
+      if (pull > THRESHOLD !== armed) { armed = pull > THRESHOLD; haptic(); }
+    } else {
+      if (dy >= 0) return;
+      if (e.cancelable) e.preventDefault();
+      document.body.classList.add("dragging");
+      root.style.setProperty("--pull", dy + "px");
+      if (-dy > THRESHOLD !== armed) { armed = -dy > THRESHOLD; haptic(); }
+    }
+  }, { passive: false });
+  const end = () => {
+    if (y0 === null) return; y0 = null;
+    if (!document.body.classList.contains("dragging")) return;
+    document.body.classList.remove("dragging");
+    if (mode === "close") { root.style.removeProperty("--pull"); if (armed) { suppressClick = true; setSky(false); } }
+    else if (armed) setSky(true); else { root.style.removeProperty("--pull"); root.style.removeProperty("--reveal"); }
+  };
+  document.addEventListener("touchend", end); document.addEventListener("touchcancel", end);
+})();
+let suppressClick = false;
 function barChart(data, key, unit) {
   const W = 340, H = 150, pad = 18, bw = (W - 8) / data.length, max = Math.max(1, ...data.map(d => d[key]));
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${unit} par jour sur ${data.length} jours">
-  <line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="var(--closet-line)"/>
+  <line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="rgba(255,255,255,.14)"/>
   ${data.map((d, i) => { const h = Math.round((H - pad - 22) * d[key] / max), x = 4 + i * bw, y = H - pad - h;
-    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="2" fill="var(--brass)"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}
+    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="2" fill="var(--gold)"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}
     <text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle">${i % 2 === (data.length - 1) % 2 ? d.date.getDate() : ""}</text>`; }).join("")}</svg>`;
 }
 function viewStats() {
@@ -606,13 +623,12 @@ function exportBook() {
 // ───────────── Actions ─────────────
 document.addEventListener("error", e => { const img = e.target; if (img.tagName === "IMG" && img.dataset.fallback) { const b = S.books.find(x => x.id === img.dataset.fallback); if (b) img.outerHTML = clothCover(b); } }, true);
 document.addEventListener("click", async e => {
-  const ct = e.target.closest("[data-ctab]"); if (ct) { closetTab = ct.dataset.ctab; renderCloset(); closet.scrollTop = 0; return; }
+  const ct = e.target.closest("[data-ctab]"); if (ct) { skyTab = ct.dataset.ctab; if (!skyOpen) setSky(true); renderSky(); return; }
   const bk = e.target.closest("[data-book]"); if (bk && !dlg.open) { openBook = bk.dataset.book; return showBook(); }
   const el = e.target.closest("[data-act]"); if (!el) return; const act = el.dataset.act;
   try {
     if (act === "close-book") closeBook();
-    else if (act === "closet") openCloset();
-    else if (act === "close-closet") closeCloset();
+    else if (act === "toggle-sky") { if (suppressClick) { suppressClick = false; return; } haptic(); setSky(!skyOpen); }
     else if (act === "log") dlgLog(el.dataset.id || openBook);
     else if (act === "add-book") dlgAddBook();
     else if (act === "manual") dlgBookForm();
@@ -630,12 +646,12 @@ document.addEventListener("click", async e => {
       await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) });
       await reload(); $("#cfg-ok").textContent = "Enregistré."; }
     else if (act === "copy-secret") { await navigator.clipboard.writeText(S.config.secret); $("#copy-ok").textContent = "Copié."; }
-    else if (act === "signout") { await api.signOut(); closeCloset(); viewLogin(); }
+    else if (act === "signout") { await api.signOut(); setSky(false); sky.innerHTML = ""; dock.innerHTML = ""; viewLogin(); }
   } catch (err) { alert(err.message || err); }
 });
-document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!bookview.hidden) closeBook(); else if (!closet.hidden) closeCloset(); });
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!bookview.hidden) closeBook(); else if (skyOpen) setSky(false); });
 
-async function reload() { S = await api.load(); render(); if (openBook) showBook(false); if (!closet.hidden) renderCloset(); }
+async function reload() { S = await api.load(); render(); if (openBook) showBook(false); }
 async function start() {
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Ma bibliothèque</h1><p style="color:var(--chalk-2)">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--brass)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
