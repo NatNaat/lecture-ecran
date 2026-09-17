@@ -188,6 +188,32 @@ dialog .count { font: 13px var(--sans); font-variant-numeric: tabular-nums; }
 .login label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 15px 0 5px; }
 .login input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
 .haptic { position: fixed; left: -100px; top: 0; opacity: 0; pointer-events: none; }
+/* ───────── Le cabinet : fiche « nouveau livre » posée sur le bureau ───────── */
+#study { position: fixed; inset: 0; z-index: 30; pointer-events: none; background: var(--night-0); }
+body.has3d #study { background: none; }
+#study > * { pointer-events: auto; }
+.backbtn.studyback { display: inline-flex; }
+.sheet { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: min(560px, calc(100% - 20px)); max-height: calc(100dvh - env(safe-area-inset-top) - 70px); overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 20px 18px calc(env(safe-area-inset-bottom) + 18px); border-radius: 20px 20px 0 0; color: var(--ink); background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 -20px 50px rgba(0,0,0,.7); animation: sheetin .6s var(--ease) both; }
+body.has3d .sheet { max-height: 66dvh; animation-delay: 1.5s; }
+body.has3d .studyback { animation: card .5s var(--ease) 1.5s both; }
+@keyframes sheetin { from { transform: translate(-50%, 105%); } }
+.sheet h1 { font: 700 26px/1.15 var(--sans); letter-spacing: -.02em; margin-bottom: 4px; }
+.sheet label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 14px 0 5px; }
+.sheet input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
+.sheet .note { font: 13px/1.5 var(--sans); color: var(--ink-2); margin: 10px 0 0; }
+.sheet .err { color: #9a2c10; }
+#sugg { max-height: 40dvh; overflow-y: auto; margin-top: 4px; } #sugg:empty { display: none; }
+.fiche { display: flex; gap: 14px; align-items: flex-start; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--paper-line); }
+.fiche .noc { position: relative; overflow: hidden; width: 64px; height: 96px; flex: none; border-radius: 4px; box-shadow: 2px 3px 8px rgba(0,0,0,.35); background: var(--paper-2); display: grid; place-items: center; font: 700 26px var(--sans); color: var(--ink-2); }
+.fiche .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.cvgrid button { border-radius: 4px; overflow: hidden; box-shadow: 2px 3px 8px rgba(0,0,0,.35); aspect-ratio: 2 / 3; background: var(--paper-2); }
+.cvgrid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cvgrid p { grid-column: 1 / -1; }
+body.study-open #dock, body.study-open .hint { transform: translate(-50%, 110%); opacity: 0; }
+body.has3d[data-view="study"] .skyhead { opacity: 0; } body.has3d[data-view="study"] #sky { background: none; }
+
 /* ───────── Mode 3D : la pièce est dessinée dans le canevas, l'interface flotte par-dessus ───────── */
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: none; touch-action: none; outline: none; }
 body.has3d #scene { display: block; }
@@ -233,6 +259,7 @@ Rien ne passe par la couleur seule. -->
 <nav id="dock" aria-label="Actions"></nav>
 <label class="haptic" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
 <div id="bookview" class="overlay" hidden></div>
+<div id="study" hidden></div>
 <dialog id="dlg"></dialog>
 
 <script src="config.js"></script>
@@ -432,6 +459,7 @@ function showBook(animate = true) {
         <div class="txt">${esc(r.summary)}</div><button class="textlink" data-act="edit" data-id="${esc(r.id)}">Corriger ce résumé</button></section>`).join("")
         : `<p class="quiet">Les pages sont encore blanches. Ton premier résumé s'écrira ici après ta prochaine lecture.</p>`}
       <h2>Ranger</h2>
+      <div class="inkrow"><button class="inkbtn line" data-act="cover">Changer la couverture</button></div>
       <div class="inkrow">${b.status === "en_cours" ? `<button class="inkbtn line" data-act="status" data-v="fini">Marquer comme fini</button><button class="inkbtn line" data-act="status" data-v="abandonne">Abandonner</button>` : ""}
         ${rs.length ? "" : `<button class="inkbtn line" data-act="del-book">Retirer de la bibliothèque</button>`}</div>
     </article></div>`;
@@ -578,12 +606,13 @@ function dlgLog(bookId) {
 
 // Recherche : catalogue général de la BnF (éditions françaises, exhaustif) + Open Library (couvertures, étranger). Gratuit, sans clé.
 const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const prefixed = q => { const w = q.trim().replace(/["*]/g, " ").split(/\s+/).filter(Boolean); if (w.length && w[w.length - 1].length >= 3) w[w.length - 1] += "*"; return w.join(" "); };
 const isbnOf = q => { const d = q.replace(/[-\s]/g, ""); return /^(97[89])?\d{9}[\dXx]$/.test(d) ? d : null; };
 // Les éditions d'avant 2007 sont cataloguées sous leur ISBN à 10 chiffres : on cherche les deux formes.
 const isbn10 = i => { if (!/^978\d{10}$/.test(i)) return null; const c = i.slice(3, 12), k = (11 - [...c].reduce((a, d, n) => a + d * (10 - n), 0) % 11) % 11; return c + (k === 10 ? "X" : k); };
-async function searchBnf(q) {
-  const isbn = isbnOf(q), cql = isbn ? `bib.isbn any "${[isbn, isbn10(isbn)].filter(Boolean).join(" ")}"` : `bib.anywhere all "${q.replace(/"/g, " ")}" and bib.doctype any "a"`;
-  const r = await fetch(`https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&recordSchema=dublincore&maximumRecords=30&query=${encodeURIComponent(cql)}`);
+async function searchBnf(q, signal) {
+  const isbn = isbnOf(q), cql = isbn ? `bib.isbn any "${[isbn, isbn10(isbn)].filter(Boolean).join(" ")}"` : `bib.anywhere all "${prefixed(q)}" and bib.doctype any "a"`;
+  const r = await fetch(`https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&recordSchema=dublincore&maximumRecords=30&query=${encodeURIComponent(cql)}`, { signal });
   const xml = new DOMParser().parseFromString(await r.text(), "text/xml");
   return [...xml.getElementsByTagNameNS("*", "dc")].map(rec => {
     const all = t => [...rec.getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", t)].map(n => n.textContent.trim());
@@ -594,18 +623,20 @@ async function searchBnf(q) {
       lang: all("language")[0] || "", cover_url: isbn13 ? `https://covers.openlibrary.org/b/isbn/${isbn13}-M.jpg?default=false` : null, openlibrary_key: null, src: "BnF" };
   }).filter(b => b.title);
 }
-async function searchOL(q) {
+async function searchOL(q, signal) {
   const isbn = isbnOf(q);
-  const r = await fetch(`https://openlibrary.org/search.json?limit=25&fields=key,title,author_name,cover_i,number_of_pages_median,first_publish_year,language&${isbn ? "isbn=" + isbn : "q=" + encodeURIComponent(q)}`);
+  const r = await fetch(`https://openlibrary.org/search.json?limit=25&fields=key,title,author_name,cover_i,number_of_pages_median,first_publish_year,language&${isbn ? "isbn=" + isbn : "q=" + encodeURIComponent(prefixed(q))}`, { signal });
   return ((await r.json()).docs || []).map(d => ({ title: d.title, author: (d.author_name || []).slice(0, 2).join(", "), total_pages: d.number_of_pages_median || null, year: d.first_publish_year || "", publisher: "",
     lang: (d.language || []).includes("fre") ? "fre" : "", cover_url: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : null, openlibrary_key: d.key, src: "Open Library" }));
 }
-async function searchBooks(q) {
-  const res = await Promise.allSettled([searchBnf(q), searchOL(q)]);
+async function searchBooks(q, signal) {
+  const res = await Promise.allSettled([searchBnf(q, signal), searchOL(q, signal)]);
+  if (signal?.aborted) throw new DOMException("annulé", "AbortError");
   if (res.every(r => r.status === "rejected")) throw new Error("réseau");
-  const words = norm(q).split(" ").filter(w => w.length > 1), seen = new Map();
+  const words = norm(q).split(" ").filter(w => w.length > 1), key3 = words.filter(w => w.length >= 3), seen = new Map(), isbnQ = !!isbnOf(q);
   res.flatMap(r => r.status === "fulfilled" ? r.value : []).forEach((b, i) => {
     const hay = norm(b.title + " " + b.author), t = norm(b.title);
+    if (!isbnQ && key3.length && key3.filter(w => hay.includes(w)).length < Math.ceil(key3.length * .6)) return;   // hors sujet
     b.score = words.filter(w => hay.includes(w)).length / Math.max(1, words.length) * 10 + (words.length && t.startsWith(words[0]) ? 1 : 0) + (b.lang === "fre" ? 2 : 0)
       + (b.total_pages ? 1.5 : 0) + (b.cover_url ? .5 : 0) - Math.min(3, t.split(" ").length / 6) - i / 1000;
     const key = `${t}|${norm(b.author).split(" ").pop()}|${b.total_pages || ""}`, prev = seen.get(key);
@@ -613,35 +644,83 @@ async function searchBooks(q) {
   });
   return [...seen.values()].sort((a, b) => b.score - a.score).slice(0, 30);
 }
-function dlgAddBook() {
-  openDlg(`<h1>Ajouter un livre</h1>
-    <form id="fsearch"><label for="q">Titre, auteur ou ISBN (le code-barres au dos)</label><div class="row"><input id="q" type="search" required enterkeyhint="search"><button class="inkbtn" style="flex:0 0 104px">Chercher</button></div></form>
-    <div id="res" style="margin-top:8px" aria-live="polite"></div>
-    <div class="inkrow" style="margin-top:16px"><button class="inkbtn line" data-close>Fermer</button><button class="inkbtn line" data-act="manual">Saisir à la main</button></div>`);
-  $("#fsearch").onsubmit = async e => { e.preventDefault(); const res = $("#res"), q = $("#q").value.trim(); res.innerHTML = `<p class="quiet" style="font:italic 15px var(--serif);color:var(--ink-2)">Recherche à la BnF et sur Open Library…</p>`;
-    try { const list = await searchBooks(q);
-      res.innerHTML = list.length ? `<p style="font:13px var(--sans);color:var(--ink-2);margin:6px 0 2px">${plural(list.length, "résultat")}. Choisis ton édition : le nombre de pages en dépend.</p>` : `<p class="err">Rien trouvé. Essaie l'ISBN au dos du livre, ou saisis-le à la main.</p>`;
-      list.forEach(b => { const el = document.createElement("button"); el.className = "hit"; el.type = "button";
+// ───────────── Le cabinet : ajouter un livre ─────────────
+// Couvertures : vérifier qu'une image existe vraiment, et en chercher une sur Open Library à partir du titre et de l'auteur.
+const imgOk = url => new Promise(res => { const i = new Image(); i.onload = () => res(i.naturalWidth > 20); i.onerror = () => res(false); i.src = url; });
+async function coverCandidates(title, author, signal) {
+  const t = String(title).split(" : ")[0], last = String(author || "").split(",")[0].trim().split(" ").pop();
+  const get = async extra => ((await (await fetch(`https://openlibrary.org/search.json?limit=12&fields=cover_i,title,author_name&title=${encodeURIComponent(t)}${extra}`, { signal })).json()).docs || []).filter(d => d.cover_i);
+  let docs = last ? await get("&author=" + encodeURIComponent(last)) : []; if (!docs.length) docs = await get("");
+  return [...new Set(docs.map(d => `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`))];
+}
+async function resolveCover(bk, signal) { if (bk.cover_url && await imgOk(bk.cover_url)) return bk.cover_url; try { return (await coverCandidates(bk.title, bk.author, signal))[0] || null; } catch { return null; } }
+// Rattrapage : les livres déjà en bibliothèque sans couverture (ou avec une adresse morte) en reçoivent une, une fois.
+async function backfillCovers() {
+  let tried = {}; try { tried = JSON.parse(localStorage.getItem("coverTried") || "{}"); } catch {}
+  let changed = false;
+  for (const b of S.books) {
+    if (tried[b.id] && Date.now() - tried[b.id] < 14 * 864e5) continue;
+    tried[b.id] = Date.now(); if (b.cover_url && await imgOk(b.cover_url)) continue;
+    const url = await resolveCover({ title: b.title, author: b.author }); if (url) { try { await api.updateBook(b.id, { cover_url: url }); changed = true; } catch {} }
+  }
+  try { localStorage.setItem("coverTried", JSON.stringify(tried)); } catch {}
+  if (changed && !dlg.open && study.hidden) await reload();
+}
+async function dlgCover(bookId) {
+  const b = S.books.find(x => x.id === bookId);
+  openDlg(`<h1>Choisir une couverture</h1><p style="font:13px/1.5 var(--sans);color:var(--ink-2)">${esc(b.title)}</p><div id="cvs" class="cvgrid"><p class="quiet" style="font:15px var(--sans);color:var(--ink-2)">Recherche…</p></div>
+    <div class="inkrow" style="margin-top:16px"><button class="inkbtn line" data-close>Fermer</button>${b.cover_url ? `<button class="inkbtn line" id="cvnone">Reliure en cuir</button>` : ""}</div>`);
+  const set = async url => { try { localStorage.removeItem("coverTried"); } catch {} await api.updateBook(b.id, { cover_url: url }); dlg.close(); await reload(); };
+  if ($("#cvnone")) $("#cvnone").onclick = () => set(null);
+  try { const list = await coverCandidates(b.title, b.author); $("#cvs").innerHTML = list.length ? "" : `<p class="err">Aucune couverture trouvée pour ce titre.</p>`;
+    list.forEach(u => { const el = document.createElement("button"); el.type = "button"; el.innerHTML = `<img src="${esc(u)}" alt="Couverture proposée" loading="lazy">`; el.onclick = () => set(u); $("#cvs").append(el); });
+  } catch { $("#cvs").innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion.</p>`; }
+}
+
+const study = $("#study"); let addPick = null, addCtl = null, addTimer = 0;
+function openStudy() {
+  addPick = null;
+  study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
+  <form class="sheet" id="fadd" autocomplete="off"><h1>Nouveau livre</h1>
+    <label for="aq">Cherche un titre, un auteur ou un ISBN</label><input id="aq" type="search" enterkeyhint="search" placeholder="ex. La Peste, Camus…">
+    <div id="sugg" aria-live="polite"></div>
+    <div class="fiche"><span class="noc" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0">
+      <label for="at" style="margin-top:0">Titre</label><input id="at" required>
+      <label for="aa">Auteur</label><input id="aa"></div></div>
+    <div class="row"><div><label for="ap">Pages de ton édition</label><input id="ap" type="number" inputmode="numeric" min="1"></div>
+    <div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
+    <p class="note">Les pages déjà lues avant aujourd'hui ne rapportent pas de minutes.</p>
+    <div class="err" id="aerr"></div><button class="inkbtn" style="width:100%;margin-top:12px">Poser sur l'étagère</button></form>`;
+  study.hidden = false; document.body.classList.add("study-open"); scene3d?.setState("study");
+  const q = $("#aq"), sugg = $("#sugg");
+  const run = async () => {
+    const text = q.value.trim(); addCtl?.abort(); if (text.length < 3) { sugg.innerHTML = ""; return; }
+    addCtl = new AbortController(); const ctl = addCtl; sugg.innerHTML = `<p class="note">Recherche à la BnF et sur Open Library…</p>`;
+    try { const list = await searchBooks(text, ctl.signal); if (ctl !== addCtl) return;
+      sugg.innerHTML = list.length ? "" : `<p class="note">Rien trouvé pour l'instant. Tu peux remplir la fiche à la main, ou essayer l'ISBN au dos du livre.</p>`;
+      list.slice(0, 12).forEach(b => { const el = document.createElement("button"); el.className = "hit"; el.type = "button";
         el.innerHTML = `<span class="noc">${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="">` : ""}</span><span><b>${esc(b.title)}</b><i>${esc(b.author || "Auteur inconnu")}</i>
-          <small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " pages" : "pages inconnues", b.src].filter(Boolean).map(esc).join(" · ")}</small></span>`;
+          <small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " pages" : "pages inconnues"].filter(Boolean).map(esc).join(" · ")}</small></span>`;
         const img = el.querySelector("img"); if (img) img.onerror = () => { img.remove(); b.cover_url = null; };
-        el.onclick = () => dlgBookForm(b); res.append(el); });
-    } catch { res.innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion, ou saisis le livre à la main.</p>`; } };
-  setTimeout(() => $("#q")?.focus(), 50);
+        el.onclick = () => pickSuggestion(b); sugg.append(el); });
+    } catch (err) { if (err.name !== "AbortError" && ctl === addCtl) sugg.innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion, ou remplis la fiche à la main.</p>`; }
+  };
+  q.addEventListener("input", () => { clearTimeout(addTimer); addTimer = setTimeout(run, 380); });
+  q.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); clearTimeout(addTimer); run(); q.blur(); } });
+  $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#fadd button.inkbtn"); btn.disabled = true;
+    try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0,
+        cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
+      bk.cover_url = await resolveCover(bk); await api.addBook(bk); closeStudy(); await reload();
+    } catch (err) { $("#aerr").textContent = err.message; btn.disabled = false; } };
 }
-function dlgBookForm(bk = {}) {
-  openDlg(`<h1>${bk.title ? "Vérifie ton édition" : "Nouveau livre"}</h1><form id="fbook">
-    <label for="bt">Titre</label><input id="bt" required value="${esc(bk.title || "")}">
-    <label for="ba">Auteur</label><input id="ba" value="${esc(bk.author || "")}">
-    <div class="row"><div><label for="bp">Pages de ton édition</label><input id="bp" type="number" inputmode="numeric" min="1" value="${bk.total_pages || ""}"></div>
-    <div><label for="bc">Tu en es page</label><input id="bc" type="number" inputmode="numeric" min="0" value="0"></div></div>
-    <p style="font:13px/1.5 var(--sans);color:var(--ink-2);margin-top:10px">Regarde le numéro de la dernière page de ton exemplaire. Les pages déjà lues avant aujourd'hui ne rapportent pas de minutes.</p>
-    <div class="err" id="berr"></div><div class="inkrow"><button type="button" class="inkbtn line" data-close>Annuler</button><button class="inkbtn">Poser sur l'étagère</button></div></form>`);
-  $("#fbook").onsubmit = async e => { e.preventDefault();
-    try { await api.addBook({ title: $("#bt").value.trim(), author: $("#ba").value.trim() || null, total_pages: +$("#bp").value || null,
-        current_page: +$("#bc").value || 0, cover_url: bk.cover_url || null, openlibrary_key: bk.openlibrary_key || null });
-      dlg.close(); await reload(); } catch (err) { $("#berr").textContent = err.message; } };
+function pickSuggestion(b) {
+  addPick = b; addCtl?.abort(); $("#sugg").innerHTML = ""; $("#aq").value = "";
+  $("#at").value = b.title; $("#aa").value = b.author || ""; $("#ap").value = b.total_pages || "";
+  $("#athumb").innerHTML = `${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="">` : ""}`; const img = $("#athumb img"); if (img) img.onerror = () => img.remove();
+  haptic(); ($("#ap").value ? $("#ac") : $("#ap")).focus();
 }
+function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open"); if (scene3d?.state === "study") scene3d.setState("room"); }
+
 function dlgEdit(rid) {
   const r = S.readings.find(x => x.id === rid);
   openDlg(`<h1>Corriger le résumé</h1><p style="font:13px var(--sans);color:var(--ink-2)">p. ${r.page_start} → ${r.page_end}</p><form id="fedit">
@@ -667,8 +746,9 @@ document.addEventListener("click", async e => {
     else if (act === "back-room") scene3d?.setState("room");
     else if (act === "toggle-sky") { if (suppressClick) { suppressClick = false; return; } haptic(); setSky(!skyOpen); }
     else if (act === "log") dlgLog(el.dataset.id || openBook);
-    else if (act === "add-book") dlgAddBook();
-    else if (act === "manual") dlgBookForm();
+    else if (act === "add-book") openStudy();
+    else if (act === "close-study") closeStudy();
+    else if (act === "cover") dlgCover(openBook);
     else if (act === "edit") dlgEdit(el.dataset.id);
     else if (act === "export") exportBook();
     else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); }
@@ -686,7 +766,7 @@ document.addEventListener("click", async e => {
     else if (act === "signout") { await api.signOut(); setSky(false); sky.innerHTML = ""; dock.innerHTML = ""; viewLogin(); }
   } catch (err) { alert(err.message || err); }
 });
-document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!bookview.hidden) closeBook(); else if (skyOpen) setSky(false); else if (scene3d?.state === "shelf") scene3d.setState("room"); });
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!study.hidden) closeStudy(); else if (!bookview.hidden) closeBook(); else if (skyOpen) setSky(false); else if (scene3d?.state === "shelf") scene3d.setState("room"); });
 
 async function reload() { S = await api.load(); render(); if (openBook) showBook(false); }
 // La pièce en 3D. Sans WebGL (ou si le module ne se charge pas), on garde la bibliothèque dessinée en 2D.
@@ -705,6 +785,7 @@ async function start() {
   if (!(await api.session())) return viewLogin();
   if (!(await api.claimOwner())) { await api.signOut(); return viewLogin("Ce compte n'est pas le propriétaire de cette base."); }
   await reload();
+  backfillCovers().catch(() => {});
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && S && !dlg.open) reload().catch(() => {}); });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
