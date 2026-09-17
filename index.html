@@ -188,6 +188,27 @@ dialog .count { font: 13px var(--sans); font-variant-numeric: tabular-nums; }
 .login label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 15px 0 5px; }
 .login input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
 .haptic { position: fixed; left: -100px; top: 0; opacity: 0; pointer-events: none; }
+/* ───────── Mode 3D : la pièce est dessinée dans le canevas, l'interface flotte par-dessus ───────── */
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: none; touch-action: none; outline: none; }
+body.has3d #scene { display: block; }
+body.has3d { overflow: hidden; }
+body.has3d #app { padding-top: 0; transform: none; position: static; will-change: auto; }
+body.has3d #sky { z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(5,9,25,.82), rgba(5,9,25,.35) 130px, transparent 210px); }
+body.has3d #sky::before { display: none; }
+body.has3d #sky::after { content: ""; position: fixed; inset: 0; background: rgba(5,9,25,.66); opacity: var(--reveal, 0); transition: opacity .5s var(--ease); pointer-events: none; z-index: -1; }
+body.has3d.sky-open #sky { pointer-events: auto; z-index: 5; }
+body.has3d.sky-open #sky::after { opacity: 1; }
+body.has3d .skyhead { transition: opacity .4s var(--ease); }
+body.has3d[data-view="shelf"] .skyhead { opacity: 0; }
+body.has3d[data-view="shelf"] #sky { background: none; }
+.backbtn { position: fixed; z-index: 8; left: 12px; top: calc(env(safe-area-inset-top) + 10px); display: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px 0 10px; border-radius: 22px; font: 600 15px var(--sans); color: var(--cream); background: rgba(5,9,25,.7); }
+.backbtn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+body.has3d[data-view="shelf"] .backbtn { display: inline-flex; }
+.hint { position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(var(--dock) + env(safe-area-inset-bottom) + 14px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
+body:not([data-view="room"]) .hint, body.sky-open .hint { opacity: 0; }
+.skyclose { position: fixed; z-index: 7; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom) + 14px); width: min(420px, calc(100% - 32px)); display: none; }
+body.has3d.sky-open .skyclose { display: block; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
@@ -197,6 +218,7 @@ la bibliothèque en noyer sombre est une feuille posée dessus : livres en cours
 Parcours : toucher un livre l'ouvre sur une page de papier où se lit le fil des résumés. Geste signature : tirer la bibliothèque vers le bas agrandit le ciel,
 un cran haptique marque le seuil, et l'on arrive dans les comptes et les réglages. Typographie : une seule police, celle du système, du titre au résumé.
 Rien ne passe par la couleur seule. -->
+<canvas id="scene" aria-hidden="true"></canvas>
 <div id="sky"></div>
 <div id="app"><p style="padding:40px 20px;color:#bdb094">Chargement…</p></div>
 <nav id="dock" aria-label="Actions"></nav>
@@ -299,7 +321,7 @@ function demoApi() {
 }
 
 // ───────────── État et calculs ─────────────
-let S = null, openBook = null, skyTab = "stats", skyOpen = false, tick = null;
+let S = null, openBook = null, skyTab = "stats", skyOpen = false, tick = null, scene3d = null;
 const bookLabel = b => `${b.title} — p. ${b.current_page}`;
 const balance = () => S.ledger.reduce((a, l) => a + l.delta, 0);
 const lastMonday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7); return d; };
@@ -334,7 +356,13 @@ function render() {
   const done = S.books.filter(b => b.status === "fini").sort((a, c) => new Date(a.finished_at || a.started_at) - new Date(c.finished_at || c.started_at));
   const dropped = S.books.filter(b => b.status === "abandonne");
   const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), today = byDay(1)[0], st = streak();
-  app.innerHTML = `<div id="case">
+  if (scene3d) {
+    const label = b => `${b.title}, ${b.author || "auteur inconnu"}, ${b.status === "en_cours" ? `page ${b.current_page}${b.total_pages ? " sur " + b.total_pages : ""}` : b.status === "fini" ? "fini" : "abandonné"}`;
+    app.innerHTML = `<button class="backbtn" data-act="back-room"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reculer</button>
+      <p class="hint">${S.books.length ? "Touche les rayons pour t'approcher" : "Tes rayons sont vides : pose ton premier livre avec « Ajouter un livre »."}</p>
+      <ul class="sr-only" aria-label="Tes livres">${S.books.map(b => `<li><button data-book="${esc(b.id)}">${esc(label(b))}</button></li>`).join("")}</ul>`;
+    scene3d.setBooks(S.books);
+  } else app.innerHTML = `<div id="case">
     <button class="grab" data-act="toggle-sky" aria-expanded="${skyOpen}" aria-controls="sky"><span class="grablabel">${skyOpen ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"}</span></button>
     <main class="alcove">
       <section class="shelf front" aria-label="En cours de lecture">
@@ -398,7 +426,7 @@ function showBook(animate = true) {
     </article></div>`;
   bookview.hidden = false; if (animate) bookview.scrollTop = 0;
 }
-function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; }
+function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; scene3d?.releaseBook(); }
 
 // ───────────── Le ciel : solde, puis comptes et réglages quand on le tire ─────────────
 function renderSky() {
@@ -411,7 +439,8 @@ function renderSky() {
     <div class="skybody" ${skyOpen ? "" : "inert"}><div class="tabs" role="tablist">
       <button role="tab" aria-selected="${skyTab === "stats"}" data-ctab="stats">Comptes</button>
       <button role="tab" aria-selected="${skyTab === "settings"}" data-ctab="settings">Réglages</button></div>
-    ${skyTab === "stats" ? viewStats() : viewSettings()}</div>`;
+    ${skyTab === "stats" ? viewStats() : viewSettings()}</div>
+    <button class="chalkbtn solid skyclose" data-act="toggle-sky">Revenir à la bibliothèque</button>`;
   sky.scrollTop = keep; updateCountdowns();
 }
 // Retour haptique : iOS n'expose pas navigator.vibrate ; basculer un interrupteur natif (Safari 17.4+) déclenche le même petit cran.
@@ -419,6 +448,7 @@ function haptic() { try { if (navigator.vibrate) navigator.vibrate(12); else doc
 function setSky(open) {
   skyOpen = open; document.body.classList.toggle("sky-open", open); document.documentElement.style.removeProperty("--pull"); document.documentElement.style.removeProperty("--reveal");
   if (open) window.scrollTo(0, 0); else sky.scrollTop = 0;
+  scene3d?.setState(open ? "ceiling" : "room");
   const g = document.querySelector(".grab"); if (g) { g.setAttribute("aria-expanded", open); g.querySelector(".grablabel").textContent = open ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"; }
   sky.querySelector(".skybody")?.toggleAttribute("inert", !open);
 }
@@ -427,7 +457,7 @@ function setSky(open) {
   const THRESHOLD = 96; let y0 = null, armed = false, mode = null;
   const root = document.documentElement;
   document.addEventListener("touchstart", e => {
-    if (!S || dlg.open || !bookview.hidden || e.touches.length > 1) return;
+    if (scene3d || !S || dlg.open || !bookview.hidden || e.touches.length > 1) return;
     const onGrab = e.target.closest(".grab");
     if (skyOpen ? onGrab : (window.scrollY <= 0 && !e.target.closest(".fronts"))) { y0 = e.touches[0].clientY; mode = skyOpen ? "close" : "open"; armed = false; }
   }, { passive: true });
@@ -623,6 +653,7 @@ document.addEventListener("click", async e => {
   const el = e.target.closest("[data-act]"); if (!el) return; const act = el.dataset.act;
   try {
     if (act === "close-book") closeBook();
+    else if (act === "back-room") scene3d?.setState("room");
     else if (act === "toggle-sky") { if (suppressClick) { suppressClick = false; return; } haptic(); setSky(!skyOpen); }
     else if (act === "log") dlgLog(el.dataset.id || openBook);
     else if (act === "add-book") dlgAddBook();
@@ -644,10 +675,21 @@ document.addEventListener("click", async e => {
     else if (act === "signout") { await api.signOut(); setSky(false); sky.innerHTML = ""; dock.innerHTML = ""; viewLogin(); }
   } catch (err) { alert(err.message || err); }
 });
-document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!bookview.hidden) closeBook(); else if (skyOpen) setSky(false); });
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!bookview.hidden) closeBook(); else if (skyOpen) setSky(false); else if (scene3d?.state === "shelf") scene3d.setState("room"); });
 
 async function reload() { S = await api.load(); render(); if (openBook) showBook(false); }
+// La pièce en 3D. Sans WebGL (ou si le module ne se charge pas), on garde la bibliothèque dessinée en 2D.
+async function initScene() {
+  if (scene3d || new URLSearchParams(location.search).has("2d")) return;
+  try {
+    const { createScene } = await import("./scene.js");
+    scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(); }, onCeiling: () => setSky(true),
+      onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; } });
+    document.body.classList.add("has3d"); document.body.dataset.view = "room";
+  } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
+}
 async function start() {
+  await initScene();
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Ma bibliothèque</h1><p style="color:var(--chalk-2)">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--brass)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
   if (!(await api.claimOwner())) { await api.signOut(); return viewLogin("Ce compte n'est pas le propriétaire de cette base."); }
