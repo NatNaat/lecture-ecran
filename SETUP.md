@@ -28,8 +28,8 @@ Compte 30 à 40 minutes, une seule fois. Tout est gratuit.
 ## 3. Le raccourci « Portier » — 5 min
 
 1. Envoie `shortcuts/Portier.shortcut` sur l'iPhone (AirDrop, ou dépose-le dans iCloud Drive et ouvre-le dans Fichiers) › **Ajouter le raccourci**.
-2. Ouvre-le en édition (⋯). Dans le bloc **Dictionnaire** du haut, remplace les trois valeurs par celles de la web app › Réglages › *Copier les trois valeurs* : `url`, `cle`, `secret`.
-3. Test : lance le raccourci à la main, il te demande une entrée → tape `TikTok`. Tu dois voir le menu « TikTok est bloqué. Solde : … ».
+2. Ouvre-le en édition (⋯). Dans le bloc **Dictionnaire** du haut, `url` et `cle` sont déjà remplies : remplace seulement `COLLE_ICI_LE_SECRET` par le secret affiché dans la web app › Réglages.
+3. Test : lance le raccourci à la main (sans entrée). Tu es renvoyé à l'écran d'accueil et un menu s'affiche : « est bloqué. Solde : … » avec *J'ai lu / Utiliser mon solde / Annuler*. Le nom de l'appli est vide, c'est normal : ce sont les automatisations qui le fournissent.
    À la première exécution iOS demande d'autoriser la connexion à supabase.co : **Toujours autoriser**.
 
 Si l'import échoue ou qu'une action apparaît cassée, reconstruis-le à la main : voir l'annexe en bas.

@@ -4,10 +4,14 @@
 Usage : python3 build.py        → Portier.shortcut prêt à importer (AirDrop / iCloud Drive vers l'iPhone)
 Le raccourci reçoit en entrée le nom de l'appli (« TikTok ») ou « fermeture TikTok ».
 """
-import plistlib, subprocess, sys, uuid
+import plistlib, re, subprocess, sys, uuid
 from pathlib import Path
 
 HERE = Path(__file__).parent
+# L'adresse et la clé anon (publiques) sont reprises de config.js : il ne reste que le secret à coller sur l'iPhone.
+_cfg = (HERE.parent / "config.js").read_text() if (HERE.parent / "config.js").exists() else ""
+URL = (re.search(r'supabaseUrl:\s*"([^"]+)"', _cfg) or [None, "https://XXXX.supabase.co"])[1]
+KEY = (re.search(r'supabaseAnonKey:\s*"([^"]+)"', _cfg) or [None, "COLLE_ICI_LA_CLE_ANON"])[1]
 OBJ = "￼"  # caractère de remplacement où s'insère une variable
 
 
@@ -59,6 +63,13 @@ def if_(source, cond, value=None):
     if value is not None: p["WFConditionalActionString"] = value
     return g, action("conditional", **p)
 
+def if_text(source, cond, value):
+    """Condition sur du texte : on passe d'abord la valeur dans un bloc Texte, sinon iOS ne connaît pas
+    son type (entrée du raccourci, champ d'un dictionnaire) et refuse « est » / « contient » à l'import."""
+    u = uid()
+    g, c = if_(out(u, "Texte"), cond, value)
+    return g, [action("gettext", UUID=u, WFTextActionText=text(source)), c]
+
 def end_if(g): return action("conditional", GroupingIdentifier=g, WFControlFlowMode=2)
 def alert(title, msg): return action("alert", WFAlertActionTitle=title, WFAlertActionMessage=msg, WFAlertActionCancelButtonShown=False)
 def ask(prompt, kind, u): return action("ask", UUID=u, WFAskActionPrompt=prompt, WFInputType=kind)
@@ -71,13 +82,13 @@ def portier():
     a = []
     # ── Réglages : les trois valeurs affichées dans la web app › Réglages ──
     cfg = uid()
-    a += [action("comment", WFCommentActionText="RÉGLAGES — remplace les trois valeurs ci-dessous par celles de la web app (onglet Réglages)."),
-          action("dictionary", UUID=cfg, WFItems=dico({"url": "https://XXXX.supabase.co", "cle": "COLLE_ICI_LA_CLE_ANON", "secret": "COLLE_ICI_LE_SECRET"})),
+    a += [action("comment", WFCommentActionText="RÉGLAGES — colle ton secret (web app › Réglages) à la place de COLLE_ICI_LE_SECRET. url et cle sont déjà remplies."),
+          action("dictionary", UUID=cfg, WFItems=dico({"url": URL, "cle": KEY, "secret": "COLLE_ICI_LE_SECRET"})),
           set_var("Cfg", out(cfg, "Dictionnaire"))]
 
     # ── Fermeture d'une appli : on prévient le serveur et c'est tout ──
-    g, cond = if_(INPUT, CONTAINS, "fermeture")
-    a += [cond, *rpc("close_session", {"p_app": text(INPUT)}, "R"), EXIT, end_if(g)]
+    g, cond = if_text(INPUT, CONTAINS, "fermeture")
+    a += [*cond, *rpc("close_session", {"p_app": text(INPUT)}, "R"), EXIT, end_if(g)]
 
     # ── Pas de réseau : bloqué ──
     ip = uid()
@@ -87,8 +98,8 @@ def portier():
 
     # ── Session en cours ? On laisse passer ──
     a += rpc("gate_status", {"p_app": text(INPUT)}, "Etat")
-    g, cond = if_(var("Etat", "state"), IS, "open")
-    a += [cond, EXIT, end_if(g)]
+    g, cond = if_text(var("Etat", "state"), IS, "open")
+    a += [*cond, EXIT, end_if(g)]
 
     # ── Sinon : dehors, puis le choix ──
     a += [HOME]
@@ -103,8 +114,8 @@ def portier():
           ask("Résume ce que tu viens de lire (le micro du clavier permet de dicter).", "Text", resume)]
     a += rpc("log_reading", {"p_book": text(out(livre, "Élément choisi")), "p_page_end": text(out(page, "Entrée fournie")),
                              "p_summary": text(out(resume, "Entrée fournie"))}, "Lecture")
-    g, cond = if_(var("Lecture", "status"), IS, "ok")
-    a += [cond, alert("Bien joué", text(var("Lecture", "message"))),
+    g, cond = if_text(var("Lecture", "status"), IS, "ok")
+    a += [*cond, alert("Bien joué", text(var("Lecture", "message"))),
           action("conditional", GroupingIdentifier=g, WFControlFlowMode=1),
           alert("Refusé", text(var("Lecture", "error"))), EXIT, end_if(g)]
 
@@ -116,13 +127,15 @@ def portier():
     minutes = uid()
     a += [ask(text("Combien de minutes sur ", INPUT, " ?"), "Number", minutes), set_var("Minutes", out(minutes, "Entrée fournie"))]
     a += rpc("start_session", {"p_app": text(INPUT), "p_minutes": text(var("Minutes"))}, "Session")
-    g, cond = if_(var("Session", "status"), IS, "ok")
-    a += [cond,
+    g, cond = if_text(var("Session", "status"), IS, "ok")
+    a += [*cond,
           action("timer.start", WFDuration={"Value": {"Unit": "min", "Magnitude": att(var("Session", "minutes"))}, "WFSerializationType": "WFQuantityFieldValue"}),
           action("conditional", GroupingIdentifier=g, WFControlFlowMode=1),
           alert("Refusé", text(var("Session", "error"))), EXIT, end_if(g)]
     # Rouvre l'appli si son schéma d'URL est connu du serveur ; sinon on la relance à la main.
-    g, cond = if_(var("Session", "open_url"), HAS_VALUE)
+    u_url = uid()
+    a += [action("gettext", UUID=u_url, WFTextActionText=text(var("Session", "open_url")))]
+    g, cond = if_(out(u_url, "Texte"), HAS_VALUE)
     a += [cond, action("openurl", WFInput=text(var("Session", "open_url"))), end_if(g)]
 
     return {"WFWorkflowClientVersion": "2302.0.4", "WFWorkflowMinimumClientVersion": 900, "WFWorkflowMinimumClientVersionString": "900",
