@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pages contre minutes</title>
+<meta name="theme-color" content="#14110d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pages">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root {
+  --bg: #14110d; --surface: #1e1a14; --surface-2: #29231b; --line: #3a3226;
+  --ink: #f2eadb; --ink-2: #b8ac97; --ink-3: #8a7f6c;
+  --accent: #f0b64a; --accent-ink: #1a1408; --warn: #ff9d7a; --ok: #9ad7c0;
+  --serif: "Iowan Old Style", "Palatino", "Georgia", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --r: 13px;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #f6f0e4; --surface: #fffaf0; --surface-2: #efe6d4; --line: #d9ccb4;
+    --ink: #221c12; --ink-2: #5d5342; --ink-3: #85795f;
+    --accent: #a8650a; --accent-ink: #fff8ea; --warn: #b3401c; --ok: #1d6b55; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans);
+  padding: env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom)); min-height: 100dvh; }
+main { max-width: 640px; margin: 0 auto; padding: 20px 16px 8px; }
+h1 { font: 600 28px/1.15 var(--serif); margin: 4px 0 18px; letter-spacing: -.01em; }
+h2 { font: 600 13px/1.2 var(--sans); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin: 28px 0 10px; }
+p { margin: 0 0 10px; } .muted { color: var(--ink-2); } .small { font-size: 13px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; margin-bottom: 13px; }
+.hero { padding: 20px 18px; }
+.hero .num { font: 600 64px/1 var(--serif); font-variant-numeric: tabular-nums; }
+.hero .unit { font: 500 20px var(--sans); color: var(--ink-2); margin-left: 6px; }
+.hero .label { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+.hero.debt { border-color: var(--warn); } .hero.debt .num { color: var(--warn); }
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 13px; }
+.kpi b { display: block; font: 600 28px/1.1 var(--serif); font-variant-numeric: tabular-nums; }
+.kpi span { display: block; font-size: 13px; line-height: 1.3; margin-top: 4px; color: var(--ink-2); }
+.banner { border-color: var(--accent); }
+.banner.warn { border-color: var(--warn); }
+button, .btn { font: 600 16px var(--sans); border: 0; border-radius: 13px; padding: 13px 16px; min-height: 48px;
+  background: var(--accent); color: var(--accent-ink); cursor: pointer; width: 100%; }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+button.link { background: none; color: var(--accent); width: auto; padding: 8px 0; min-height: 44px; text-align: left; }
+button:disabled { opacity: .5; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; gap: 10px; align-items: center; } .row > * { flex: 1; }
+label { display: block; font-size: 13px; color: var(--ink-2); margin: 13px 0 6px; }
+input, textarea, select { width: 100%; font: 16px var(--sans); color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: 10px; padding: 13px; }
+textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+.err { color: var(--warn); font-size: 13px; margin-top: 10px; } .err:empty { display: none; }
+.err::before { content: "⚠ "; }
+.okmsg { color: var(--ok); font-size: 13px; margin-top: 10px; } .okmsg:empty { display: none; }
+.okmsg::before { content: "✓ "; }
+
+.book { display: flex; gap: 13px; align-items: flex-start; text-align: left; width: 100%; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r); padding: 13px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
+.cover { width: 56px; height: 84px; flex: none; border-radius: 6px; object-fit: cover; background: var(--surface-2);
+  display: grid; place-items: center; font: 600 20px var(--serif); color: var(--ink-3); }
+.book .t { font: 600 18px/1.25 var(--serif); } .book .a { font-size: 13px; color: var(--ink-2); }
+.bar { height: 6px; background: var(--surface-2); border-radius: 3px; margin: 8px 0 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; }
+.tag { display: inline-block; font-size: 13px; border: 1px solid var(--line); border-radius: 99px; padding: 1px 9px; color: var(--ink-2); }
+
+.reading { border-left: 2px solid var(--line); padding: 2px 0 2px 13px; margin: 0 0 20px 4px; }
+.reading .meta { font-size: 13px; color: var(--ink-3); margin-bottom: 4px; }
+.reading .meta b { color: var(--accent); font-variant-numeric: tabular-nums; }
+.reading .txt { font: 18px/1.6 var(--serif); white-space: pre-wrap; }
+
+.chart { width: 100%; height: auto; display: block; }
+.chart text { font: 11px var(--sans); fill: var(--ink-2); }
+.chart .v { fill: var(--ink); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; font-size: 16px; }
+td, th { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: left; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+th { font-size: 13px; color: var(--ink-3); font-weight: 600; }
+code.copy { display: block; background: var(--surface-2); border-radius: 8px; padding: 10px; font-size: 13px; word-break: break-all; }
+
+nav { position: fixed; left: 0; right: 0; bottom: 0; background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(13px); -webkit-backdrop-filter: blur(13px); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom); display: none; }
+nav.on { display: block; }
+nav div { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+nav button { background: none; color: var(--ink-3); font-size: 13px; font-weight: 600; padding: 9px 0 8px; border-radius: 0; min-height: 56px; }
+nav button svg { display: block; margin: 0 auto 3px; width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+nav button[aria-current="page"] { color: var(--accent); box-shadow: inset 0 2px 0 var(--accent); }
+.back { display: inline-flex; align-items: center; gap: 4px; }
+dialog { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); width: min(560px, calc(100vw - 24px)); padding: 18px; max-height: 88dvh; }
+dialog::backdrop { background: rgba(0,0,0,.6); }
+.results button { margin-bottom: 8px; }
+@media (prefers-reduced-motion: no-preference) { .bar i { transition: transform .4s ease; } }
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"><p class="muted">Chargement…</p></main>
+<nav id="nav" aria-label="Sections"><div>
+  <button data-tab="today"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Aujourd'hui</button>
+  <button data-tab="books"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>Livres</button>
+  <button data-tab="stats"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>Stats</button>
+  <button data-tab="settings"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Réglages</button>
+</div></nav>
+<dialog id="dlg"></dialog>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const dayKey = d => new Date(d).toLocaleDateString("sv");
+const fmtDate = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+const fmtDateTime = d => new Date(d).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const plural = (n, w) => `${n} ${w}${Math.abs(n) > 1 ? "s" : ""}`;
+const DEMO = new URLSearchParams(location.search).has("demo");
+
+// ───────────── Couche de données : Supabase, ou jeu de démonstration en mémoire (?demo) ─────────────
+const api = DEMO ? demoApi() : supabaseApi();
+
+function supabaseApi() {
+  const cfg = window.LE_CONFIG || {};
+  if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return { unconfigured: true };
+  const sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+  const all = async q => { const { data, error } = await q; if (error) throw error; return data; };
+  const rpc = async (fn, args) => { const { data, error } = await sb.rpc(fn, args); if (error) throw error; return data; };
+  return {
+    url: cfg.supabaseUrl, anonKey: cfg.supabaseAnonKey,
+    session: async () => (await sb.auth.getSession()).data.session,
+    signIn: async (email, password) => { const { error } = await sb.auth.signInWithPassword({ email, password }); if (error) throw error; },
+    signOut: () => sb.auth.signOut(),
+    claimOwner: () => rpc("claim_owner"),
+    load: async () => {
+      const [config, books, readings, sessions, ledger, audits] = await Promise.all([
+        all(sb.from("app_config").select("*")), all(sb.from("books").select("*").order("started_at", { ascending: false })),
+        all(sb.from("readings").select("*").order("page_start")), all(sb.from("sessions").select("*").order("started_at")),
+        all(sb.from("ledger").select("*")), all(sb.from("audits").select("*")) ]);
+      return { config: config[0], books, readings, sessions, ledger, audits };
+    },
+    addBook: b => all(sb.from("books").insert(b)),
+    updateBook: (id, patch) => all(sb.from("books").update(patch).eq("id", id)),
+    deleteBook: id => all(sb.from("books").delete().eq("id", id)),
+    updateConfig: patch => all(sb.from("app_config").update(patch).eq("id", 1)),
+    logReading: (secret, label, pageEnd, summary) => rpc("log_reading", { p_secret: secret, p_book: label, p_page_end: pageEnd, p_summary: summary }),
+    editSummary: (id, summary) => rpc("edit_summary", { p_reading: id, p_summary: summary }),
+    submitAudit: (week, app, minutes) => rpc("submit_audit", { p_week_start: week, p_app: app, p_real_minutes: minutes }),
+  };
+}
+
+function demoApi() {
+  const now = Date.now(), H = 3600e3, D = 24 * H; let n = 0; const id = () => "demo-" + (++n);
+  const db = { config: { secret: "secret-de-demonstration", apps: ["TikTok", "Instagram", "YouTube"], session_cap_min: 30, daily_cap_min: 120 },
+    books: [], readings: [], sessions: [], ledger: [], audits: [] };
+  const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", current_page: 0, started_at: new Date(now - 13 * D).toISOString() };
+  const b2 = { id: id(), title: "La Grande Transformation", author: "Karl Polanyi", cover_url: null, total_pages: 420, status: "en_cours", current_page: 0, started_at: new Date(now - 6 * D).toISOString() };
+  const b3 = { id: id(), title: "L'Étranger", author: "Albert Camus", cover_url: null, total_pages: 120, status: "fini", current_page: 120, started_at: new Date(now - 30 * D).toISOString(), finished_at: new Date(now - 20 * D).toISOString() };
+  db.books.push(b1, b2, b3);
+  const texts = ["Le narrateur évoque ses couchers à Combray et l'angoisse du baiser maternel refusé lorsque Swann dîne à la maison. La mémoire volontaire ne restitue qu'un pan lumineux du passé.",
+    "Épisode de la madeleine : le goût du gâteau trempé dans le thé ressuscite tout Combray. Opposition entre mémoire de l'intelligence et mémoire involontaire, seule capable de rendre le passé vivant.",
+    "Polanyi décrit la « paix de cent ans » et soutient que le marché autorégulateur est une utopie du XIXe siècle : la société se protège spontanément contre lui (double mouvement)."];
+  for (let d = 12; d >= 0; d--) {
+    if (d % 5 === 3) continue;
+    const b = d % 3 === 0 && d < 6 ? b2 : b1, pages = 12 + (d * 7) % 19, t = new Date(now - d * D - 3 * H).toISOString();
+    const r = { id: id(), book_id: b.id, page_start: b.current_page, page_end: b.current_page + pages, pages, summary: texts[b === b2 ? 2 : d % 2], created_at: t };
+    b.current_page += pages; db.readings.push(r); db.ledger.push({ delta: pages, reason: "lecture", created_at: t });
+    const m = 8 + (d * 5) % 17, app = db.config.apps[d % 3], st = now - d * D - 2 * H, over = d === 4 ? 6 : 0;
+    db.sessions.push({ id: id(), app, minutes_granted: m, started_at: new Date(st).toISOString(), expires_at: new Date(st + m * 6e4).toISOString(), overtime_min: over });
+    db.ledger.push({ delta: -m, reason: "session", created_at: t });
+    if (over) db.ledger.push({ delta: -over * 2, reason: "dette_depassement", created_at: t });
+  }
+  db.sessions.push({ id: id(), app: "TikTok", minutes_granted: 10, started_at: new Date(now - 4 * 6e4).toISOString(), expires_at: new Date(now + 6 * 6e4).toISOString(), overtime_min: 0 });
+  db.ledger.push({ delta: -10, reason: "session", created_at: new Date().toISOString() });
+  return {
+    demo: true, url: "https://exemple.supabase.co", anonKey: "clé-anon-de-démonstration",
+    session: async () => ({ user: { email: "demo" } }), signIn: async () => {}, signOut: async () => {}, claimOwner: async () => true,
+    load: async () => structuredClone(db),
+    addBook: async b => { db.books.unshift({ id: id(), status: "en_cours", current_page: 0, started_at: new Date().toISOString(), ...b }); },
+    updateBook: async (bid, patch) => Object.assign(db.books.find(b => b.id === bid), patch),
+    deleteBook: async bid => { db.books = db.books.filter(b => b.id !== bid); },
+    updateConfig: async patch => Object.assign(db.config, patch),
+    logReading: async (_s, label, pageEnd, summary) => {
+      const b = db.books.find(b => bookLabel(b) === label), pages = pageEnd - b.current_page, need = Math.min(150 + 20 * pages, 800);
+      if (pages <= 0) return { ok: false, error: `Tu en étais déjà page ${b.current_page} : indique une page plus loin.` };
+      if (summary.trim().length < need) return { ok: false, error: `Résumé trop court : ${summary.trim().length} caractères, il en faut ${need} pour ${pages} pages.` };
+      db.readings.push({ id: id(), book_id: b.id, page_start: b.current_page, page_end: pageEnd, pages, summary, created_at: new Date().toISOString() });
+      b.current_page = pageEnd; db.ledger.push({ delta: pages, reason: "lecture", created_at: new Date().toISOString() });
+      return { ok: true, pages };
+    },
+    editSummary: async (rid, s) => { db.readings.find(r => r.id === rid).summary = s; return true; },
+    submitAudit: async (week, app, minutes) => { db.audits.push({ week_start: week, app, real_minutes: minutes, logged_minutes: 0, undeclared: 0 }); return { ok: true, logged: minutes, undeclared: 0 }; },
+  };
+}
+
+// ───────────── État et calculs ─────────────
+let S = null, tab = "today", openBook = null, tick = null;
+const bookLabel = b => `${b.title} — p. ${b.current_page}`;
+const balance = () => S.ledger.reduce((a, l) => a + l.delta, 0);
+const lastMonday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7); return d; };
+
+function byDay(days) {
+  const out = []; const today = new Date(); today.setHours(12, 0, 0, 0);
+  for (let i = days - 1; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); out.push({ key: dayKey(d), date: d, pages: 0, minutes: 0 }); }
+  const idx = Object.fromEntries(out.map(o => [o.key, o]));
+  S.readings.forEach(r => { const o = idx[dayKey(r.created_at)]; if (o) o.pages += r.pages; });
+  S.sessions.forEach(s => { const o = idx[dayKey(s.started_at)]; if (o) o.minutes += s.minutes_granted + (s.overtime_min || 0); });
+  return out;
+}
+function streak() {
+  const days = new Set(S.readings.map(r => dayKey(r.created_at))); const d = new Date(); let n = 0;
+  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);
+  while (days.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+// ───────────── Rendu ─────────────
+const app = $("#app"), nav = $("#nav"), dlg = $("#dlg");
+function render() {
+  clearInterval(tick);
+  nav.classList.add("on");
+  nav.querySelectorAll("button").forEach(b => b.toggleAttribute("aria-current", false));
+  const cur = nav.querySelector(`[data-tab="${tab}"]`); cur && cur.setAttribute("aria-current", "page");
+  app.innerHTML = openBook ? viewBook() : { today: viewToday, books: viewBooks, stats: viewStats, settings: viewSettings }[tab]();
+  if (tab === "today" && !openBook) { tick = setInterval(updateCountdowns, 1000); updateCountdowns(); }
+  window.scrollTo(0, 0);
+}
+
+function viewToday() {
+  const bal = balance(), today = byDay(1)[0], st = streak();
+  const active = S.sessions.filter(s => new Date(s.expires_at) > new Date());
+  const current = S.books.filter(b => b.status === "en_cours");
+  const wk = dayKey(lastMonday()), auditDue = S.sessions.length && S.config.apps.some(a => !S.audits.some(x => x.week_start === wk && x.app === a));
+  return `<h1>${DEMO ? "Démo · " : ""}Aujourd'hui</h1>
+  <div class="card hero ${bal < 0 ? "debt" : ""}">
+    <div class="label">${bal < 0 ? "Dette à rembourser en lisant" : "Solde disponible"}</div>
+    <span class="num">${Math.abs(bal)}</span><span class="unit">min ${bal < 0 ? "de dette" : ""}</span>
+    <p class="muted small" style="margin:10px 0 0">${bal < 0 ? `Lis ${plural(-bal, "page")} pour revenir à zéro.` : bal === 0 ? "1 page lue et résumée = 1 minute." : `De quoi ouvrir une appli ${plural(Math.min(bal, S.config.session_cap_min), "minute")} d'affilée.`}</p>
+  </div>
+  ${active.map(s => `<div class="card banner"><b>${esc(s.app)} est ouvert</b><div class="muted small">Se referme dans <span data-exp="${esc(s.expires_at)}">…</span>. Rester après l'alarme coûte le double.</div></div>`).join("")}
+  ${auditDue ? `<div class="card banner warn"><b>Contrôle de la semaine passée</b><p class="muted small">Reporte ton temps d'écran réel pour vérifier qu'aucune minute n'a échappé au compteur.</p><button class="ghost" data-act="goto-audit">Faire le contrôle</button></div>` : ""}
+  <div class="kpis">
+    <div class="kpi"><b>${today.pages}</b><span>pages lues aujourd'hui</span></div>
+    <div class="kpi"><b>${today.minutes}</b><span>min d'écran aujourd'hui</span></div>
+    <div class="kpi"><b>${st}</b><span>${st > 1 ? "jours" : "jour"} de lecture d'affilée</span></div>
+  </div>
+  <h2>En cours de lecture</h2>
+  ${current.length ? current.map(bookCard).join("") : `<div class="card"><p>Aucun livre en cours.</p><p class="muted small">Ajoute le livre que tu lis : c'est lui que le raccourci te proposera au moment de débloquer une appli.</p></div>`}
+  <button data-act="log" ${current.length ? "" : "disabled"}>J'ai lu — gagner des minutes</button>
+  <div style="height:10px"></div><button class="ghost" data-act="add-book">Ajouter un livre</button>`;
+}
+function updateCountdowns() {
+  document.querySelectorAll("[data-exp]").forEach(el => {
+    const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000));
+    el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")} s` : "0 s — terminé";
+  });
+}
+function bookCard(b) {
+  const pct = b.total_pages ? Math.min(100, Math.round(100 * b.current_page / b.total_pages)) : null;
+  const nb = S.readings.filter(r => r.book_id === b.id).length;
+  const cover = b.cover_url ? `<img class="cover" src="${esc(b.cover_url)}" alt="" loading="lazy">` : `<div class="cover" aria-hidden="true">${esc(b.title[0] || "?")}</div>`;
+  return `<button class="book" data-book="${esc(b.id)}">${cover}<div style="flex:1;min-width:0">
+    <div class="t">${esc(b.title)}</div><div class="a">${esc(b.author || "Auteur inconnu")}</div>
+    ${pct !== null ? `<div class="bar" role="img" aria-label="${pct} % lu"><i style="transform:scaleX(${pct / 100})"></i></div>` : ""}
+    <div class="small muted">p. ${b.current_page}${b.total_pages ? ` / ${b.total_pages} · ${pct} %` : ""} · ${plural(nb, "résumé")}</div></div></button>`;
+}
+
+function viewBooks() {
+  const g = k => S.books.filter(b => b.status === k);
+  const sec = (title, list) => list.length ? `<h2>${title} · ${list.length}</h2>${list.map(bookCard).join("")}` : "";
+  return `<h1>Bibliothèque</h1><button data-act="add-book">Ajouter un livre</button>
+  ${S.books.length ? "" : `<p class="muted" style="margin-top:16px">Ta bibliothèque est vide. Cherche un titre : couverture et nombre de pages se remplissent tout seuls.</p>`}
+  ${sec("En cours", g("en_cours"))}${sec("Finis", g("fini"))}${sec("Abandonnés", g("abandonne"))}`;
+}
+
+function viewBook() {
+  const b = S.books.find(x => x.id === openBook); if (!b) { openBook = null; return viewBooks(); }
+  const rs = S.readings.filter(r => r.book_id === b.id).sort((a, c) => a.page_start - c.page_start);
+  const statusLabel = { en_cours: "En cours", fini: "Fini", abandonne: "Abandonné" };
+  return `<button class="link back" data-act="back">‹ Retour</button>
+  <h1 style="margin-bottom:4px">${esc(b.title)}</h1><p class="muted">${esc(b.author || "Auteur inconnu")} · <span class="tag">${statusLabel[b.status]}</span></p>
+  <p class="small muted">Page ${b.current_page}${b.total_pages ? ` sur ${b.total_pages}` : ""} · commencé le ${fmtDate(b.started_at)} · ${plural(rs.reduce((a, r) => a + r.pages, 0), "page")} résumées</p>
+  <div class="row" style="margin:13px 0 4px">
+    ${b.status === "en_cours" ? `<button data-act="log" data-id="${esc(b.id)}">J'ai lu</button>` : `<button class="ghost" data-act="status" data-v="en_cours">Reprendre</button>`}
+    <button class="ghost" data-act="export">Exporter</button></div>
+  <h2>Fil de lecture</h2>
+  ${rs.length ? rs.map(r => `<div class="reading"><div class="meta"><b>p. ${r.page_start} → ${r.page_end}</b> · ${fmtDateTime(r.created_at)}</div>
+    <div class="txt">${esc(r.summary)}</div><button class="link small" data-act="edit" data-id="${esc(r.id)}">Modifier</button></div>`).join("")
+    : `<p class="muted">Pas encore de résumé. Le premier arrivera avec ta prochaine lecture.</p>`}
+  <h2>Gérer</h2>
+  ${b.status === "en_cours" ? `<div class="row"><button class="ghost" data-act="status" data-v="fini">Marquer fini</button><button class="ghost" data-act="status" data-v="abandonne">Abandonner</button></div>` : ""}
+  ${rs.length ? "" : `<div style="height:10px"></div><button class="ghost" data-act="del-book">Supprimer ce livre</button>`}`;
+}
+
+function barChart(data, key, unit) {
+  const W = 340, H = 150, pad = 18, bw = (W - 8) / data.length, max = Math.max(1, ...data.map(d => d[key]));
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${unit} par jour sur ${data.length} jours">
+  <line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="var(--line)"/>
+  ${data.map((d, i) => { const h = Math.round((H - pad - 22) * d[key] / max), x = 4 + i * bw, y = H - pad - h;
+    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="3" fill="var(--accent)"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}
+    <text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle">${i % 2 === (data.length - 1) % 2 ? d.date.getDate() : ""}</text>`; }).join("")}</svg>`;
+}
+function viewStats() {
+  const d14 = byDay(14), d7 = d14.slice(7), sum = (a, k) => a.reduce((x, y) => x + y[k], 0);
+  const p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0);
+  const over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
+  const perApp = {}; S.sessions.forEach(s => { const o = perApp[s.app] ??= { n: 0, m: 0, o: 0 }; o.n++; o.m += s.minutes_granted; o.o += s.overtime_min || 0; });
+  return `<h1>Stats</h1>
+  <div class="kpis"><div class="kpi"><b>${p7}</b><span>pages sur 7 jours</span></div><div class="kpi"><b>${m7}</b><span>min d'écran sur 7 jours</span></div>
+    <div class="kpi"><b>${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page lue par minute d'écran</span></div></div>
+  <h2>Pages lues par jour · 14 jours</h2><div class="card">${barChart(d14, "pages", "Pages")}</div>
+  <h2>Minutes d'écran par jour · 14 jours</h2><div class="card">${barChart(d14, "minutes", "Minutes")}</div>
+  <h2>Par appli · depuis le début</h2><div class="card">${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépassement</th></tr>
+    ${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="muted" style="margin:0">Aucune session pour l'instant.</p>`}</div>
+  <h2>Depuis le début</h2>
+  <div class="kpis"><div class="kpi"><b>${totalP}</b><span>pages résumées</span></div><div class="kpi"><b>${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div>
+    <div class="kpi"><b>${over}</b><span>min de dépassement</span></div></div>
+  ${S.audits.length ? `<h2>Contrôles hebdomadaires</h2><div class="card"><table><tr><th>Semaine du</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>
+    ${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></div>` : ""}`;
+}
+
+function viewSettings() {
+  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config;
+  const todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a));
+  return `<h1>Réglages</h1>
+  <h2 id="audit">Contrôle de la semaine du ${fmtDate(wk)}</h2>
+  <div class="card">${todo.length ? `<p class="small muted">Dans Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière, relève le temps de chaque appli. Tout écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
+    ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)} — minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="ghost" style="flex:0 0 110px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}
+    <div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p style="margin:0">✓ Contrôle fait pour toutes les applis.</p>`}</div>
+  <h2>Applis bloquées</h2>
+  <div class="card"><label for="apps" style="margin-top:0">Une par ligne, avec le nom exact utilisé dans les raccourcis</label>
+    <textarea id="apps" style="min-height:96px">${esc(c.apps.join("\n"))}</textarea>
+    <div class="row"><div><label for="cap-s">Max par session (min)</label><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
+    <div><label for="cap-d">Max par jour (min)</label><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div></div>
+    <div style="height:13px"></div><button data-act="save-config">Enregistrer</button><div class="okmsg" id="cfg-ok"></div><div class="err" id="cfg-err"></div></div>
+  <h2>Pour configurer les raccourcis iPhone</h2>
+  <div class="card small"><p class="muted">À coller dans le raccourci « Portier — réglages » (voir SETUP.md). Ne partage pas le secret.</p>
+    <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code>
+    <label>Secret</label><code class="copy">${esc(c.secret)}</code>
+    <div style="height:13px"></div><button class="ghost" data-act="copy-setup">Copier les trois valeurs</button><div class="okmsg" id="copy-ok"></div></div>
+  ${DEMO ? "" : `<div style="height:8px"></div><button class="ghost" data-act="signout">Se déconnecter</button>`}`;
+}
+
+function viewLogin(msg = "") {
+  nav.classList.remove("on");
+  app.innerHTML = `<h1>Pages contre minutes</h1><p class="muted">Connecte-toi avec le compte créé dans Supabase.</p>
+  <form id="login" class="card"><label for="em" style="margin-top:0">Email</label><input id="em" type="email" autocomplete="username" required>
+  <label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required>
+  <div style="height:16px"></div><button>Se connecter</button><div class="err">${esc(msg)}</div></form>`;
+  $("#login").onsubmit = async e => { e.preventDefault(); const btn = $("#login button"); btn.disabled = true;
+    try { await api.signIn($("#em").value.trim(), $("#pw").value); await start(); }
+    catch (err) { viewLogin(/invalid/i.test(err.message) ? "Email ou mot de passe incorrect." : err.message); } };
+}
+
+// ───────────── Dialogues ─────────────
+function openDlg(html) { dlg.innerHTML = html; dlg.showModal(); }
+dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); });
+
+function dlgLog(bookId) {
+  const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
+  openDlg(`<h1 style="font-size:20px">J'ai lu</h1><form id="flog">
+    <label for="lb">Livre</label><select id="lb">${list.map(b => `<option value="${esc(b.id)}" ${b === sel ? "selected" : ""}>${esc(bookLabel(b))}</option>`).join("")}</select>
+    <label for="lp">Page atteinte</label><input id="lp" type="number" inputmode="numeric" required min="1">
+    <label for="ls">Résumé de ce que tu viens de lire <span id="lcount"></span></label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
+    <div class="err" id="lerr"></div><div style="height:13px"></div>
+    <div class="row"><button type="button" class="ghost" data-close>Annuler</button><button>Valider</button></div></form>`);
+  const upd = () => { const b = list.find(x => x.id === $("#lb").value), n = Math.max(0, (+$("#lp").value || 0) - b.current_page), need = Math.min(150 + 20 * n, 800);
+    $("#lcount").textContent = n ? `· ${$("#ls").value.trim().length} / ${need} caractères pour ${plural(n, "page")}` : ""; };
+  ["input", "change"].forEach(ev => $("#flog").addEventListener(ev, upd));
+  $("#flog").onsubmit = async e => { e.preventDefault(); const btn = $("#flog button:not(.ghost)"); btn.disabled = true;
+    try { const b = list.find(x => x.id === $("#lb").value); const r = await api.logReading(S.config.secret, bookLabel(b), +$("#lp").value, $("#ls").value);
+      if (!r.ok) { $("#lerr").textContent = r.error; btn.disabled = false; return; }
+      dlg.close(); await reload(); } catch (err) { $("#lerr").textContent = err.message; btn.disabled = false; } };
+}
+
+function dlgAddBook() {
+  openDlg(`<h1 style="font-size:20px">Ajouter un livre</h1>
+    <form id="fsearch"><label for="q">Titre, auteur ou ISBN</label><div class="row"><input id="q" type="search" required><button style="flex:0 0 110px">Chercher</button></div></form>
+    <div class="results" id="res" style="margin-top:13px"></div>
+    <button class="link" data-act="manual">Saisir le livre à la main</button><div></div><button class="ghost" data-close>Fermer</button>`);
+  $("#fsearch").onsubmit = async e => { e.preventDefault(); const res = $("#res"); res.innerHTML = `<p class="muted">Recherche…</p>`;
+    try { const r = await fetch(`https://openlibrary.org/search.json?limit=8&fields=key,title,author_name,cover_i,number_of_pages_median,first_publish_year&q=${encodeURIComponent($("#q").value)}`);
+      const docs = (await r.json()).docs || [];
+      res.innerHTML = docs.length ? "" : `<p class="muted">Rien trouvé. Essaie un autre titre, ou saisis le livre à la main.</p>`;
+      docs.forEach(d => { const bk = { title: d.title, author: (d.author_name || []).slice(0, 2).join(", "), total_pages: d.number_of_pages_median || null,
+          cover_url: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : null, openlibrary_key: d.key };
+        const el = document.createElement("button"); el.className = "book"; el.type = "button";
+        el.innerHTML = `${bk.cover_url ? `<img class="cover" src="${esc(bk.cover_url)}" alt="">` : `<div class="cover">${esc(bk.title[0])}</div>`}<div><div class="t">${esc(bk.title)}</div><div class="a">${esc(bk.author)}${d.first_publish_year ? " · " + d.first_publish_year : ""}</div><div class="small muted">${bk.total_pages ? bk.total_pages + " pages" : "nombre de pages inconnu"}</div></div>`;
+        el.onclick = () => dlgBookForm(bk); res.append(el); });
+    } catch { res.innerHTML = `<p class="err">Recherche impossible (réseau ?). Tu peux saisir le livre à la main.</p>`; } };
+}
+function dlgBookForm(bk = {}) {
+  openDlg(`<h1 style="font-size:20px">${bk.title ? "Vérifie ton édition" : "Nouveau livre"}</h1><form id="fbook">
+    <label for="bt">Titre</label><input id="bt" required value="${esc(bk.title || "")}">
+    <label for="ba">Auteur</label><input id="ba" value="${esc(bk.author || "")}">
+    <div class="row"><div><label for="bp">Pages de ton édition</label><input id="bp" type="number" inputmode="numeric" min="1" value="${bk.total_pages || ""}"></div>
+    <div><label for="bc">Tu en es page</label><input id="bc" type="number" inputmode="numeric" min="0" value="0"></div></div>
+    <p class="small muted" style="margin-top:10px">Les pages déjà lues avant aujourd'hui ne rapportent pas de minutes.</p>
+    <div class="err" id="berr"></div><div class="row"><button type="button" class="ghost" data-close>Annuler</button><button>Ajouter</button></div></form>`);
+  $("#fbook").onsubmit = async e => { e.preventDefault();
+    try { await api.addBook({ title: $("#bt").value.trim(), author: $("#ba").value.trim() || null, total_pages: +$("#bp").value || null,
+        current_page: +$("#bc").value || 0, cover_url: bk.cover_url || null, openlibrary_key: bk.openlibrary_key || null });
+      dlg.close(); tab = "books"; await reload(); } catch (err) { $("#berr").textContent = err.message; } };
+}
+function dlgEdit(rid) {
+  const r = S.readings.find(x => x.id === rid);
+  openDlg(`<h1 style="font-size:20px">Modifier le résumé</h1><p class="muted small">p. ${r.page_start} → ${r.page_end}</p><form id="fedit">
+    <textarea id="et" required style="min-height:240px">${esc(r.summary)}</textarea><div class="err" id="eerr"></div><div style="height:13px"></div>
+    <div class="row"><button type="button" class="ghost" data-close>Annuler</button><button>Enregistrer</button></div></form>`);
+  $("#fedit").onsubmit = async e => { e.preventDefault(); try { await api.editSummary(rid, $("#et").value); dlg.close(); await reload(); } catch (err) { $("#eerr").textContent = err.message; } };
+}
+function exportBook() {
+  const b = S.books.find(x => x.id === openBook), rs = S.readings.filter(r => r.book_id === b.id).sort((a, c) => a.page_start - c.page_start);
+  const md = `# ${b.title}\n${b.author ? `*${b.author}*\n` : ""}\n` + rs.map(r => `## p. ${r.page_start} → ${r.page_end} — ${fmtDate(r.created_at)}\n\n${r.summary}\n`).join("\n");
+  if (navigator.share) return navigator.share({ title: b.title, text: md }).catch(() => {});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([md], { type: "text/markdown" })); a.download = `${b.title}.md`; a.click();
+}
+
+// ───────────── Actions ─────────────
+nav.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) { tab = b.dataset.tab; openBook = null; render(); } });
+document.addEventListener("click", async e => {
+  const bk = e.target.closest("[data-book]"); if (bk && !dlg.open) { openBook = bk.dataset.book; return render(); }
+  const el = e.target.closest("[data-act]"); if (!el) return; const act = el.dataset.act;
+  try {
+    if (act === "back") { openBook = null; render(); }
+    else if (act === "log") dlgLog(el.dataset.id || openBook);
+    else if (act === "add-book") dlgAddBook();
+    else if (act === "manual") dlgBookForm();
+    else if (act === "edit") dlgEdit(el.dataset.id);
+    else if (act === "export") exportBook();
+    else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); }
+    else if (act === "del-book") { if (confirm("Supprimer ce livre de la bibliothèque ?")) { await api.deleteBook(openBook); openBook = null; await reload(); } }
+    else if (act === "goto-audit") { tab = "settings"; render(); $("#audit").scrollIntoView(); }
+    else if (act === "audit") { const v = $(`#au-${CSS.escape(el.dataset.app)}`).value; $("#audit-err").textContent = "";
+      if (v === "") return void ($("#audit-err").textContent = "Indique un nombre de minutes.");
+      const r = await api.submitAudit(dayKey(lastMonday()), el.dataset.app, +v);
+      if (!r.ok) return void ($("#audit-err").textContent = r.error);
+      await reload(); $("#audit-ok").textContent = r.undeclared ? `${r.undeclared} min non déclarées : dette ajoutée.` : `Rien à signaler pour ${el.dataset.app}.`; }
+    else if (act === "save-config") { const apps = $("#apps").value.split("\n").map(s => s.trim()).filter(Boolean);
+      if (!apps.length) return void ($("#cfg-err").textContent = "Garde au moins une appli.");
+      await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) });
+      await reload(); $("#cfg-ok").textContent = "Enregistré."; }
+    else if (act === "copy-setup") { await navigator.clipboard.writeText(`${api.url}\n${api.anonKey}\n${S.config.secret}`); $("#copy-ok").textContent = "Copié."; }
+    else if (act === "signout") { await api.signOut(); viewLogin(); }
+  } catch (err) { alert(err.message || err); }
+});
+
+async function reload() { S = await api.load(); render(); }
+async function start() {
+  if (api.unconfigured) { app.innerHTML = `<h1>Pages contre minutes</h1><div class="card"><p>Il manque l'adresse et la clé Supabase dans <code>config.js</code>.</p><p class="muted small">En attendant, tu peux <a href="?demo" style="color:var(--accent)">voir la démo</a>.</p></div>`; return; }
+  if (!(await api.session())) return viewLogin();
+  if (!(await api.claimOwner())) { await api.signOut(); return viewLogin("Ce compte n'est pas le propriétaire de cette base."); }
+  await reload();
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && S && !dlg.open) reload().catch(() => {}); });
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+start().catch(err => { app.innerHTML = `<h1>Oups</h1><p class="err">${esc(err.message || err)}</p>`; });
+</script>
+</body>
+</html>
