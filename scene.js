@@ -81,14 +81,14 @@ function wrapWords(g, text, max) {
   for (const wd of words) { const t = cur ? cur + " " + wd : wd; if (g.measureText(t).width > max && cur) { lines.push(cur); cur = wd; } else cur = t; }
   if (cur) lines.push(cur); return lines;
 }
-function spineTex(book, color, horizontal, ratio = .25) {
+function spineTex(book, color, horizontal, ratio = .25, ink = "#f0e4c6", accent = "#d9b972") {
   const h = 512, w = Math.max(64, Math.round(h * ratio));
   return canvasTex(horizontal ? h : w, horizontal ? w : h, g => {
     if (horizontal) { g.translate(h, 0); g.rotate(Math.PI / 2); }
     leatherFill(g, w, h, color, hash(book.title));
     const sh = g.createLinearGradient(0, 0, w, 0); sh.addColorStop(0, "rgba(0,0,0,.45)"); sh.addColorStop(.25, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(0,0,0,.4)"); g.fillStyle = sh; g.fillRect(0, 0, w, h);
-    g.fillStyle = "#d9b972"; g.fillRect(0, 34, w, 3); g.fillRect(0, h - 37, w, 3); const maxSize = Math.min(38, w * .42);
-    g.save(); g.translate(w / 2, h / 2); g.rotate(-Math.PI / 2); g.fillStyle = "#f0e4c6"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.fillStyle = accent; g.fillRect(0, 34, w, 3); g.fillRect(0, h - 37, w, 3); const maxSize = Math.min(38, w * .42);
+    g.save(); g.translate(w / 2, h / 2); g.rotate(-Math.PI / 2); g.fillStyle = ink; g.textAlign = "center"; g.textBaseline = "middle";
     let size = maxSize, lines; const title = book.title.toUpperCase();
     for (;; size -= 3) { g.font = `600 ${size}px ${SANS}`; lines = wrapWords(g, title, h - 110); if ((lines.length <= (w > 90 ? 2 : 1) && lines.every(l => g.measureText(l).width <= h - 100)) || size <= 15) break; }
     if (lines.length > 2) lines = [lines[0], lines.slice(1).join(" ")];
@@ -114,6 +114,29 @@ function titlePageTex(book) {
     g.fillStyle = "#62574a"; g.font = `400 22px ${SANS}`; g.fillText(book.author || "", w / 2 + 8, 150 + lines.length * size * 1.2 + 26, w - 80);
     g.fillRect(w / 2 - 22, h - 120, 60, 2);
   });
+}
+// Les couvertures d'Open Library n'autorisent pas la lecture de leurs pixels (pas d'en-tête CORS sur l'image finale) :
+// on passe par le relais d'images wsrv.nl, qui les sert avec l'autorisation. Seule l'adresse de la couverture lui est transmise.
+const proxied = url => "https://wsrv.nl/?w=384&output=jpg&url=" + encodeURIComponent(url.replace(/^https?:\/\//, ""));
+const covers = new Map();
+function loadCover(url) {
+  if (!covers.has(url)) covers.set(url, new Promise(res => {
+    const img = new Image(); img.crossOrigin = "anonymous";
+    img.onload = () => { try {
+      if (img.naturalWidth < 20) return res(null);
+      const c = document.createElement("canvas"), W = c.width = 40, H = c.height = 60, g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, W, H);
+      const d = g.getImageData(0, 0, W, H).data, bins = new Map();
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4, k = (d[i] >> 4) << 8 | (d[i + 1] >> 4) << 4 | d[i + 2] >> 4, edge = x < 5 || y < 5 || x >= W - 5 || y >= H - 5 ? 3 : 1;
+        const b = bins.get(k) || bins.set(k, [0, 0, 0, 0]).get(k); b[0] += edge; b[1] += d[i] * edge; b[2] += d[i + 1] * edge; b[3] += d[i + 2] * edge; }
+      const ranked = [...bins.values()].sort((a, b) => b[0] - a[0]), rgb = b => [b[1] / b[0], b[2] / b[0], b[3] / b[0]], main = rgb(ranked[0]);
+      const far = ranked.slice(1).find(b => b[0] > ranked[0][0] * .04 && rgb(b).reduce((s, v, i) => s + Math.abs(v - main[i]), 0) > 150);
+      const hex = v => "#" + v.map(n => Math.round(n).toString(16).padStart(2, "0")).join(""), lum = (.2126 * main[0] + .7152 * main[1] + .0722 * main[2]) / 255;
+      const tex = new THREE.Texture(img); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4; tex.needsUpdate = true;
+      res({ tex, color: hex(main), ink: lum > .55 ? "#221b14" : "#f0e4c6", accent: far ? hex(rgb(far)) : lum > .55 ? "#221b14" : "#d9b972" });
+    } catch { res(null); } };
+    img.onerror = () => res(null); img.src = proxied(url);
+  }));
+  return covers.get(url);
 }
 function labelTex(text) {
   return canvasTex(256, 40, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = "#e3c47c"; g.font = `600 26px ${SANS}`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(text, w / 2, h / 2 + 1); });
@@ -250,11 +273,22 @@ export function createScene(canvas, cb = {}) {
   const user = new THREE.Group(); scene.add(user); let pickables = [], texLoader = new THREE.TextureLoader(); texLoader.setCrossOrigin("anonymous");
   const bayHit = new THREE.Mesh(new THREE.PlaneGeometry(BAY.x1 - BAY.x0, BAY.rows * BAY.rowH), new THREE.MeshBasicMaterial({ visible: false })); bayHit.position.set(0, BAY.y0 + BAY.rows * BAY.rowH / 2, ZB + CASE_D + .01); scene.add(bayHit);
   const rowY = k => BAY.y0 + k * BAY.rowH + .02, zFront = ZB + CASE_D - .03;
-  function disposeUser() { user.traverse(o => { if (o.isMesh) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.map && m.userData.own) m.map.dispose(); if (m.userData.own) m.dispose(); }); } }); user.clear(); pickables = []; }
+  function disposeUser() { user.traverse(o => { if (o.isMesh) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.map && m.userData.own && !m.userData.keepMap) m.map.dispose(); if (m.userData.own) m.dispose(); }); } }); user.clear(); pickables = []; }
   function bookMesh(w, h, d, faceTex, color) {
     const side = new THREE.MeshStandardMaterial({ color, roughness: .85 }); side.userData.own = true;
     const face = new THREE.MeshStandardMaterial({ map: faceTex, roughness: .85, emissive: "#ffffff", emissiveMap: faceTex, emissiveIntensity: .28 }); face.userData.own = true;
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [side, side, paper, side, face, side]); m.castShadow = m.receiveShadow = true; return m;
+  }
+  function dress(m, b, ratio) {
+    if (!b.cover_url) return;
+    loadCover(b.cover_url).then(cv => {
+      if (!cv || m.parent !== user) return; const u = m.userData, mats = m.material.slice(), side = mats[1];
+      side.color.set(cv.color); u.color = cv.color; u.cover = cv.tex;
+      const pic = new THREE.MeshStandardMaterial({ map: cv.tex, roughness: .8, emissive: "#ffffff", emissiveMap: cv.tex, emissiveIntensity: .22 }); pic.userData = { own: true, keepMap: true };
+      if (u.kind === "face") { mats[4].map.dispose(); mats[4].dispose(); mats[4] = pic; }
+      else { const t = spineTex(b, cv.color, u.kind === "flat", ratio, cv.ink, cv.accent); mats[4].map.dispose(); mats[4].map = mats[4].emissiveMap = t; mats[4].needsUpdate = true; if (u.kind === "spine") mats[0] = pic; }
+      m.material = mats; invalidate();
+    });
   }
   function setBooks(books) {
     disposeUser();
@@ -264,19 +298,19 @@ export function createScene(canvas, cb = {}) {
     let x = inner0 + .04;
     cur.slice(0, 6).forEach(b => {
       const w = .3, h = .44, m = bookMesh(w, h, .05, coverTex(b, color(b)), color(b)); m.position.set(x + w / 2, rowY(2) + h / 2 + .005, zFront - .1); m.rotation.x = -.1; m.userData = { id: b.id, home: m.position.clone(), rx: -.1, kind: "face", w, h, d: .05, book: b, color: color(b) }; user.add(m); pickables.push(m);
-      if (b.cover_url) texLoader.load(b.cover_url, t => { t.colorSpace = THREE.SRGBColorSpace; m.material[4].map.dispose(); m.material[4].map = m.material[4].emissiveMap = t; m.material[4].needsUpdate = true; invalidate(); }, undefined, () => {});
+      dress(m, b);
       const lab = new THREE.Mesh(new THREE.PlaneGeometry(.3, .047), new THREE.MeshBasicMaterial({ map: labelTex(`p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}`), transparent: true })); lab.material.userData.own = true;
       lab.position.set(x + w / 2, rowY(2) - .02, ZB + CASE_D + .002); user.add(lab); x += w + .09;
     });
     // abandonnés : couchés en pile au bout de la même rangée
     let py = rowY(2); const px = inner1 - .24;
     if (x < px - .24) dropped.slice(0, 8).forEach(b => { const t = Math.max(.05, Math.min(.11, (b.total_pages || 260) * .00013)), m = bookMesh(.42, t, .27, spineTex(b, color(b), true, t / .42), color(b));
-      m.position.set(px + ((hash(b.title) % 5) - 2) * .008, py + t / 2, zFront - .14); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "flat" }; user.add(m); pickables.push(m); py += t + .002; });
+      m.position.set(px + ((hash(b.title) % 5) - 2) * .008, py + t / 2, zFront - .14); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "flat" }; user.add(m); pickables.push(m); dress(m, b, t / .42); py += t + .002; });
     // finis : sur la tranche, rangées 3, 1, 4, 0
     const order = [3, 1, 4, 0]; let ri = 0; x = inner0;
     done.forEach(b => { const t = Math.max(.055, Math.min(.12, (b.total_pages || 260) * .00014)), h = .37 + (hash(b.title) % 9) * .011;
       if (x + t > inner1) { ri++; x = inner0; } if (ri >= order.length) return;
-      const m = bookMesh(t, h, .27, spineTex(b, color(b), false, t / h), color(b)); m.position.set(x + t / 2, rowY(order[ri]) + h / 2, zFront - .135); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "spine", w: t, h, d: .27, book: b, color: color(b) }; user.add(m); pickables.push(m); x += t + .004; });
+      const m = bookMesh(t, h, .27, spineTex(b, color(b), false, t / h), color(b)); m.position.set(x + t / 2, rowY(order[ri]) + h / 2, zFront - .135); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "spine", w: t, h, d: .27, book: b, color: color(b) }; user.add(m); pickables.push(m); dress(m, b, t / h); x += t + .004; });
     focusX = BAY.x0 + .7; invalidate();
   }
 
@@ -307,7 +341,7 @@ export function createScene(canvas, cb = {}) {
   function frame(now) {
     raf = 0; let busy = dragging;
     if (tw) { const k = Math.min(1, (now - tw.t0) / tw.ms), e = ease(k); cam.p.lerpVectors(from.p, goal.p, e); cam.t.lerpVectors(from.t, goal.t, e); if (k >= 1) tw = null; else busy = true; }
-    for (const a of tweens) { const k = Math.min(1, (now - a.t0) / a.ms); a.step(ease(k)); if (k >= 1) { tweens.delete(a); a.done?.(); } else busy = true; }
+    for (const a of tweens) { const k = Math.min(1, (now - a.t0) / a.ms); a.step(a.linear ? k : ease(k)); if (k >= 1) { tweens.delete(a); a.done?.(); } else busy = true; }
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
     applyCamera(); renderer.render(scene, camera); if (busy) invalidate();
   }
@@ -339,34 +373,41 @@ export function createScene(canvas, cb = {}) {
     invalidate();
   };
   canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", () => { down = null; dragging = false; invalidate(); });
-  // Prendre un livre : il sort du rayon, vient se présenter de face devant la caméra, puis sa couverture s'ouvre sur la première page.
-  const tween = (ms, step, done) => { tweens.add({ t0: performance.now(), ms, step, done }); invalidate(); };
+  // Prendre un livre : un seul geste continu. Il glisse hors du rayon sur une courbe, pivote pendant qu'il approche,
+  // et la couverture commence à s'ouvrir avant qu'il soit arrivé, pour qu'aucune étape ne marque d'arrêt.
+  const io = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, seg = (k, a, b) => Math.min(1, Math.max(0, (k - a) / (b - a)));
+  const timeline = (ms, step, done) => { tweens.add({ t0: performance.now(), ms, linear: true, step, done }); invalidate(); };
+  const bez = (out, a, b, c, t) => out.set(0, 0, 0).addScaledVector(a, (1 - t) * (1 - t)).addScaledVector(b, 2 * (1 - t) * t).addScaledVector(c, t * t);
   function pullOut(m) {
-    held = m; cb.haptic?.(); const u = m.userData, p0 = m.position.clone();
-    tween(380, e => { m.position.z = p0.z + .3 * e; m.position.y = p0.y + .03 * e; m.rotation.x = u.rx * (1 - e); }, () => {
-      if (u.kind === "flat") return cb.onOpenBook?.(u.id);
-      const p1 = m.position.clone(), coverW = u.kind === "spine" ? u.d : u.w, ry1 = u.kind === "spine" ? -Math.PI / 2 : 0;
-      const dir = new THREE.Vector3(); camera.getWorldDirection(dir); const p2 = camera.position.clone().addScaledVector(dir, .98); p2.x += coverW * .5;
-      tween(620, e => { m.position.lerpVectors(p1, p2, e); m.rotation.y = ry1 * e; }, () => {
-        // la couverture : une plaque fine articulée sur le dos, extérieur en cuir titré, intérieur papier
-        const outer = new THREE.MeshStandardMaterial({ map: u.kind === "spine" ? coverTex(u.book, u.color) : m.material[4].map, roughness: .85, emissive: "#ffffff", emissiveIntensity: .25 }); outer.emissiveMap = outer.map;
-        const inner = new THREE.MeshStandardMaterial({ color: "#e9dfc4", roughness: .95, emissive: "#e9dfc4", emissiveIntensity: .35 });
-        const hinge = new THREE.Group(), spine = u.kind === "spine";
-        const lid = new THREE.Mesh(spine ? new THREE.BoxGeometry(.006, u.h, u.d) : new THREE.BoxGeometry(u.w, u.h, .006), spine ? [outer, inner, inner, inner, inner, inner] : [inner, inner, inner, inner, outer, inner]);
-        if (spine) { hinge.position.set(u.w / 2 + .004, 0, u.d / 2); lid.position.set(0, 0, -u.d / 2); } else { hinge.position.set(-u.w / 2, 0, u.d / 2 + .004); lid.position.set(u.w / 2, 0, 0); }
-        hinge.add(lid); m.add(hinge); u.hinge = hinge; u.faceMat = m.material[spine ? 0 : 4];
-        const first = new THREE.MeshStandardMaterial({ map: titlePageTex(u.book), roughness: .95, emissive: "#ffffff", emissiveIntensity: .3 }); first.emissiveMap = first.map; u.firstMat = first;
-        const mats = m.material.slice(); mats[spine ? 0 : 4] = first; m.material = mats;
-        const p3 = p2.clone().addScaledVector(dir, -.12);
-        cb.haptic?.();
-        tween(760, e => { hinge.rotation.y = -2.75 * e; m.position.lerpVectors(p2, p3, e); }, () => cb.onOpenBook?.(u.id));
-      });
-    });
+    held = m; cb.haptic?.(); const u = m.userData, home = u.home.clone();
+    if (u.kind === "flat") return timeline(520, k => { const e = io(k); m.position.z = home.z + .3 * e; m.position.y = home.y + .03 * e; }, () => cb.onOpenBook?.(u.id));
+    const spine = u.kind === "spine", coverW = spine ? u.d : u.w, ry1 = spine ? -Math.PI / 2 : 0;
+    const dir = new THREE.Vector3(); camera.getWorldDirection(dir); const end = camera.position.clone().addScaledVector(dir, .86); end.x += coverW * .5;
+    const mid = home.clone(); mid.z += .55; mid.y += .06; mid.x += (end.x - home.x) * .25;
+    // la couverture articulée et la page de titre sont prêtes dès le départ : aucun à-coup en cours de route
+    const outerMap = u.cover || (spine ? coverTex(u.book, u.color) : m.material[4].map);
+    const outer = new THREE.MeshStandardMaterial({ map: outerMap, roughness: .85, emissive: "#ffffff", emissiveMap: outerMap, emissiveIntensity: .25 });
+    const inner = new THREE.MeshStandardMaterial({ color: "#e9dfc4", roughness: .95, emissive: "#e9dfc4", emissiveIntensity: .35 });
+    const first = new THREE.MeshStandardMaterial({ map: titlePageTex(u.book), roughness: .95, emissive: "#ffffff", emissiveIntensity: .3 }); first.emissiveMap = first.map;
+    const hinge = new THREE.Group(), lid = new THREE.Mesh(spine ? new THREE.BoxGeometry(.006, u.h, u.d) : new THREE.BoxGeometry(u.w, u.h, .006), spine ? [outer, inner, inner, inner, inner, inner] : [inner, inner, inner, inner, outer, inner]);
+    if (spine) { hinge.position.set(u.w / 2 + .004, 0, u.d / 2); lid.position.set(0, 0, -u.d / 2); } else { hinge.position.set(-u.w / 2, 0, u.d / 2 + .004); lid.position.set(u.w / 2, 0, 0); }
+    hinge.add(lid); hinge.visible = false; m.add(hinge); Object.assign(u, { hinge, firstMat: first, faceMat: m.material[spine ? 0 : 4], ownOuter: outerMap !== u.cover && spine ? outerMap : null });
+    let opened = false;
+    timeline(1650, k => {
+      bez(m.position, home, mid, end, io(seg(k, 0, .78)));
+      m.rotation.x = u.rx * (1 - io(seg(k, 0, .35))); m.rotation.y = ry1 * io(seg(k, .12, .72)); m.rotation.z = Math.sin(seg(k, .05, .8) * Math.PI) * -.05;
+      const o = seg(k, .5, 1);
+      if (o > 0 && !opened) { opened = true; hinge.visible = true; const mats = m.material.slice(); mats[spine ? 0 : 4] = first; m.material = mats; cb.haptic?.(); }
+      const a = io(o); hinge.rotation.y = -2.75 * (a + .035 * Math.sin(a * Math.PI));
+    }, () => cb.onOpenBook?.(u.id));
   }
   function releaseBook() {
-    if (!held) return; const m = held, u = m.userData, p0 = m.position.clone(), ry0 = m.rotation.y, h0 = u.hinge ? u.hinge.rotation.y : 0; held = null;
-    tween(650, e => { if (u.hinge) u.hinge.rotation.y = h0 * (1 - Math.min(1, e * 1.6)); m.position.lerpVectors(p0, u.home, e); m.rotation.y = ry0 * (1 - e); m.rotation.x = u.rx * e; }, () => {
-      if (!u.hinge) return; m.remove(u.hinge); u.hinge.children[0].geometry.dispose(); const spine = u.kind === "spine", mats = m.material.slice(); mats[spine ? 0 : 4] = u.faceMat; m.material = mats; u.hinge = null; u.firstMat?.map.dispose(); u.firstMat?.dispose(); invalidate();
+    if (!held) return; const m = held, u = m.userData, p0 = m.position.clone(), ry0 = m.rotation.y, h0 = u.hinge ? u.hinge.rotation.y : 0, home = u.home; held = null;
+    const mid = home.clone(); mid.z += .55; mid.y += .06; mid.x += (p0.x - home.x) * .25; let closed = !u.hinge;
+    timeline(u.hinge ? 1150 : 520, k => {
+      if (u.hinge) { u.hinge.rotation.y = h0 * (1 - io(seg(k, 0, .5)));
+        if (!closed && k >= .5) { closed = true; const spine = u.kind === "spine", mats = m.material.slice(); mats[spine ? 0 : 4] = u.faceMat; m.material = mats; m.remove(u.hinge); u.hinge.children[0].geometry.dispose(); u.hinge = null; u.firstMat.map.dispose(); u.firstMat.dispose(); u.ownOuter?.dispose(); } }
+      bez(m.position, p0, mid, home, io(seg(k, u.kind === "flat" ? 0 : .22, 1))); m.rotation.y = ry0 * (1 - io(seg(k, .25, .85))); m.rotation.x = u.rx * io(seg(k, .6, 1)); m.rotation.z = Math.sin(seg(k, .2, 1) * Math.PI) * .04;
     });
   }
 

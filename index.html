@@ -132,7 +132,7 @@ body.sky-open .grab { min-height: var(--peek); color: var(--cream); font-size: 1
 .empty-note { align-self: center; margin: 0 auto; max-width: 280px; text-align: center; font: 400 15px/1.5 var(--sans); color: var(--cream-2); padding: 0 8px 30px; }
 
 /* ───────── La barre du bas ───────── */
-#dock { position: fixed; z-index: 20; left: 50%; transform: translateX(-50%); bottom: calc(-1 * var(--gap, 0px)); width: min(720px, 100%); height: calc(var(--dock) + env(safe-area-inset-bottom)); padding: 0 16px env(safe-area-inset-bottom);
+#dock { position: fixed; z-index: 20; left: 50%; transform: translateX(-50%); bottom: 0; width: min(720px, 100%); height: calc(var(--dock) + env(safe-area-inset-bottom)); padding: 0 16px env(safe-area-inset-bottom);
   display: flex; align-items: center; gap: 10px; background: var(--grain), linear-gradient(180deg, var(--wood-hi) 0 1px, var(--wood-2) 1px, var(--wood-0)); box-shadow: 0 -15px 26px rgba(0,0,0,.8); transition: transform .5s var(--ease); }
 body.sky-open #dock, #dock:empty { transform: translate(-50%, 110%); }
 .tool { flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; border-radius: 15px; font: 600 15px/1 var(--sans); transition: transform .2s var(--ease); }
@@ -194,7 +194,7 @@ body.has3d #scene { display: block; }
 html:has(body.has3d) { background: var(--wood-0); }
 body.has3d { overflow: hidden; background: var(--wood-0); }
 #dock::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 80px; background: var(--wood-0); }
-body.has3d #scene { height: calc(100lvh + var(--gap, 0px)); }
+body.has3d #scene { height: 100lvh; }
 body.has3d #app { padding-top: 0; transform: none; position: static; will-change: auto; }
 body.has3d #sky { z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(5,9,25,.82), rgba(5,9,25,.35) 130px, transparent 210px); }
 body.has3d #sky::before { opacity: 0; animation: none; transition: opacity .35s var(--ease); }
@@ -286,7 +286,9 @@ function demoApi() {
   const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", current_page: 0, started_at: new Date(now - 13 * D).toISOString() };
   const b2 = { id: id(), title: "La Grande Transformation", author: "Karl Polanyi", cover_url: null, total_pages: 420, status: "en_cours", current_page: 0, started_at: new Date(now - 6 * D).toISOString() };
   const b3 = { id: id(), title: "L'Étranger", author: "Albert Camus", cover_url: null, total_pages: 120, status: "fini", current_page: 120, started_at: new Date(now - 30 * D).toISOString(), finished_at: new Date(now - 20 * D).toISOString() };
-  db.books.push(b1, b2, b3);
+  const b4 = { id: id(), title: "Le Petit Prince", author: "Antoine de Saint-Exupéry", cover_url: "https://covers.openlibrary.org/b/isbn/9782070612758-M.jpg", total_pages: 97, status: "en_cours", current_page: 40, started_at: new Date(now - 2 * D).toISOString() };
+  const b5 = { id: id(), title: "1984", author: "George Orwell", cover_url: "https://covers.openlibrary.org/b/isbn/9780451524935-M.jpg", total_pages: 328, status: "fini", current_page: 328, started_at: new Date(now - 300 * D).toISOString(), finished_at: new Date(now - 280 * D).toISOString() };
+  db.books.push(b1, b2, b3, b4, b5);
   [["La Peste", "Albert Camus", 278], ["Les Misérables", "Victor Hugo", 1488], ["Candide", "Voltaire", 154], ["Le Rouge et le Noir", "Stendhal", 576], ["Bel-Ami", "Guy de Maupassant", 394],
    ["La Société de consommation", "Jean Baudrillard", 318], ["Germinal", "Émile Zola", 592], ["Le Capital au XXIe siècle", "Thomas Piketty", 976], ["Madame Bovary", "Gustave Flaubert", 468],
    ["Économie du bien commun", "Jean Tirole", 640], ["Les Mots", "Jean-Paul Sartre", 212], ["Voyage au bout de la nuit", "Louis-Ferdinand Céline", 505]].forEach(([title, author, total_pages], i) =>
@@ -697,13 +699,6 @@ async function initScene() {
     document.body.classList.add("has3d"); document.body.dataset.view = "room";
   } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
 }
-// iOS, appli installée : si la zone d'affichage est plus courte que l'écran, on mesure l'écart et on descend la barre du bas d'autant.
-function fixBottomGap() {
-  const installed = navigator.standalone === true || matchMedia("(display-mode: standalone)").matches, portrait = innerHeight > innerWidth;
-  const gap = installed && portrait ? Math.max(0, Math.min(80, screen.height - innerHeight)) : 0;
-  document.documentElement.style.setProperty("--gap", gap + "px");
-}
-addEventListener("resize", fixBottomGap); addEventListener("orientationchange", () => setTimeout(fixBottomGap, 300)); fixBottomGap();
 async function start() {
   await initScene();
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Ma bibliothèque</h1><p style="color:var(--chalk-2)">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--brass)">voir la démonstration</a>.</p></div>`; return; }
