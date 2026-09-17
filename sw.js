@@ -1,5 +1,5 @@
 // Cache minimal de la coquille : l'appli s'ouvre même sans réseau, les données restent toujours fraîches.
-const CACHE = "pages-v7";
+const CACHE = "pages-v8";
 const SHELL = ["./", "index.html", "config.js", "scene.js", "manifest.webmanifest", "icon.svg", "icon-180.png"];
 self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(

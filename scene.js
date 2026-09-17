@@ -206,17 +206,32 @@ export function createScene(canvas, cb = {}) {
   // mobilier
   const leather = new THREE.MeshStandardMaterial({ color: "#9a683a", roughness: .55 }), linen = new THREE.MeshStandardMaterial({ color: "#b9ab8c", roughness: .9 });
   const cyl = (rt, rb, h, mat, x, y, z, open) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 28, 1, !!open), mat); m.position.set(x, y, z); m.castShadow = !open; m.receiveShadow = true; scene.add(m); return m; };
-  const tx = 1.25, tz = .9; cyl(.42, .42, .04, wood, tx, .74, tz); cyl(.05, .07, .7, wood, tx, .37, tz); cyl(.26, .3, .04, wood, tx, .02, tz);
+  const tx = 1.25, tz = .9; cyl(.42, .42, .035, wood, tx, .745, tz); cyl(.4, .36, .03, wood, tx, .715, tz); cyl(.035, .06, .42, wood, tx, .5, tz); cyl(.07, .035, .1, wood, tx, .26, tz); cyl(.06, .09, .2, wood, tx, .12, tz); cyl(.24, .28, .035, wood, tx, .018, tz);
   const shadeMat = new THREE.MeshStandardMaterial({ color: "#f3d9a4", emissive: "#ffb765", emissiveIntensity: 1.6, side: THREE.DoubleSide, roughness: .9 });
   const lamp = (x, y, z, k = 1) => { cyl(.07 * k, .09 * k, .04, brass, x, y + .02, z); cyl(.015, .015, .34 * k, brass, x, y + .19 * k, z); cyl(.11 * k, .2 * k, .2 * k, shadeMat, x, y + .44 * k, z, true);
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); s.scale.set(1.5 * k, 1.5 * k, 1); s.position.set(x, y + .44 * k, z); scene.add(s); };
   const glow = glowTex(); lamp(tx, .76, tz); lamp(-1.35, y2, ZB + .75, .9);
-  const chair = (x, z, ry) => { const g = new THREE.Group(); const p = (w, h, d, px, py, pz, mat = leather) => { const m = new THREE.Mesh(unit, mat); m.scale.set(w, h, d); m.position.set(px, py, pz); m.castShadow = m.receiveShadow = true; g.add(m); };
-    p(.72, .2, .7, 0, .4, 0); p(.72, .7, .16, 0, .82, -.28); p(.13, .3, .62, -.33, .62, .02); p(.13, .3, .62, .33, .62, .02); for (const a of [-1, 1]) for (const b of [-1, 1]) p(.06, .3, .06, a * .3, .15, b * .28, wood);
+  // Mobilier aux arêtes adoucies : boîtes arrondies (extrusion biseautée), accoudoirs en capsule, pieds tournés
+  const softGeo = (w, h, d, r) => { r = Math.min(r, w / 2 - .001, h / 2 - .001, d / 2 - .001); const a = w / 2 - r, b = h / 2 - r, c = Math.min(r * .6, a, b), sh = new THREE.Shape();
+    sh.moveTo(-a + c, -b); sh.lineTo(a - c, -b); sh.quadraticCurveTo(a, -b, a, -b + c); sh.lineTo(a, b - c); sh.quadraticCurveTo(a, b, a - c, b); sh.lineTo(-a + c, b); sh.quadraticCurveTo(-a, b, -a, b - c); sh.lineTo(-a, -b + c); sh.quadraticCurveTo(-a, -b, -a + c, -b);
+    const g = new THREE.ExtrudeGeometry(sh, { depth: d - 2 * r, bevelEnabled: true, bevelSize: r, bevelThickness: r, bevelSegments: 5, curveSegments: 6 }); g.translate(0, 0, -(d - 2 * r) / 2); return g; };
+  const soft = (g, w, h, d, r, mat, x, y, z, rx = 0) => { const m = new THREE.Mesh(softGeo(w, h, d, r), mat); m.position.set(x, y, z); m.rotation.x = rx; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
+  const leg = (g, x, z, h = .2) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.03, .018, h, 12), wood); m.position.set(x, h / 2, z); m.castShadow = true; g.add(m); };
+  const studs = new THREE.MeshStandardMaterial({ color: "#c9a457", roughness: .3, metalness: .9 });
+  const chair = (x, z, ry) => { const g = new THREE.Group();
+    soft(g, .78, .2, .74, .06, leather, 0, .3, 0);                                   // assise basse
+    soft(g, .56, .15, .56, .07, leather, 0, .47, .04);                               // coussin
+    soft(g, .76, .78, .2, .09, leather, 0, .72, -.3, -.16);                          // dossier incliné
+    for (const a of [-1, 1]) { soft(g, .17, .34, .7, .08, leather, a * .33, .5, .02);   // accoudoirs
+      const roll = new THREE.Mesh(new THREE.CapsuleGeometry(.095, .5, 6, 14), leather); roll.rotation.x = Math.PI / 2; roll.position.set(a * .33, .68, .02); roll.castShadow = true; g.add(roll);
+      for (let k = 0; k < 5; k++) { const st = new THREE.Mesh(new THREE.SphereGeometry(.012, 8, 6), studs); st.position.set(a * .33, .4 + k * .045, .375); g.add(st); } }
+    soft(g, .34, .3, .1, .045, linen, .02, .66, -.14, -.3);                          // petit coussin
+    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .31, b * .29);
     g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g); };
   chair(1.75, 1.75, -2.2); chair(-1.7, 2.4, 1.0);
-  { const g = new THREE.Group(); const top = new THREE.Mesh(unit, linen); top.scale.set(.62, .2, .46); top.position.y = .42; top.castShadow = true; g.add(top);
-    for (const a of [-1, 1]) for (const b of [-1, 1]) { const l = new THREE.Mesh(unit, wood); l.scale.set(.05, .32, .05); l.position.set(a * .25, .16, b * .17); l.castShadow = true; g.add(l); } g.position.set(-1.05, 0, 1.2); g.rotation.y = .5; g.scale.setScalar(.85); scene.add(g); }
+  { const g = new THREE.Group(); soft(g, .62, .2, .46, .08, linen, 0, .4, 0); soft(g, .56, .06, .4, .025, wood, 0, .28, 0);
+    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .24, b * .16, .27);
+    g.position.set(-1.05, 0, 1.2); g.rotation.y = .5; g.scale.setScalar(.85); scene.add(g); }
 
   { const geo = new THREE.BoxGeometry(1, 1, 1), mat = new THREE.MeshStandardMaterial({ roughness: .75 }), inst = new THREE.InstancedMesh(geo, mat, generic.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
     generic.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(.85)); });
