@@ -2,7 +2,7 @@
 // États de caméra : "room" (vue d'ensemble) → "shelf" (devant les rayons) ; "ceiling" (levée vers le plafond étoilé : comptes et réglages).
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js";
 
-const W = 4.8, ZB = -4, ZF = 5, H1 = 3.3, SLAB = 0.2, H = 6.9, BAL_B = 1.25, BAL_S = 0.9, CASE_D = 0.32;
+const W = 4.8, ZB = -4, ZF = 5, H1 = 3.3, SLAB = 0.2, H = 6.9, BAL_B = 1.25, BAL_S = 0.62, CASE_D = 0.32;
 const BAY = { x0: -1.3, x1: 1.3, y0: 0.35, rowH: 0.56, rows: 5 };
 const LEATHERS = ["#4a1a1a", "#1b3629", "#16264a", "#3a2415", "#232226", "#38203f", "#153a3d", "#4c3515", "#431727", "#26391f"];
 const GENERIC = ["#5b3a22", "#6e4a2b", "#7c5a36", "#8a6b45", "#a58a62", "#c2ab84", "#4a2a1c", "#3d2a20", "#5a2320", "#2f3b2c", "#2c3340", "#94764a", "#b59a70", "#6a3a2a"];
@@ -105,6 +105,16 @@ function coverTex(book, color) {
     g.fillStyle = "#d9b972"; g.font = `600 24px ${SANS}`; wrapWords(g, (book.author || "").toUpperCase(), w - 100).slice(0, 2).forEach((l, i) => g.fillText(l, 50, h - 110 + i * 30, w - 100));
   });
 }
+function titlePageTex(book) {
+  return canvasTex(384, 560, (g, w, h) => {
+    g.fillStyle = "#ebe1c8"; g.fillRect(0, 0, w, h); const sh = g.createLinearGradient(0, 0, 60, 0); sh.addColorStop(0, "rgba(60,40,15,.35)"); sh.addColorStop(1, "rgba(60,40,15,0)"); g.fillStyle = sh; g.fillRect(0, 0, 60, h);
+    g.fillStyle = "#221b14"; g.textAlign = "center"; g.textBaseline = "top"; let size = 40, lines;
+    for (;; size -= 3) { g.font = `700 ${size}px ${SANS}`; lines = wrapWords(g, book.title, w - 90); if (lines.length <= 4 || size <= 22) break; }
+    lines.forEach((l, i) => g.fillText(l, w / 2 + 8, 150 + i * (size * 1.2), w - 80));
+    g.fillStyle = "#62574a"; g.font = `400 22px ${SANS}`; g.fillText(book.author || "", w / 2 + 8, 150 + lines.length * size * 1.2 + 26, w - 80);
+    g.fillRect(w / 2 - 22, h - 120, 60, 2);
+  });
+}
 function labelTex(text) {
   return canvasTex(256, 40, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = "#e3c47c"; g.font = `600 26px ${SANS}`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(text, w / 2, h / 2 + 1); });
 }
@@ -183,11 +193,11 @@ export function createScene(canvas, cb = {}) {
     const top = box(.06, .05, len, wood, (x0 + x1) / 2, y2 + .95, (z0 + z1) / 2); top.rotation.y = rot; const low = box(.03, .03, len, iron, (x0 + x1) / 2, y2 + .12, (z0 + z1) / 2, false); low.rotation.y = rot;
     for (let i = 0; i <= n; i++) { const t = i / n; box(i % 5 === 0 ? .045 : .02, .93, i % 5 === 0 ? .045 : .02, i % 5 === 0 ? wood : iron, x0 + (x1 - x0) * t, y2 + .48, z0 + (z1 - z0) * t, false); } };
   const zr = ZB + BAL_B - .05, xr = W / 2 - BAL_S + .05;
-  rail(-xr, zr, -1.75, zr); rail(-1.05, zr, xr, zr); rail(-xr, zr, -xr, 1.55); rail(xr, zr, xr, 1.55);
+  rail(-xr, zr, -1.74, zr); rail(-1.16, zr, xr, zr); rail(-xr, zr, -xr, 1.55); rail(xr, zr, xr, 1.55);
   // échelle
-  { const g = new THREE.Group(), foot = new THREE.Vector3(-1.4, 0, ZB + BAL_B + 1.15), head = new THREE.Vector3(-1.4, y2 + .75, ZB + BAL_B + .02), len = foot.distanceTo(head);
-    for (const s of [-1, 1]) { const m = new THREE.Mesh(unit, wood); m.scale.set(.05, len, .08); m.position.set(s * .27, len / 2, 0); m.castShadow = true; g.add(m); }
-    for (let i = 1; i < 15; i++) { const m = new THREE.Mesh(unit, wood); m.scale.set(.54, .035, .07); m.position.set(0, i * len / 15, 0); m.castShadow = true; g.add(m); }
+  { const g = new THREE.Group(), foot = new THREE.Vector3(-1.45, 0, ZB + BAL_B + 1.15), head = new THREE.Vector3(-1.45, y2 + .75, ZB + BAL_B + .03), len = foot.distanceTo(head);
+    for (const s of [-1, 1]) { const m = new THREE.Mesh(unit, wood); m.scale.set(.05, len, .08); m.position.set(s * .23, len / 2, 0); m.castShadow = true; g.add(m); }
+    for (let i = 1; i < 15; i++) { const m = new THREE.Mesh(unit, wood); m.scale.set(.46, .035, .07); m.position.set(0, i * len / 15, 0); m.castShadow = true; g.add(m); }
     g.position.copy(foot); g.rotation.x = -Math.atan2(foot.z - head.z, head.y); scene.add(g); }
   // tableaux
   const painting = (x, y, z, w, h, seed, ry = 0) => { const g = new THREE.Group(); const f = new THREE.Mesh(unit, brass); f.scale.set(w + .1, h + .1, .05); g.add(f);
@@ -238,7 +248,7 @@ export function createScene(canvas, cb = {}) {
     // en cours : de face, à hauteur d'yeux (rangée 2)
     let x = inner0 + .04;
     cur.slice(0, 6).forEach(b => {
-      const w = .3, h = .44, m = bookMesh(w, h, .05, coverTex(b, color(b)), color(b)); m.position.set(x + w / 2, rowY(2) + h / 2 + .005, zFront - .1); m.rotation.x = -.1; m.userData = { id: b.id, home: m.position.clone(), rx: -.1 }; user.add(m); pickables.push(m);
+      const w = .3, h = .44, m = bookMesh(w, h, .05, coverTex(b, color(b)), color(b)); m.position.set(x + w / 2, rowY(2) + h / 2 + .005, zFront - .1); m.rotation.x = -.1; m.userData = { id: b.id, home: m.position.clone(), rx: -.1, kind: "face", w, h, d: .05, book: b, color: color(b) }; user.add(m); pickables.push(m);
       if (b.cover_url) texLoader.load(b.cover_url, t => { t.colorSpace = THREE.SRGBColorSpace; m.material[4].map.dispose(); m.material[4].map = m.material[4].emissiveMap = t; m.material[4].needsUpdate = true; invalidate(); }, undefined, () => {});
       const lab = new THREE.Mesh(new THREE.PlaneGeometry(.3, .047), new THREE.MeshBasicMaterial({ map: labelTex(`p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}`), transparent: true })); lab.material.userData.own = true;
       lab.position.set(x + w / 2, rowY(2) - .02, ZB + CASE_D + .002); user.add(lab); x += w + .09;
@@ -246,17 +256,17 @@ export function createScene(canvas, cb = {}) {
     // abandonnés : couchés en pile au bout de la même rangée
     let py = rowY(2); const px = inner1 - .24;
     if (x < px - .24) dropped.slice(0, 8).forEach(b => { const t = Math.max(.05, Math.min(.11, (b.total_pages || 260) * .00013)), m = bookMesh(.42, t, .27, spineTex(b, color(b), true, t / .42), color(b));
-      m.position.set(px + ((hash(b.title) % 5) - 2) * .008, py + t / 2, zFront - .14); m.userData = { id: b.id, home: m.position.clone(), rx: 0 }; user.add(m); pickables.push(m); py += t + .002; });
+      m.position.set(px + ((hash(b.title) % 5) - 2) * .008, py + t / 2, zFront - .14); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "flat" }; user.add(m); pickables.push(m); py += t + .002; });
     // finis : sur la tranche, rangées 3, 1, 4, 0
     const order = [3, 1, 4, 0]; let ri = 0; x = inner0;
     done.forEach(b => { const t = Math.max(.055, Math.min(.12, (b.total_pages || 260) * .00014)), h = .37 + (hash(b.title) % 9) * .011;
       if (x + t > inner1) { ri++; x = inner0; } if (ri >= order.length) return;
-      const m = bookMesh(t, h, .27, spineTex(b, color(b), false, t / h), color(b)); m.position.set(x + t / 2, rowY(order[ri]) + h / 2, zFront - .135); m.userData = { id: b.id, home: m.position.clone(), rx: 0 }; user.add(m); pickables.push(m); x += t + .004; });
+      const m = bookMesh(t, h, .27, spineTex(b, color(b), false, t / h), color(b)); m.position.set(x + t / 2, rowY(order[ri]) + h / 2, zFront - .135); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "spine", w: t, h, d: .27, book: b, color: color(b) }; user.add(m); pickables.push(m); x += t + .004; });
     focusX = BAY.x0 + .7; invalidate();
   }
 
   // ───────────── Caméra ─────────────
-  const VIEWS = { room: { p: [0, 2.05, 5.7], t: [0, 2.9, ZB] }, ceiling: { p: [0, 2.3, 2.4], t: [0, H, -.2] } };
+  const VIEWS = { room: { p: [0, 2.05, 5.7], t: [0, 2.9, ZB] }, ceiling: { p: [0, H - 1.25, .55], t: [0, H, .2] } };
   let state = "room", shelf = { x: 0, y: 1.75 }, yaw = 0, pull = 0, focusX = BAY.x0 + .6;
   const cam = { p: new THREE.Vector3(...VIEWS.room.p), t: new THREE.Vector3(...VIEWS.room.t) }, from = { p: cam.p.clone(), t: cam.t.clone() }, goal = { p: cam.p.clone(), t: cam.t.clone() };
   let tw = null; const tweens = new Set();
@@ -264,11 +274,11 @@ export function createScene(canvas, cb = {}) {
   function goTo(v, ms = 1100) { from.p.copy(cam.p); from.t.copy(cam.t); goal.p.set(...v.p); goal.t.set(...v.t); tw = { t0: performance.now(), ms }; invalidate(); }
   function setState(s, opt = {}) {
     if (s === "shelf") { shelf.x = THREE.MathUtils.clamp(opt.x ?? focusX, BAY.x0 + .6, BAY.x1 - .6); shelf.y = 1.75; }
-    state = s; yaw = 0; pull = 0; goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : 1100); cb.onState?.(s);
+    state = s; yaw = 0; pull = 0; goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1500 : 1200); cb.onState?.(s);
   }
   function applyCamera() {
     camera.position.copy(cam.p); const t = cam.t.clone();
-    if (state === "room") { const e = ease(Math.min(1, pull)) * .55; camera.position.lerp(new THREE.Vector3(...VIEWS.ceiling.p), e * .5); t.lerp(new THREE.Vector3(...VIEWS.ceiling.t), e); t.x += yaw * 7; camera.position.x += yaw * 1.2; }
+    if (state === "room") { const e = ease(Math.min(1, pull)) * .5; camera.position.lerp(new THREE.Vector3(0, 3.2, 3.2), e); t.lerp(new THREE.Vector3(0, H, .2), e); t.x += yaw * 7; camera.position.x += yaw * 1.2; }
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
   }
   function resize() {
@@ -295,8 +305,8 @@ export function createScene(canvas, cb = {}) {
     if (!down) return; const dx = e.clientX - down.x, dy = e.clientY - down.y;
     if (!down.moved && Math.hypot(dx, dy) < 8) return; down.moved = true; dragging = true; tw = state === "shelf" ? null : tw;
     if (state === "room") {
-      down.axis ??= Math.abs(dy) > Math.abs(dx) && dy > 0 ? "pull" : "look";
-      if (down.axis === "pull") { pull = Math.max(0, dy / 300); const a = pull > .42; if (a !== armed) { armed = a; cb.haptic?.(); } cb.onPull?.(pull); }
+      down.axis ??= Math.abs(dy) > Math.abs(dx) ? "pull" : "look";
+      if (down.axis === "pull") { pull = Math.abs(dy) / 300; const a = pull > .42; if (a !== armed) { armed = a; cb.haptic?.(); } cb.onPull?.(pull); }
       else yaw = THREE.MathUtils.clamp(-dx / 900, -.22, .22);
     } else if (state === "shelf") {
       const k = (2 * SHELF_DIST * .43) / (canvas.clientWidth || innerWidth); shelf.x = THREE.MathUtils.clamp(down.sx - dx * k, BAY.x0 + .6, BAY.x1 - .6); shelf.y = THREE.MathUtils.clamp(down.sy + dy * k, 1.2, 2.3);
@@ -314,13 +324,35 @@ export function createScene(canvas, cb = {}) {
     invalidate();
   };
   canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", () => { down = null; dragging = false; invalidate(); });
+  // Prendre un livre : il sort du rayon, vient se présenter de face devant la caméra, puis sa couverture s'ouvre sur la première page.
+  const tween = (ms, step, done) => { tweens.add({ t0: performance.now(), ms, step, done }); invalidate(); };
   function pullOut(m) {
-    held = m; cb.haptic?.(); const z0 = m.position.z, y0 = m.position.y;
-    tweens.add({ t0: performance.now(), ms: 420, step: e => { m.position.z = z0 + .3 * e; m.position.y = y0 + .03 * e; m.rotation.x = m.userData.rx * (1 - e); }, done: () => cb.onOpenBook?.(m.userData.id) }); invalidate();
+    held = m; cb.haptic?.(); const u = m.userData, p0 = m.position.clone();
+    tween(380, e => { m.position.z = p0.z + .3 * e; m.position.y = p0.y + .03 * e; m.rotation.x = u.rx * (1 - e); }, () => {
+      if (u.kind === "flat") return cb.onOpenBook?.(u.id);
+      const p1 = m.position.clone(), coverW = u.kind === "spine" ? u.d : u.w, ry1 = u.kind === "spine" ? -Math.PI / 2 : 0;
+      const dir = new THREE.Vector3(); camera.getWorldDirection(dir); const p2 = camera.position.clone().addScaledVector(dir, .98); p2.x += coverW * .5;
+      tween(620, e => { m.position.lerpVectors(p1, p2, e); m.rotation.y = ry1 * e; }, () => {
+        // la couverture : une plaque fine articulée sur le dos, extérieur en cuir titré, intérieur papier
+        const outer = new THREE.MeshStandardMaterial({ map: u.kind === "spine" ? coverTex(u.book, u.color) : m.material[4].map, roughness: .85, emissive: "#ffffff", emissiveIntensity: .25 }); outer.emissiveMap = outer.map;
+        const inner = new THREE.MeshStandardMaterial({ color: "#e9dfc4", roughness: .95, emissive: "#e9dfc4", emissiveIntensity: .35 });
+        const hinge = new THREE.Group(), spine = u.kind === "spine";
+        const lid = new THREE.Mesh(spine ? new THREE.BoxGeometry(.006, u.h, u.d) : new THREE.BoxGeometry(u.w, u.h, .006), spine ? [outer, inner, inner, inner, inner, inner] : [inner, inner, inner, inner, outer, inner]);
+        if (spine) { hinge.position.set(u.w / 2 + .004, 0, u.d / 2); lid.position.set(0, 0, -u.d / 2); } else { hinge.position.set(-u.w / 2, 0, u.d / 2 + .004); lid.position.set(u.w / 2, 0, 0); }
+        hinge.add(lid); m.add(hinge); u.hinge = hinge; u.faceMat = m.material[spine ? 0 : 4];
+        const first = new THREE.MeshStandardMaterial({ map: titlePageTex(u.book), roughness: .95, emissive: "#ffffff", emissiveIntensity: .3 }); first.emissiveMap = first.map; u.firstMat = first;
+        const mats = m.material.slice(); mats[spine ? 0 : 4] = first; m.material = mats;
+        const p3 = p2.clone().addScaledVector(dir, -.12);
+        cb.haptic?.();
+        tween(760, e => { hinge.rotation.y = -2.75 * e; m.position.lerpVectors(p2, p3, e); }, () => cb.onOpenBook?.(u.id));
+      });
+    });
   }
   function releaseBook() {
-    if (!held) return; const m = held, z0 = m.position.z, y0 = m.position.y, home = m.userData.home; held = null;
-    tweens.add({ t0: performance.now(), ms: 500, step: e => { m.position.z = z0 + (home.z - z0) * e; m.position.y = y0 + (home.y - y0) * e; m.rotation.x = m.userData.rx * e; } }); invalidate();
+    if (!held) return; const m = held, u = m.userData, p0 = m.position.clone(), ry0 = m.rotation.y, h0 = u.hinge ? u.hinge.rotation.y : 0; held = null;
+    tween(650, e => { if (u.hinge) u.hinge.rotation.y = h0 * (1 - Math.min(1, e * 1.6)); m.position.lerpVectors(p0, u.home, e); m.rotation.y = ry0 * (1 - e); m.rotation.x = u.rx * e; }, () => {
+      if (!u.hinge) return; m.remove(u.hinge); u.hinge.children[0].geometry.dispose(); const spine = u.kind === "spine", mats = m.material.slice(); mats[spine ? 0 : 4] = u.faceMat; m.material = mats; u.hinge = null; u.firstMat?.map.dispose(); u.firstMat?.dispose(); invalidate();
+    });
   }
 
   addEventListener("resize", resize); resize();

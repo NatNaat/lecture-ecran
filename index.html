@@ -51,7 +51,7 @@ body.sky-open #sky { overflow-y: auto; -webkit-overflow-scrolling: touch; z-inde
 .hud { margin-top: 8px; font: 400 13px/1.45 var(--sans); color: var(--cream-2); font-variant-numeric: tabular-nums; }
 .hud b { font-weight: 600; color: var(--cream); }
 .hud .due { color: var(--gold); }
-.skybody { position: relative; max-width: 640px; margin: 0 auto; padding: 4px 16px calc(var(--peek) + env(safe-area-inset-bottom) + 28px); opacity: var(--reveal, 0); pointer-events: none; transition: opacity .35s var(--ease); }
+.skybody { position: relative; max-width: 640px; margin: 0 auto; padding: 4px 16px calc(env(safe-area-inset-bottom) + 40px); opacity: var(--reveal, 0); pointer-events: none; transition: opacity .35s var(--ease); }
 body.sky-open .skybody { opacity: 1; pointer-events: auto; }
 body.dragging .skybody { transition: none; }
 .tabs { display: flex; gap: 6px; padding: 4px; margin: 0 0 22px; border-radius: 12px; background: rgba(255,255,255,.06); }
@@ -191,23 +191,32 @@ dialog .count { font: 13px var(--sans); font-variant-numeric: tabular-nums; }
 /* ───────── Mode 3D : la pièce est dessinée dans le canevas, l'interface flotte par-dessus ───────── */
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: none; touch-action: none; outline: none; }
 body.has3d #scene { display: block; }
-body.has3d { overflow: hidden; }
+html:has(body.has3d) { background: var(--wood-0); }
+body.has3d { overflow: hidden; background: var(--wood-0); }
+#dock::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 80px; background: var(--wood-0); }
+body.has3d #scene { height: 100lvh; }
 body.has3d #app { padding-top: 0; transform: none; position: static; will-change: auto; }
 body.has3d #sky { z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(5,9,25,.82), rgba(5,9,25,.35) 130px, transparent 210px); }
-body.has3d #sky::before { display: none; }
-body.has3d #sky::after { content: ""; position: fixed; inset: 0; background: rgba(5,9,25,.66); opacity: var(--reveal, 0); transition: opacity .5s var(--ease); pointer-events: none; z-index: -1; }
+body.has3d #sky::before { opacity: 0; animation: none; transition: opacity .35s var(--ease); }
+body.has3d.sky-open #sky::before { opacity: .9; transition: opacity .7s var(--ease) .75s; }
+body.has3d #sky::after { content: ""; position: fixed; inset: 0; background: linear-gradient(180deg, var(--night-2) -12%, var(--night-1) 30%, var(--night-0) 78%); opacity: 0; transition: opacity .35s var(--ease); pointer-events: none; z-index: -1; }
 body.has3d.sky-open #sky { pointer-events: auto; z-index: 5; }
-body.has3d.sky-open #sky::after { opacity: 1; }
+body.has3d.sky-open #sky::after { opacity: 1; transition: opacity .7s var(--ease) .75s; }
+body.has3d .skybody { transition: opacity .3s var(--ease); }
+body.has3d.sky-open .skybody { transition: opacity .6s var(--ease) 1s; }
 body.has3d .skyhead { transition: opacity .4s var(--ease); }
 body.has3d[data-view="shelf"] .skyhead { opacity: 0; }
 body.has3d[data-view="shelf"] #sky { background: none; }
 .backbtn { position: fixed; z-index: 8; left: 12px; top: calc(env(safe-area-inset-top) + 10px); display: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px 0 10px; border-radius: 22px; font: 600 15px var(--sans); color: var(--cream); background: rgba(5,9,25,.7); }
 .backbtn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 body.has3d[data-view="shelf"] .backbtn { display: inline-flex; }
+body.has3d #bookview:not([hidden]) { animation: pagein .45s var(--ease); }
+@keyframes pagein { from { opacity: 0; transform: scale(.96); } }
 .hint { position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(var(--dock) + env(safe-area-inset-bottom) + 14px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
 body:not([data-view="room"]) .hint, body.sky-open .hint { opacity: 0; }
-.skyclose { position: fixed; z-index: 7; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom) + 14px); width: min(420px, calc(100% - 32px)); display: none; }
-body.has3d.sky-open .skyclose { display: block; }
+.skyclose { position: fixed; z-index: 7; right: 12px; top: calc(env(safe-area-inset-top) + 10px); width: 44px; height: 44px; border-radius: 22px; display: none; place-items: center; color: var(--cream); background: rgba(255,255,255,.1); }
+.skyclose svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+body.has3d.sky-open .skyclose { display: grid; animation: card .5s var(--ease) 1s both; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
@@ -440,7 +449,7 @@ function renderSky() {
       <button role="tab" aria-selected="${skyTab === "stats"}" data-ctab="stats">Comptes</button>
       <button role="tab" aria-selected="${skyTab === "settings"}" data-ctab="settings">Réglages</button></div>
     ${skyTab === "stats" ? viewStats() : viewSettings()}</div>
-    <button class="chalkbtn solid skyclose" data-act="toggle-sky">Revenir à la bibliothèque</button>`;
+    <button class="skyclose" data-act="toggle-sky" aria-label="Redescendre dans la bibliothèque"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
   sky.scrollTop = keep; updateCountdowns();
 }
 // Retour haptique : iOS n'expose pas navigator.vibrate ; basculer un interrupteur natif (Safari 17.4+) déclenche le même petit cran.
@@ -683,7 +692,7 @@ async function initScene() {
   if (scene3d || new URLSearchParams(location.search).has("2d")) return;
   try {
     const { createScene } = await import("./scene.js");
-    scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(); }, onCeiling: () => setSky(true),
+    scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(false); bookview.scrollTop = 0; }, onCeiling: () => setSky(true),
       onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; } });
     document.body.classList.add("has3d"); document.body.dataset.view = "room";
   } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
