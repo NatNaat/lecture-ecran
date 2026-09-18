@@ -458,10 +458,52 @@ export function createScene(canvas, cb = {}) {
     camera.position.copy(cam.p); const t = cam.t.clone();
     if (state === "room") tilted(camera.position, t);
     const rm = rooms[state] || (tw && rooms[tw.room]); if (lift > .001 && rm) camera.up.set(0, 1, 0).lerp(rm.up, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
+    const amp = rooms[state] || lift > .01 || state === "ceiling" ? 0 : state === "shelf" ? .05 : .2;
+    if (amp) { const now = performance.now(), bx = Math.sin(now / 3700) * .012, by = Math.sin(now / 2600) * .014, side = new THREE.Vector3().subVectors(t, camera.position).cross(camera.up).normalize();
+      camera.position.addScaledVector(side, par.x * amp + bx); camera.position.y += -par.y * amp * .6 + by; }
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
   }
+  // Finitions d'image : l'image précédente est mêlée à la nouvelle quand la caméra bouge (flou de mouvement), puis un vignettage discret.
+  // Si le téléphone ne sait pas dessiner dans une texture flottante, on garde le rendu direct.
+  let post = null;
+  try {
+    const okFloat = renderer.capabilities.isWebGL2 && (renderer.extensions.has("EXT_color_buffer_half_float") || renderer.extensions.has("EXT_color_buffer_float"));
+    if (okFloat && !new URLSearchParams(location.search).has("nopost")) {
+      const mk = samples => new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, samples, depthBuffer: samples > 0 });
+      const rtScene = mk(4), acc = [mk(0), mk(0)], qScene = new THREE.Scene(), qCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const mat = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false, uniforms: { tNew: { value: null }, tOld: { value: null }, uBlend: { value: 0 }, uVig: { value: 0 } },
+        vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }",
+        fragmentShader: "uniform sampler2D tNew; uniform sampler2D tOld; uniform float uBlend; uniform float uVig; varying vec2 vUv;\nvoid main() {\n  vec4 c = mix(texture2D(tNew, vUv), texture2D(tOld, vUv), uBlend);\n  float d = length((vUv - .5) * vec2(1., 1.2));\n  c.rgb *= 1. - uVig * smoothstep(.38, .98, d);\n  gl_FragColor = vec4(c.rgb, 1.);\n  #include <tonemapping_fragment>\n  #include <colorspace_fragment>\n}" });
+      qScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+      let cur = 0, primed = false;
+      post = { size(w, h) { rtScene.setSize(w, h); acc[0].setSize(w, h); acc[1].setSize(w, h); primed = false; },
+        render(blend) {
+          renderer.setRenderTarget(rtScene); renderer.render(scene, camera);
+          mat.uniforms.tNew.value = rtScene.texture; mat.uniforms.tOld.value = acc[cur].texture; mat.uniforms.uBlend.value = primed ? blend : 0; mat.uniforms.uVig.value = 0;
+          renderer.setRenderTarget(acc[1 - cur]); renderer.render(qScene, qCam); cur = 1 - cur; primed = true;
+          mat.uniforms.tNew.value = acc[cur].texture; mat.uniforms.uBlend.value = 0; mat.uniforms.uVig.value = .42;
+          renderer.setRenderTarget(null); renderer.render(qScene, qCam);
+        } };
+    }
+  } catch (err) { console.warn("Finitions d'image indisponibles :", err); post = null; }
+
+  // Poussières dans la lumière des lampes
+  const DUST = 90, dustPos = new Float32Array(DUST * 3), dustSeed = []; { const r = rnd(77);
+    for (let i = 0; i < DUST; i++) { dustSeed.push([r() * 6.28, .04 + r() * .06, .5 + r()]); dustPos[i * 3] = -1.9 + r() * 3.8; dustPos[i * 3 + 1] = .4 + r() * 3.4; dustPos[i * 3 + 2] = -3 + r() * 6.5; } }
+  const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+  const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ map: glowTex(), color: "#ffd9a0", size: .035, transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true })); scene.add(dust);
+
+  // Parallaxe : la caméra suit un peu l'inclinaison du téléphone (ou la souris), sauf quand un formulaire est calé sur une feuille
+  const par = { x: 0, y: 0, tx: 0, ty: 0, beta0: null, asked: false };
+  const onTilt = e => { if (e.gamma == null) return; if (par.beta0 === null) par.beta0 = e.beta; par.tx = THREE.MathUtils.clamp(e.gamma / 22, -1, 1); par.ty = THREE.MathUtils.clamp((e.beta - par.beta0) / 22, -1, 1); invalidate(); };
+  function askTilt() { if (par.asked) return; par.asked = true; const D = window.DeviceOrientationEvent; if (!D) return;
+    if (typeof D.requestPermission === "function") D.requestPermission().then(r => { if (r === "granted") addEventListener("deviceorientation", onTilt); }).catch(() => {}); else addEventListener("deviceorientation", onTilt); }
+  if (matchMedia("(pointer: fine)").matches) addEventListener("pointermove", e => { par.tx = (e.clientX / innerWidth - .5) * 1.4; par.ty = (e.clientY / innerHeight - .5) * 1.4; invalidate(); });
+  const lastCam = { p: new THREE.Vector3(), q: new THREE.Quaternion(), ok: false };
+
   function resize() {
     const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h;
+    if (post) { const b = renderer.getDrawingBufferSize(new THREE.Vector2()); post.size(b.x, b.y); }
     camera.fov = THREE.MathUtils.clamp(2 * THREE.MathUtils.radToDeg(Math.atan(.43 / camera.aspect)), 42, 84); camera.updateProjectionMatrix(); invalidate();
   }
 
@@ -481,16 +523,27 @@ export function createScene(canvas, cb = {}) {
       const c = (now % 4200) / 4200, g = c < .3 ? Math.sin(c / .3 * Math.PI) : 0; glint.material.opacity = g * .75; glint.position.set(JP.w / 2 + .006 - .1 + .2 * (c / .3), .06, JP.h * .3 - JP.h * .6 * (c / .3));
       if (!busy) setTimeout(invalidate, 50);
     } else { doorGlow.material.opacity = 0; glint.material.opacity = 0; }
-    applyCamera(); renderer.render(scene, camera); if (busy) invalidate();
+    par.x += (par.tx - par.x) * .09; par.y += (par.ty - par.y) * .09; if (Math.abs(par.tx - par.x) + Math.abs(par.ty - par.y) > .004) busy = true;
+    if (state === "room" || state === "shelf") { const a = dustGeo.attributes.position; for (let i = 0; i < DUST; i++) { const [ph, sp, k] = dustSeed[i]; a.array[i * 3 + 1] += sp * .012; if (a.array[i * 3 + 1] > 4) a.array[i * 3 + 1] = .4; a.array[i * 3] += Math.sin(now / 1900 * k + ph) * .0006; } a.needsUpdate = true; dust.visible = true; } else dust.visible = false;
+    applyCamera();
+    if (post) { let blend = 0; if (lastCam.ok) { const v = camera.position.distanceTo(lastCam.p) * 3.2 + camera.quaternion.angleTo(lastCam.q) * 5.5; blend = Math.min(.72, Math.max(0, v - .012) * 3.4); if (tweens.size) blend = Math.max(blend, .28); }
+      lastCam.p.copy(camera.position); lastCam.q.copy(camera.quaternion); lastCam.ok = true;
+      try { post.render(blend); if (blend > .02) busy = true; } catch (err) { console.warn(err); post = null; renderer.setRenderTarget(null); renderer.render(scene, camera); } }
+    else renderer.render(scene, camera);
+    if (busy) invalidate();
   }
 
   // ───────────── Gestes ─────────────
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null, armed = false, held = null;
   const pick = (e, list) => { const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera); return ray.intersectObjects(list, false)[0]; };
-  canvas.addEventListener("pointerdown", e => { if (state === "ceiling" || rooms[state] || held) return; down = { x: e.clientX, y: e.clientY, t: performance.now(), sx: shelf.x, sy: shelf.y, moved: false, axis: null }; armed = false; canvas.setPointerCapture?.(e.pointerId); });
+  const tween = (ms, step, done) => { tweens.add({ t0: performance.now(), ms, step, done }); invalidate(); };
+  let pressed = null; const unpress = () => { if (!pressed) return; const m = pressed, z0 = m.position.z; pressed = null; if (m !== held) tween(180, e => { m.position.z = z0 + (m.userData.home.z - z0) * e; }); };
+  canvas.addEventListener("pointerdown", e => { askTilt(); if (state === "ceiling" || rooms[state] || held) return;
+    if (state === "shelf") { const h = pick(e, pickables); if (h && h.object.userData.kind !== "flat") { pressed = h.object; const m = pressed, z0 = m.position.z; tween(140, k => { if (pressed === m) m.position.z = z0 + (m.userData.home.z + .04 - z0) * k; }); } }
+    down = { x: e.clientX, y: e.clientY, t: performance.now(), sx: shelf.x, sy: shelf.y, moved: false, axis: null }; armed = false; canvas.setPointerCapture?.(e.pointerId); });
   canvas.addEventListener("pointermove", e => {
     if (!down) return; const dx = e.clientX - down.x, dy = e.clientY - down.y;
-    if (!down.moved && Math.hypot(dx, dy) < 8) return; down.moved = true; dragging = true; tw = state === "shelf" ? null : tw;
+    if (!down.moved && Math.hypot(dx, dy) < 8) return; down.moved = true; dragging = true; unpress(); tw = state === "shelf" ? null : tw;
     if (state === "room") {
       down.axis ??= Math.abs(dy) > Math.abs(dx) ? "pull" : "look";
       if (down.axis === "pull") { pull = Math.abs(dy) / 300; const a = pull > .42; if (a !== armed) { armed = a; cb.haptic?.(); } cb.onPull?.(pull); }
@@ -506,9 +559,9 @@ export function createScene(canvas, cb = {}) {
     if (!d.moved && performance.now() - d.t < 500) {
       const hit = pick(e, pickables);
       if (state === "room") { const h = hit || pick(e, [doorHit, journalHit, bayHit]); if (h) { cb.haptic?.(); if (h.object === doorHit) cb.onDoor?.(); else if (h.object === journalHit) cb.onJournal?.(); else setState("shelf"); } }
-      else if (state === "shelf" && hit) pullOut(hit.object);
+      else if (state === "shelf" && hit) { pressed = null; pullOut(hit.object); }
     } else if (state === "room" && d.axis === "pull" && armed) { cb.onCeiling?.(); }
-    invalidate();
+    unpress(); invalidate();
   };
   canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", () => { down = null; dragging = false; invalidate(); });
   // Prendre un livre : un seul geste continu. Il glisse hors du rayon sur une courbe, pivote pendant qu'il approche,
@@ -517,7 +570,7 @@ export function createScene(canvas, cb = {}) {
   const timeline = (ms, step, done) => { tweens.add({ t0: performance.now(), ms, linear: true, step, done }); invalidate(); };
   const bez = (out, a, b, c, t) => out.set(0, 0, 0).addScaledVector(a, (1 - t) * (1 - t)).addScaledVector(b, 2 * (1 - t) * t).addScaledVector(c, t * t);
   function pullOut(m) {
-    held = m; cb.haptic?.(); const u = m.userData, home = u.home.clone();
+    held = m; cb.haptic?.(); const u = m.userData, home = m.position.clone();   // il part de là où le doigt l'a déjà avancé
     if (u.kind === "flat") return timeline(520, k => { const e = io(k); m.position.z = home.z + .3 * e; m.position.y = home.y + .03 * e; }, () => cb.onOpenBook?.(u.id));
     const spine = u.kind === "spine", coverW = spine ? u.d : u.w, ry1 = spine ? -Math.PI / 2 : 0;
     const dir = new THREE.Vector3(); camera.getWorldDirection(dir); const end = camera.position.clone().addScaledVector(dir, .86); end.x += coverW * .5;
@@ -555,5 +608,6 @@ export function createScene(canvas, cb = {}) {
     return { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
   }
   addEventListener("resize", resize); resize();
+  cam.p.set(0, 2.7, 8.6); cam.t.set(0, 3.5, ZB); goTo(VIEWS.room, 2600, true);
   return { setBooks, setState, releaseBook, invalidate, paperRect, get state() { return state; }, dispose() { alive = false; cancelAnimationFrame(raf); removeEventListener("resize", resize); renderer.dispose(); } };
 }
