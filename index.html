@@ -258,7 +258,7 @@ body.has3d[data-view="shelf"] #sky { background: none; }
 body.has3d[data-view="shelf"] .backbtn { display: inline-flex; }
 body.has3d #bookview:not([hidden]) { animation: pagein .45s var(--ease); }
 @keyframes pagein { from { opacity: 0; transform: scale(.96); } }
-.hint { position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 22px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
+.hint { display: none; position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 22px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
 body:not([data-view="room"]) .hint, body.sky-open .hint { opacity: 0; }
 .skyclose { position: fixed; z-index: 7; right: 12px; top: calc(env(safe-area-inset-top) + 10px); width: 44px; height: 44px; border-radius: 22px; display: none; place-items: center; color: var(--cream); background: rgba(255,255,255,.1); }
 .skyclose svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -418,7 +418,7 @@ function render() {
   if (scene3d) {
     const label = b => `${b.title}, ${b.author || "auteur inconnu"}, ${b.status === "en_cours" ? `page ${b.current_page}${b.total_pages ? " sur " + b.total_pages : ""}` : b.status === "fini" ? "fini" : "abandonné"}`;
     app.innerHTML = `<button class="backbtn" data-act="back-room"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reculer</button>
-      <p class="hint">${S.books.length ? "Touche les rayons, le journal sur la table, ou la porte de l'étage" : "Tes rayons sont vides : touche la porte éclairée de l'étage pour poser ton premier livre."}</p>
+
       <ul class="sr-only"><li><button data-act="add-book">Ajouter un livre</button></li><li><button data-act="log" ${reading.length ? "" : "disabled"}>J'ai lu</button></li></ul>
       <ul class="sr-only" aria-label="Tes livres">${S.books.map(b => `<li><button data-book="${esc(b.id)}">${esc(label(b))}</button></li>`).join("")}</ul>`;
     scene3d.setBooks(S.books);

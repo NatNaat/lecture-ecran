@@ -223,6 +223,7 @@ export function createScene(canvas, cb = {}) {
   for (const s of [-1, 1]) caseSide(s, ZB + CASE_D, 1.4, y2, 6, .47, R);
   // porte éclairée à l'étage
   const door = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.3), new THREE.MeshBasicMaterial({ color: "#e9a45a", transparent: true })); door.position.set(0, y2 + 1.15, ZB + .04); scene.add(door);
+  const doorGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ffb35a", opacity: .55 })); doorGlow.scale.set(2.2, 3.2, 1); doorGlow.position.set(0, y2 + 1.15, ZB + .3); scene.add(doorGlow);
   const doorHit = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0), new THREE.MeshBasicMaterial({ visible: false })); doorHit.position.set(0, y2 + 1.3, ZB + .06); scene.add(doorHit);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
   // rambardes (avec une ouverture pour l'échelle)
@@ -268,6 +269,7 @@ export function createScene(canvas, cb = {}) {
     const pen = new THREE.Mesh(new THREE.CylinderGeometry(.005, .0035, .15, 8), new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .35 })); pen.rotation.set(Math.PI / 2, 0, .45); pen.position.set(JP.w + .07, .01, .1); J.add(pen);
     const cap = new THREE.Mesh(new THREE.CylinderGeometry(.0055, .0055, .03, 8), brass); cap.rotation.set(Math.PI / 2, 0, .45); cap.position.set(JP.w + .07 - Math.sin(.45) * .06, .01, .1 - Math.cos(.45) * .06); J.add(cap); }
   const journalPage = new THREE.Mesh(new THREE.PlaneGeometry(JP.w, JP.h), new THREE.MeshBasicMaterial({ visible: false })); journalPage.rotation.x = -Math.PI / 2; journalPage.position.set(JP.w / 2 + .006, .047, 0); journal.add(journalPage);
+  const glint = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#fff4d6", opacity: 0 })); glint.scale.set(.32, .16, 1); glint.position.set(JP.w / 2 + .006, .06, 0); journal.add(glint);
   const journalHit = new THREE.Mesh(new THREE.BoxGeometry(2 * JP.w + .2, .12, JP.h + .16), new THREE.MeshBasicMaterial({ visible: false })); journalHit.position.y = .05; journal.add(journalHit);
   // Mobilier aux arêtes adoucies : boîtes arrondies (extrusion biseautée), accoudoirs en capsule, pieds tournés
   const softGeo = (w, h, d, r) => { r = Math.min(r, w / 2 - .001, h / 2 - .001, d / 2 - .001); const a = w / 2 - r, b = h / 2 - r, c = Math.min(r * .6, a, b), sh = new THREE.Shape();
@@ -445,11 +447,14 @@ export function createScene(canvas, cb = {}) {
   function setState(s, opt = {}) {
     if (s === "shelf") { shelf.x = THREE.MathUtils.clamp(opt.x ?? focusX, BAY.x0 + .6, BAY.x1 - .6); shelf.y = 1.75; }
     const entering = !!rooms[s], roomName = entering ? s : rooms[state] ? state : null; if (entering) rooms[s].group.visible = true;
-    state = s; yaw = 0; pull = 0; if (roomName) goRoom(roomName, entering); else goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1500 : 1200); cb.onState?.(s);
+    if (s === "ceiling" && state === "room") { const p = new THREE.Vector3(), t = new THREE.Vector3(); tilted(p, t); cam.p.copy(p); cam.t.copy(t); }
+    state = s; yaw = 0; pull = 0; if (roomName) goRoom(roomName, entering); else goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1400 : 1200, s === "ceiling" || state === "ceiling"); cb.onState?.(s);
   }
+  // Pendant le geste, la caméra glisse déjà sur le chemin qui mène au ciel (pull ∈ [0, 1] → 45 % du trajet)
+  const tilted = (p, t) => { const e = ease(Math.min(1, pull)) * .45; p.copy(cam.p).lerp(new THREE.Vector3(...VIEWS.ceiling.p), e); t.copy(cam.t).lerp(new THREE.Vector3(...VIEWS.ceiling.t), e); t.x += yaw * 7; p.x += yaw * 1.2; };
   function applyCamera() {
     camera.position.copy(cam.p); const t = cam.t.clone();
-    if (state === "room") { const e = ease(Math.min(1, pull)) * .5; camera.position.lerp(new THREE.Vector3(0, 3.2, 3.2), e); t.lerp(new THREE.Vector3(0, H, .2), e); t.x += yaw * 7; camera.position.x += yaw * 1.2; }
+    if (state === "room") tilted(camera.position, t);
     const rm = rooms[state] || (tw && rooms[tw.room]); if (lift > .001 && rm) camera.up.set(0, 1, 0).lerp(rm.up, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
   }
@@ -468,6 +473,12 @@ export function createScene(canvas, cb = {}) {
       if (k >= 1) { const arrived = tw.cp ? tw.entering : false; tw = null; for (const [n, r] of Object.entries(rooms)) if (state !== n && !r.keep) r.group.visible = false; if (arrived) { applyCamera(); cb.onArrive?.(state); } } else busy = true; }
     for (const a of tweens) { const k = Math.min(1, (now - a.t0) / a.ms); a.step(a.linear ? k : ease(k)); if (k >= 1) { tweens.delete(a); a.done?.(); } else busy = true; }
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
+    // Signaux discrets dans la vue d'ensemble, à cadence réduite : la porte respire, un reflet passe sur le journal
+    if (state === "room" && !document.hidden) {
+      const s1 = .5 + .5 * Math.sin(now / 900); door.material.color.setRGB(.914 + .086 * s1, .643 + .18 * s1, .353 + .25 * s1); doorGlow.material.opacity = .35 + .35 * s1; doorGlow.scale.set(2.0 + .5 * s1, 3.0 + .5 * s1, 1);
+      const c = (now % 4200) / 4200, g = c < .3 ? Math.sin(c / .3 * Math.PI) : 0; glint.material.opacity = g * .75; glint.position.set(JP.w / 2 + .006 - .1 + .2 * (c / .3), .06, JP.h * .3 - JP.h * .6 * (c / .3));
+      if (!busy) setTimeout(invalidate, 50);
+    } else { doorGlow.material.opacity = 0; glint.material.opacity = 0; }
     applyCamera(); renderer.render(scene, camera); if (busy) invalidate();
   }
 
