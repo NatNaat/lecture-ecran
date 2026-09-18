@@ -207,6 +207,43 @@ body.has3d #study { background: none; }
 .sheet.onpaper .note { font-size: 12px; margin-top: 8px; }
 .sheet.onpaper .inkbtn { margin-top: auto !important; min-height: 46px; }
 .sheet.onpaper .searchwrap { position: relative; }
+/* pièces communes des deux formulaires */
+.searchwrap { position: relative; }
+.searchbox { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0 10px; border-radius: 12px; background: rgba(34,27,20,.07); box-shadow: inset 0 0 0 1px rgba(34,27,20,.14); }
+.searchbox:focus-within { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.searchbox svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; }
+.sheet .searchbox input, .sheet.onpaper .searchbox input { flex: 1; min-width: 0; border: 0; background: none; padding: 11px 0; font-size: 16px; outline: none; -webkit-appearance: none; appearance: none; }
+.searchbox input::-webkit-search-cancel-button { display: none; }
+.searchbox button { display: grid; place-items: center; width: 32px; height: 32px; margin-right: -6px; }
+.textlink { font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; min-height: 0; }
+.noc.big, .fiche .noc.big { width: 66px; height: 99px; }
+.chips { display: flex; flex-wrap: nowrap; gap: 6px; align-items: center; margin: 10px -7% 0; padding: 0 7% 2px; overflow-x: auto; scrollbar-width: none; } .chips::-webkit-scrollbar { display: none; } .chips:empty { display: none; }
+.chips > * { flex: none; } .chips:not(:empty) + .note { display: none; }
+.chiplbl { font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin-right: 2px; }
+.chips button { display: grid; text-align: left; padding: 5px 10px; border-radius: 10px; font: 600 13px/1.2 var(--sans); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(34,27,20,.25); font-variant-numeric: tabular-nums; }
+.chips button small { font: 400 11px/1.2 var(--sans); color: var(--ink-2); max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); box-shadow: none; } .chips button[aria-pressed="true"] small { color: var(--paper-2); }
+.jhead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 6px; border-bottom: 1.5px solid var(--ink); }
+.jhead h1 { font: 700 20px/1.1 var(--sans); letter-spacing: -.02em; margin: 0; border: 0; padding: 0; } .jhead span { font: 500 12px var(--sans); color: var(--ink-2); }
+.sheet.onpaper .jhead h1 { border: 0; padding: 0; }
+.pickwrap { position: relative; margin-top: 10px; }
+.bookpick, .bookopt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; color: var(--ink); }
+.bookpick { padding: 6px 8px 6px 6px; border-radius: 12px; background: rgba(34,27,20,.07); box-shadow: inset 0 0 0 1px rgba(34,27,20,.14); }
+.bookpick:disabled { opacity: 1; cursor: default; }
+.bookpick > svg { width: 18px; height: 18px; flex: none; margin-left: auto; fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s var(--ease); }
+.bookpick[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.bookpick .noc, .bookopt .noc { position: relative; overflow: hidden; width: 30px; height: 45px; flex: none; border-radius: 3px; background: var(--paper-2); display: grid; place-items: center; font: 700 14px var(--sans); color: var(--ink-2); box-shadow: 1px 2px 5px rgba(0,0,0,.3); }
+.bookpick .noc img, .bookopt .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pk { min-width: 0; } .pk b { display: block; font: 600 14.5px/1.2 var(--sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pk small { display: block; font: 12px/1.3 var(--sans); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.droplist { position: absolute; z-index: 4; left: 0; right: 0; top: calc(100% + 4px); max-height: 46dvh; overflow-y: auto; padding: 4px; border-radius: 12px; background: var(--paper); box-shadow: 0 16px 34px rgba(0,0,0,.5), 0 0 0 1px rgba(34,27,20,.15); }
+.bookopt { padding: 6px; border-radius: 9px; } .bookopt[aria-selected="true"] { background: rgba(34,27,20,.09); }
+.pagerow { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; }
+.pagerow label, .sheet.onpaper .pagerow label, dialog .pagerow label { margin: 0; font: 400 14px var(--sans); color: var(--ink); white-space: nowrap; } .pagerow label b { font-variant-numeric: tabular-nums; }
+.pagerow input, .sheet.onpaper .pagerow input, dialog .pagerow input { width: 62px; flex: none; text-align: center; font: 700 18px var(--sans); font-variant-numeric: tabular-nums; padding: 3px 0 4px; border: 0; border-bottom: 1.5px solid var(--ink); border-radius: 0; background: none; }
+.gain { margin-left: auto; font: 700 13px var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; } .gain:empty { display: none; }
+.meter { height: 4px; margin-top: 6px; border-radius: 2px; background: rgba(34,27,20,.15); overflow: hidden; } .meter i { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform .25s var(--ease); }
+.meterlbl { font: 11.5px/1.4 var(--sans); color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.journal.indlg { display: flex; flex-direction: column; } .journal.indlg textarea { min-height: 150px; } .journal.indlg label { margin-top: 12px; }
 .sheet.onpaper.journal h1 { font-size: 18px; padding-bottom: 4px; }
 .sheet.onpaper.journal label { margin-top: 6px; }
 .sheet.onpaper.journal .inkbtn { min-height: 40px; font-size: 14px; margin-top: 8px !important; }
@@ -612,18 +649,8 @@ dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest("[
 
 function dlgLog(bookId) {
   const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
-  openDlg(`<h1>J'ai lu</h1><form id="flog">
-    <label for="lb">Livre</label><select id="lb">${list.map(b => `<option value="${esc(b.id)}" ${b === sel ? "selected" : ""}>${esc(bookLabel(b))}</option>`).join("")}</select>
-    <label for="lp">Page atteinte</label><input id="lp" type="number" inputmode="numeric" required min="1">
-    <label for="ls">Ce que tu viens de lire <span class="count" id="lcount"></span></label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
-    <div class="err" id="lerr"></div><div class="inkrow"><button type="button" class="inkbtn line" data-close>Annuler</button><button class="inkbtn">Valider</button></div></form>`);
-  const upd = () => { const b = list.find(x => x.id === $("#lb").value), n = Math.max(0, (+$("#lp").value || 0) - b.current_page), need = Math.min(150 + 20 * n, 800);
-    $("#lcount").textContent = n ? `· ${$("#ls").value.trim().length} / ${need} caractères pour ${plural(n, "page")}` : ""; };
-  ["input", "change"].forEach(ev => $("#flog").addEventListener(ev, upd));
-  $("#flog").onsubmit = async e => { e.preventDefault(); const btn = $("#flog button:not(.line)"); btn.disabled = true;
-    try { const b = list.find(x => x.id === $("#lb").value); const r = await api.logReading(S.config.secret, bookLabel(b), +$("#lp").value, $("#ls").value);
-      if (!r.ok) { $("#lerr").textContent = r.error; btn.disabled = false; return; }
-      dlg.close(); await reload(); } catch (err) { $("#lerr").textContent = err.message; btn.disabled = false; } };
+  openDlg(`<form id="flog" class="journal indlg">${readingForm(list, sel, "Valider")}<button type="button" class="inkbtn line" style="width:100%;margin-top:8px" data-close>Annuler</button></form>`);
+  wireReadingForm($("#flog"), list, sel, async () => { dlg.close(); await reload(); });
 }
 
 // Recherche : catalogue général de la BnF (éditions françaises, exhaustif) + Open Library (couvertures, étranger). Gratuit, sans clé.
@@ -632,9 +659,9 @@ const prefixed = q => { const w = q.trim().replace(/["*]/g, " ").split(/\s+/).fi
 const isbnOf = q => { const d = q.replace(/[-\s]/g, ""); return /^(97[89])?\d{9}[\dXx]$/.test(d) ? d : null; };
 // Les éditions d'avant 2007 sont cataloguées sous leur ISBN à 10 chiffres : on cherche les deux formes.
 const isbn10 = i => { if (!/^978\d{10}$/.test(i)) return null; const c = i.slice(3, 12), k = (11 - [...c].reduce((a, d, n) => a + d * (10 - n), 0) % 11) % 11; return c + (k === 10 ? "X" : k); };
-async function searchBnf(q, signal) {
-  const isbn = isbnOf(q), cql = isbn ? `bib.isbn any "${[isbn, isbn10(isbn)].filter(Boolean).join(" ")}"` : `bib.anywhere all "${prefixed(q)}" and bib.doctype any "a"`;
-  const r = await fetch(`https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&recordSchema=dublincore&maximumRecords=30&query=${encodeURIComponent(cql)}`, { signal });
+async function searchBnf(q, signal, mode = "any") {
+  const isbn = isbnOf(q), cql = isbn ? `bib.isbn any "${[isbn, isbn10(isbn)].filter(Boolean).join(" ")}"` : `bib.${mode === "title" ? "title" : "anywhere"} all "${prefixed(q)}" and bib.doctype any "a"`;
+  const r = await fetch(`https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&recordSchema=dublincore&maximumRecords=${mode === "title" ? 80 : 40}&query=${encodeURIComponent(cql)}`, { signal });
   const xml = new DOMParser().parseFromString(await r.text(), "text/xml");
   return [...xml.getElementsByTagNameNS("*", "dc")].map(rec => {
     const all = t => [...rec.getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", t)].map(n => n.textContent.trim());
@@ -645,26 +672,62 @@ async function searchBnf(q, signal) {
       lang: all("language")[0] || "", cover_url: isbn13 ? `https://covers.openlibrary.org/b/isbn/${isbn13}-M.jpg?default=false` : null, openlibrary_key: null, src: "BnF" };
   }).filter(b => b.title);
 }
-async function searchOL(q, signal) {
+async function searchOL(q, signal, mode = "any") {
   const isbn = isbnOf(q);
-  const r = await fetch(`https://openlibrary.org/search.json?limit=25&fields=key,title,author_name,cover_i,number_of_pages_median,first_publish_year,language&${isbn ? "isbn=" + isbn : "q=" + encodeURIComponent(prefixed(q))}`, { signal });
+  const r = await fetch(`https://openlibrary.org/search.json?limit=40&fields=key,title,author_name,cover_i,number_of_pages_median,first_publish_year,language,edition_count&${isbn ? "isbn=" + isbn : (mode === "title" ? "title=" + encodeURIComponent(prefixed(q)) : "q=" + encodeURIComponent(q))}`, { signal });
   return ((await r.json()).docs || []).map(d => ({ title: d.title, author: (d.author_name || []).slice(0, 2).join(", "), total_pages: d.number_of_pages_median || null, year: d.first_publish_year || "", publisher: "",
-    lang: (d.language || []).includes("fre") ? "fre" : "", cover_url: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : null, openlibrary_key: d.key, src: "Open Library" }));
+    pop: d.edition_count || 1, lang: (d.language || []).includes("fre") ? "fre" : "", cover_url: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : null, openlibrary_key: d.key, src: "Open Library" }));
 }
-async function searchBooks(q, signal) {
-  const res = await Promise.allSettled([searchBnf(q, signal), searchOL(q, signal)]);
+// Un titre propre : sans mention de support, d'édition ou de collection, sans le nom de l'auteur accolé, sans sous-titre générique.
+const GENERIC_SUB = /^(romans?|récits?|nouvelles?|théâtre|poèmes?|poésies?|essais?|contes?|textes? intégra(l|ux)|(édition|version) .*|nouvelle édition.*|œuvres? .*|(comédie|tragédie|drame|pièce)( en .*)?|tradu(it|ction) .*|suivi de .*|précédé de .*|avec .*|préface .*|texte .*|\d+e? ?éd.*)$/i;
+function cleanTitle(raw, author) {
+  let t = String(raw || "").replace(/\s*\[[^\]]*\]/g, " ").replace(/\s*\((?:[^)]*\b(?:[eé]dition|folio|poche|collection|coll|classiques?|french|english|illustr|tome|vol|int[eé]gral|bilingue)[^)]*)\)/gi, " ").replace(/\s+/g, " ").trim();
+  const names = new Set(); String(author || "").split(/,|&| et /).forEach(a => { const n = norm(a), w = n.split(" "); if (n) { names.add(n); names.add(w[w.length - 1]); if (w.length > 1) names.add(w.slice(1).join(" ") + " " + w[0]); } });
+  const isAuthor = seg => { const n = norm(seg).replace(/^(par|de|d|by) /, ""); return n.length > 2 && names.has(n); };
+  for (const sep of [" / ", " — ", " – ", " - ", " : ", ", "]) { const parts = t.split(sep); if (parts.length > 1) { const kept = parts.filter(x => !isAuthor(x)); if (kept.length && kept.length < parts.length) t = kept.join(sep); } }
+  t = t.replace(/[-–—,]\s*$/, "").replace(/^(.+?)-([A-ZÉ][a-zé]+)$/, (m, a, b) => names.has(norm(b)) ? a : m);
+  const parts = t.split(" : "); while (parts.length > 1 && GENERIC_SUB.test(parts[parts.length - 1].trim())) parts.pop();
+  if (parts.length > 1 && parts[0].trim().split(" ").length >= 2 && parts.slice(1).join(" : ").length > 28) parts.length = 1;   // long sous-titre : on garde le titre
+  t = parts.join(" : ");
+  if (t.length > 3 && t === t.toUpperCase()) t = t.charAt(0) + t.slice(1).toLowerCase();
+  return t.replace(/\s*[.;:,\/]+$/, "").replace(/\s+/g, " ").trim() || String(raw || "").trim();
+}
+const DERIVED = /\b(etude|analyse|profil|commentaire|resume|fiche|dossier|lecture|adaptation|manga|bande dessinee|d apres|explique|questionnaire|livret|cahier|guide|anthologie|extraits|morceaux choisis|colloque|actes)\b/;
+async function searchBooks(q, signal, onPartial) {
+  const isbnFirst = !!isbnOf(q), jobs = isbnFirst ? [searchBnf(q, signal), searchOL(q, signal)] : [searchOL(q, signal, "title"), searchOL(q, signal), searchBnf(q, signal, "title"), searchBnf(q, signal)];
+  const got = []; let failed = 0, pending = jobs.length;
+  await Promise.all(jobs.map(j => j.then(v => { got.push(...v); pending--; if (pending && onPartial && !signal?.aborted) onPartial(rankBooks(q, got)); }, () => { failed++; pending--; })));
   if (signal?.aborted) throw new DOMException("annulé", "AbortError");
-  if (res.every(r => r.status === "rejected")) throw new Error("réseau");
-  const words = norm(q).split(" ").filter(w => w.length > 1), key3 = words.filter(w => w.length >= 3), seen = new Map(), isbnQ = !!isbnOf(q);
-  res.flatMap(r => r.status === "fulfilled" ? r.value : []).forEach((b, i) => {
-    const hay = norm(b.title + " " + b.author), t = norm(b.title);
+  if (failed === jobs.length) throw new Error("réseau");
+  return rankBooks(q, got);
+}
+function rankBooks(q, list) {
+  const noArt = x => x.replace(/^(le|la|les|l|un|une|des|the|a|an) /, ""), nq = norm(q), words = nq.split(" ").filter(w => w.length > 1), key3 = words.filter(w => w.length >= 3), groups = new Map(), isbnQ = !!isbnOf(q);
+  list.map(b => ({ ...b })).forEach((b, i) => {
+    b.title = cleanTitle(b.title, b.author); if (!b.title) return;
+    const t = norm(b.title), main = norm(b.title.split(" : ")[0]), au = norm(b.author), hay = t + " " + au;
     if (!isbnQ && key3.length && key3.filter(w => hay.includes(w)).length < Math.ceil(key3.length * .6)) return;   // hors sujet
-    b.score = words.filter(w => hay.includes(w)).length / Math.max(1, words.length) * 10 + (words.length && t.startsWith(words[0]) ? 1 : 0) + (b.lang === "fre" ? 2 : 0)
-      + (b.total_pages ? 1.5 : 0) + (b.cover_url ? .5 : 0) - Math.min(3, t.split(" ").length / 6) - i / 1000;
-    const key = `${t}|${norm(b.author).split(" ").pop()}|${b.total_pages || ""}`, prev = seen.get(key);
-    if (!prev) seen.set(key, b); else if (!prev.cover_url?.includes("/b/id/") && b.cover_url) prev.cover_url = b.cover_url;
+    const auW = au.split(" "), titleWords = words.filter(w => !auW.some(x => x.startsWith(w) && w.length >= 3 && !main.includes(w))), tq = noArt(titleWords.join(" ")), mainNA = noArt(main);
+    b.score = words.filter(w => hay.includes(w)).length / Math.max(1, words.length) * 10
+      + (tq && mainNA === tq ? 5 : tq && mainNA.startsWith(tq) ? 3 : tq && t.includes(tq) ? 1.5 : 0) + Math.min(3, Math.log2(b.pop || 1))          // le titre correspond à ce qui est tapé
+      + (key3.some(w => au.split(" ").some(x => x.startsWith(w))) ? 1.5 : 0)                               // l'auteur est dans la requête
+      + (isbnQ && b.src === "BnF" ? 4 : 0) + (b.lang === "fre" ? 2 : b.lang ? -1 : 0) + (b.total_pages ? 1 : 0) + (b.cover_url ? .5 : 0)
+      - (DERIVED.test(t) && !DERIVED.test(nq) ? 5 : 0)                                                     // études, adaptations, fiches : après l'œuvre elle-même
+      - Math.min(3, Math.max(0, main.split(" ").length - Math.max(3, titleWords.length + 1)) * .6) - i / 1000;
+    const key = mainNA + "|" + (norm(String(b.author || "").split(",")[0]).split(" ").pop() || ""), g = groups.get(key);
+    if (!g) groups.set(key, { best: b, all: [b] }); else { g.all.push(b); if (b.score > g.best.score) g.best = b; }
   });
-  return [...seen.values()].sort((a, b) => b.score - a.score).slice(0, 30);
+  return [...groups.values()].map(g => {
+    const b = g.best, seenEd = new Set(), votes = new Map(); g.all.forEach(e => votes.set(e.title, (votes.get(e.title) || 0) + 1 + (/^(le|la|les|l'|un|une) /i.test(e.title) ? .5 : 0)));
+    b.title = [...votes.entries()].sort((x, y) => y[1] - x[1] || x[0].length - y[0].length)[0][0];
+    b.editions = g.all.filter(e => e.total_pages).sort((x, y) => (y.lang === "fre") - (x.lang === "fre") || String(y.year).localeCompare(String(x.year)))
+      .filter(e => { const k = e.total_pages + "|" + e.publisher; if (seenEd.has(k)) return false; seenEd.add(k); return true; }).slice(0, 6).map(e => ({ pages: e.total_pages, year: e.year, publisher: e.publisher }));
+    if (!b.total_pages && b.editions[0]) b.total_pages = b.editions[0].pages;
+    if (!b.cover_url || !b.cover_url.includes("/b/id/")) b.cover_url = (g.all.find(e => e.cover_url?.includes("/b/id/")) || g.all.find(e => e.cover_url) || b).cover_url;
+    if (!b.openlibrary_key) b.openlibrary_key = g.all.find(e => e.openlibrary_key)?.openlibrary_key || null;
+    b.score += Math.min(2.5, Math.log2(g.all.length));                                                     // beaucoup d'éditions = œuvre connue
+    return b;
+  }).sort((a, b) => b.score - a.score).slice(0, 20);
 }
 // ───────────── Le cabinet : ajouter un livre ─────────────
 // Couvertures : vérifier qu'une image existe vraiment, et en chercher une sur Open Library à partir du titre et de l'auteur.
@@ -682,7 +745,8 @@ async function backfillCovers() {
   let changed = false;
   for (const b of S.books) {
     if (tried[b.id] && Date.now() - tried[b.id] < 14 * 864e5) continue;
-    tried[b.id] = Date.now(); if (b.cover_url && await imgOk(b.cover_url)) continue;
+    tried[b.id] = Date.now(); const ct = cleanTitle(b.title, b.author); if (ct && ct !== b.title) { try { await api.updateBook(b.id, { title: ct }); changed = true; } catch {} }
+    if (b.cover_url && await imgOk(b.cover_url)) continue;
     const url = await resolveCover({ title: b.title, author: b.author }); if (url) { try { await api.updateBook(b.id, { cover_url: url }); changed = true; } catch {} }
   }
   try { localStorage.setItem("coverTried", JSON.stringify(tried)); } catch {}
@@ -700,48 +764,89 @@ async function dlgCover(bookId) {
 }
 
 const study = $("#study"); let addPick = null, addCtl = null, addTimer = 0;
+const coverThumb = b => `<span class="noc">${esc((b.title || "?")[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span>`;
+const pickCard = (b, compact) => `${coverThumb(b)}<span class="pk"><b>${esc(b.title)}</b><small>${compact ? "" : esc(b.author || "Auteur inconnu") + " · "}p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}</small></span>`;
+function bookPicker(list, sel) {
+  return `<div class="pickwrap"><button type="button" class="bookpick" id="bpick" aria-haspopup="listbox" aria-expanded="false" ${list.length > 1 ? "" : "disabled"}>${pickCard(sel, true)}${list.length > 1 ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>` : ""}</button>
+    <div class="droplist" id="blist" role="listbox" hidden>${list.map(b => `<button type="button" role="option" class="bookopt" data-id="${esc(b.id)}" aria-selected="${b === sel}">${pickCard(b)}</button>`).join("")}</div></div>`;
+}
+function wirePicker(root, list, onChange) {
+  const btn = $("#bpick", root), box = $("#blist", root), toggle = open => { box.hidden = !open; btn.setAttribute("aria-expanded", open); };
+  btn.onclick = () => toggle(box.hidden);
+  box.onclick = e => { const o = e.target.closest(".bookopt"); if (!o) return; const b = list.find(x => x.id === o.dataset.id); btn.innerHTML = pickCard(b, true) + `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
+    box.querySelectorAll(".bookopt").forEach(x => x.setAttribute("aria-selected", x === o)); toggle(false); haptic(); onChange(b); };
+  root.addEventListener("click", e => { if (!e.target.closest(".pickwrap")) toggle(false); });
+}
+// Le formulaire « J'ai lu » : livre (avec couverture), pages, résumé et jauge de longueur. Sert au journal 3D et à la fiche rapide.
+function readingForm(list, sel, submitLabel) {
+  return `<header class="jhead"><h1>J'ai lu</h1><span>${new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}</span></header>
+    ${bookPicker(list, sel)}
+    <div class="pagerow"><label for="lp">De la p. <b id="pfrom">${sel.current_page}</b> à la p.</label><input id="lp" type="number" inputmode="numeric" required min="1" aria-describedby="lgain"><span class="gain" id="lgain"></span></div>
+    <label for="ls">Ce que je retiens</label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
+    <div class="meter" aria-hidden="true"><i id="lbar"></i></div><div class="meterlbl" id="lcount" role="status"></div>
+    <div class="err" id="lerr"></div><button class="inkbtn" style="width:100%">${submitLabel}</button>`;
+}
+function wireReadingForm(form, list, sel, done) {
+  let cur = sel; const upd = () => { const n = Math.max(0, (+$("#lp", form).value || 0) - cur.current_page), need = Math.min(150 + 20 * n, 800), len = $("#ls", form).value.trim().length;
+    $("#pfrom", form).textContent = cur.current_page; $("#lgain", form).textContent = n ? `+${n} min` : "";
+    $("#lbar", form).style.transform = `scaleX(${Math.min(1, len / need)})`; $("#lcount", form).textContent = len >= need ? `${len} caractères, c'est assez` : `${len} / ${need} caractères${n ? ` pour ${plural(n, "page")}` : ""}`; };
+  wirePicker(form, list, b => { cur = b; upd(); }); ["input", "change"].forEach(ev => form.addEventListener(ev, upd)); upd();
+  form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector("button.inkbtn"); btn.disabled = true;
+    try { const r = await api.logReading(S.config.secret, bookLabel(cur), +$("#lp", form).value, $("#ls", form).value);
+      if (!r.ok) { $("#lerr", form).textContent = r.error; btn.disabled = false; return; } haptic(); await done(); } catch (err) { $("#lerr", form).textContent = err.message; btn.disabled = false; } };
+}
+
 function openStudy() {
   addPick = null;
   study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
   <form class="sheet${scene3d ? " onpaper" : ""}" id="fadd" autocomplete="off"><h1>Nouveau livre</h1>
-    <div class="searchwrap"><label for="aq">Cherche un titre, un auteur ou un ISBN</label><input id="aq" type="search" enterkeyhint="search" placeholder="ex. La Peste, Camus…">
-    <div id="sugg" aria-live="polite"></div></div>
-    <div class="fiche"><span class="noc" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0">
-      <label for="at" style="margin-top:0">Titre</label><input id="at" required>
-      <label for="aa">Auteur</label><input id="aa"></div></div>
-    <div class="row"><div><label for="ap">Nombre de pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div>
-    <div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
-    <p class="note">Les pages déjà lues avant aujourd'hui ne rapportent pas de minutes.</p>
-    <div class="err" id="aerr"></div><button class="inkbtn" style="width:100%;margin-top:12px">Poser sur l'étagère</button></form>`;
+    <div class="searchwrap"><label for="aq" class="sr-only">Chercher un titre, un auteur ou un ISBN</label>
+      <div class="searchbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="aq" type="search" enterkeyhint="search" placeholder="Titre, auteur ou ISBN">
+        <button type="button" id="aqx" aria-label="Effacer la recherche" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+      <div id="sugg" aria-live="polite"></div></div>
+    <p class="note" id="ahint">Les suggestions arrivent pendant que tu tapes. Tu peux aussi <button type="button" class="textlink" id="amanual">remplir la fiche à la main</button>.</p>
+    <div id="afields" hidden>
+      <div class="fiche"><span class="noc big" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0">
+        <label for="at" style="margin-top:0">Titre</label><input id="at" required>
+        <label for="aa">Auteur</label><input id="aa"></div></div>
+      <div class="row"><div><label for="ap">Pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div>
+      <div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
+      <div id="aeds" class="chips" aria-label="Autres éditions"></div>
+      <p class="note">Vérifie le nombre de pages sur ton exemplaire. Les pages déjà lues ne rapportent pas de minutes.</p></div>
+    <div class="err" id="aerr"></div><button class="inkbtn" id="asubmit" style="width:100%" hidden>Poser sur l'étagère</button></form>`;
   study.hidden = false; document.body.classList.add("study-open"); scene3d?.setState("study");
-  const q = $("#aq"), sugg = $("#sugg");
+  const q = $("#aq"), sugg = $("#sugg"), showFields = () => { $("#afields").hidden = false; $("#asubmit").hidden = false; $("#ahint").hidden = true; };
   const run = async () => {
-    const text = q.value.trim(); addCtl?.abort(); if (text.length < 3) { sugg.innerHTML = ""; return; }
-    addCtl = new AbortController(); const ctl = addCtl; sugg.innerHTML = `<p class="note">Recherche à la BnF et sur Open Library…</p>`;
-    try { const list = await searchBooks(text, ctl.signal); if (ctl !== addCtl) return;
-      sugg.innerHTML = list.length ? "" : `<p class="note">Rien trouvé pour l'instant. Tu peux remplir la fiche à la main, ou essayer l'ISBN au dos du livre.</p>`;
+    const text = q.value.trim(); addCtl?.abort(); $("#aqx").hidden = !text; if (text.length < 3) { sugg.innerHTML = ""; return; }
+    addCtl = new AbortController(); const ctl = addCtl; if (!sugg.children.length) sugg.innerHTML = `<p class="note">Recherche…</p>`;
+    const show = (list, final) => { if (ctl !== addCtl) return; if (!list.length && !final) return;
+      sugg.innerHTML = list.length ? "" : `<p class="note">Rien trouvé. Essaie l'ISBN au dos du livre, ou remplis la fiche à la main.</p>`;
       list.slice(0, 12).forEach(b => { const el = document.createElement("button"); el.className = "hit"; el.type = "button";
-        el.innerHTML = `<span class="noc">${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="">` : ""}</span><span><b>${esc(b.title)}</b><i>${esc(b.author || "Auteur inconnu")}</i>
-          <small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " pages" : "pages inconnues"].filter(Boolean).map(esc).join(" · ")}</small></span>`;
-        const img = el.querySelector("img"); if (img) img.onerror = () => { img.remove(); b.cover_url = null; };
-        el.onclick = () => pickSuggestion(b); sugg.append(el); });
+        el.innerHTML = `${coverThumb(b)}<span><b>${esc(b.title)}</b><i>${esc(b.author || "Auteur inconnu")}</i>
+          <small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " p." : null, b.editions.length > 1 ? b.editions.length + " éditions" : null].filter(Boolean).map(esc).join(" · ")}</small></span>`;
+        el.onclick = () => pickSuggestion(b, showFields); sugg.append(el); });
+      if (!final && list.length) sugg.insertAdjacentHTML("beforeend", `<p class="note" style="margin:6px 0">La BnF répond encore…</p>`); };
+    try { show(await searchBooks(text, ctl.signal, l => show(l, false)), true);
     } catch (err) { if (err.name !== "AbortError" && ctl === addCtl) sugg.innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion, ou remplis la fiche à la main.</p>`; }
   };
-  q.addEventListener("input", () => { clearTimeout(addTimer); addTimer = setTimeout(run, 380); });
+  q.addEventListener("input", () => { clearTimeout(addTimer); addTimer = setTimeout(run, 320); });
   q.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); clearTimeout(addTimer); run(); q.blur(); } });
-  $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#fadd button.inkbtn"); btn.disabled = true;
+  $("#aqx").onclick = () => { q.value = ""; addCtl?.abort(); sugg.innerHTML = ""; $("#aqx").hidden = true; q.focus(); };
+  $("#amanual").onclick = () => { showFields(); $("#athumb").textContent = "?"; $("#at").focus(); };
+  $("#aeds").onclick = e => { const c = e.target.closest("[data-pages]"); if (!c) return; $("#ap").value = c.dataset.pages; $("#aeds").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === c)); haptic(); };
+  $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#asubmit"); btn.disabled = true;
     try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0,
         cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
       bk.cover_url = await resolveCover(bk); await api.addBook(bk); closeStudy(); await reload();
     } catch (err) { $("#aerr").textContent = err.message; btn.disabled = false; } };
 }
-function pickSuggestion(b) {
-  addPick = b; addCtl?.abort(); $("#sugg").innerHTML = ""; $("#aq").value = "";
+function pickSuggestion(b, showFields) {
+  addPick = b; addCtl?.abort(); $("#sugg").innerHTML = ""; $("#aq").value = ""; $("#aqx").hidden = true; showFields();
   $("#at").value = b.title; $("#aa").value = b.author || ""; $("#ap").value = b.total_pages || "";
-  $("#athumb").innerHTML = `${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="">` : ""}`; const img = $("#athumb img"); if (img) img.onerror = () => img.remove();
+  $("#athumb").innerHTML = `${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="" onerror="this.remove()">` : ""}`;
+  $("#aeds").innerHTML = b.editions.length > 1 ? `<span class="chiplbl">Éditions</span>` + b.editions.map(e => `<button type="button" data-pages="${e.pages}" aria-pressed="${e.pages === b.total_pages}">${e.pages} p.<small>${esc([e.publisher, e.year].filter(Boolean).join(" ") || "sans date")}</small></button>`).join("") : "";
   haptic(); ($("#ap").value ? $("#ac") : $("#ap")).focus();
 }
-// La feuille 3D est vue à la verticale : son contour à l'écran est un rectangle, sur lequel on cale le formulaire.
 function placeSheet(room = scene3d?.state) {
   const f = $(room === "journal" ? "#flog" : "#fadd"); if (!f || !scene3d || scene3d.state !== room) return; const r = scene3d.paperRect(room); if (!r) return;
   Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" }); f.classList.add("ready"); document.body.classList.add("study-ready");
@@ -752,21 +857,10 @@ function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = 
 function openJournal(bookId) {
   const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
   study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-  <form class="sheet onpaper journal" id="flog" autocomplete="off"><h1>J'ai lu</h1>
-    <label for="lb">Livre</label><select id="lb">${list.map(b => `<option value="${esc(b.id)}" ${b === sel ? "selected" : ""}>${esc(bookLabel(b))}</option>`).join("")}</select>
-    <label for="lp">Page atteinte</label><input id="lp" type="number" inputmode="numeric" required min="1">
-    <label for="ls">Ce que je retiens <span class="count" id="lcount"></span></label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
-    <div class="err" id="lerr"></div><button class="inkbtn" style="width:100%;margin-top:12px">Noter dans le journal</button></form>`;
+  <form class="sheet onpaper journal" id="flog" autocomplete="off">${readingForm(list, sel, "Noter dans le journal")}</form>`;
   study.hidden = false; document.body.classList.add("study-open"); scene3d.setState("journal");
-  const upd = () => { const b = list.find(x => x.id === $("#lb").value), n = Math.max(0, (+$("#lp").value || 0) - b.current_page), need = Math.min(150 + 20 * n, 800);
-    $("#lcount").textContent = n ? `· ${$("#ls").value.trim().length} / ${need} car. pour ${plural(n, "page")}` : ""; };
-  ["input", "change"].forEach(ev => $("#flog").addEventListener(ev, upd));
-  $("#flog").onsubmit = async e => { e.preventDefault(); const btn = $("#flog button.inkbtn"); btn.disabled = true;
-    try { const b = list.find(x => x.id === $("#lb").value); const r = await api.logReading(S.config.secret, bookLabel(b), +$("#lp").value, $("#ls").value);
-      if (!r.ok) { $("#lerr").textContent = r.error; btn.disabled = false; return; }
-      haptic(); closeStudy(); await reload(); } catch (err) { $("#lerr").textContent = err.message; btn.disabled = false; } };
+  wireReadingForm($("#flog"), list, sel, async () => { closeStudy(); await reload(); });
 }
-
 function dlgEdit(rid) {
   const r = S.readings.find(x => x.id === rid);
   openDlg(`<h1>Corriger le résumé</h1><p style="font:13px var(--sans);color:var(--ink-2)">p. ${r.page_start} → ${r.page_end}</p><form id="fedit">
