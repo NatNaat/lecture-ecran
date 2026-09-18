@@ -207,9 +207,11 @@ body.has3d #study { background: none; }
 .sheet.onpaper .note { font-size: 12px; margin-top: 8px; }
 .sheet.onpaper .inkbtn { margin-top: auto !important; min-height: 46px; }
 .sheet.onpaper .searchwrap { position: relative; }
-.sheet.onpaper.journal h1 { font-size: 19px; }
+.sheet.onpaper.journal h1 { font-size: 18px; padding-bottom: 4px; }
+.sheet.onpaper.journal label { margin-top: 6px; }
+.sheet.onpaper.journal .inkbtn { min-height: 40px; font-size: 14px; margin-top: 8px !important; }
 .sheet.onpaper select { width: 100%; font: 16px var(--sans); color: var(--ink); background: none; border: 0; border-bottom: 1px solid rgba(34,27,20,.45); border-radius: 0; padding: 5px 0 6px; -webkit-appearance: none; appearance: none; }
-.sheet.onpaper textarea { flex: 1; min-height: 120px; width: 100%; resize: none; border: 0; border-radius: 0; padding: 4px 0; font: 17px/28px var(--sans); color: var(--ink); background: repeating-linear-gradient(180deg, transparent 0 27px, rgba(34,27,20,.28) 27px 28px); }
+.sheet.onpaper textarea { flex: 1; min-height: 84px; width: 100%; resize: none; border: 0; border-radius: 0; padding: 4px 0; font: 17px/28px var(--sans); color: var(--ink); background: repeating-linear-gradient(180deg, transparent 0 27px, rgba(34,27,20,.28) 27px 28px); }
 .sheet.onpaper textarea:focus-visible { outline: none; }
 .sheet.onpaper .count { font-size: 11px; }
 .sheet.onpaper #sugg { position: absolute; z-index: 3; left: -4%; right: -4%; top: 100%; max-height: 46dvh; margin: 0; padding: 2px 12px; border-radius: 0 0 10px 10px; background: var(--paper); box-shadow: 0 16px 30px rgba(0,0,0,.5); }
@@ -230,7 +232,7 @@ body.has3d .studyback { opacity: 0; transition: opacity .5s var(--ease); } body.
 .cvgrid img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cvgrid p { grid-column: 1 / -1; }
 body.study-open #dock, body.study-open .hint { transform: translate(-50%, 110%); opacity: 0; }
-body.has3d[data-view="study"] .skyhead, body.has3d[data-view="nook"] .skyhead { opacity: 0; } body.has3d[data-view="study"] #sky, body.has3d[data-view="nook"] #sky { background: none; }
+body.has3d[data-view="study"] .skyhead, body.has3d[data-view="journal"] .skyhead { opacity: 0; } body.has3d[data-view="study"] #sky, body.has3d[data-view="journal"] #sky { background: none; }
 
 /* ───────── Mode 3D : la pièce est dessinée dans le canevas, l'interface flotte par-dessus ───────── */
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: none; touch-action: none; outline: none; }
@@ -256,7 +258,7 @@ body.has3d[data-view="shelf"] #sky { background: none; }
 body.has3d[data-view="shelf"] .backbtn { display: inline-flex; }
 body.has3d #bookview:not([hidden]) { animation: pagein .45s var(--ease); }
 @keyframes pagein { from { opacity: 0; transform: scale(.96); } }
-.hint { position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(var(--dock) + env(safe-area-inset-bottom) + 14px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
+.hint { position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 22px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
 body:not([data-view="room"]) .hint, body.sky-open .hint { opacity: 0; }
 .skyclose { position: fixed; z-index: 7; right: 12px; top: calc(env(safe-area-inset-top) + 10px); width: 44px; height: 44px; border-radius: 22px; display: none; place-items: center; color: var(--cream); background: rgba(255,255,255,.1); }
 .skyclose svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -416,7 +418,8 @@ function render() {
   if (scene3d) {
     const label = b => `${b.title}, ${b.author || "auteur inconnu"}, ${b.status === "en_cours" ? `page ${b.current_page}${b.total_pages ? " sur " + b.total_pages : ""}` : b.status === "fini" ? "fini" : "abandonné"}`;
     app.innerHTML = `<button class="backbtn" data-act="back-room"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reculer</button>
-      <p class="hint">${S.books.length ? "Touche les rayons pour t'approcher" : "Tes rayons sont vides : pose ton premier livre avec « Ajouter un livre »."}</p>
+      <p class="hint">${S.books.length ? "Touche les rayons, le journal sur la table, ou la porte de l'étage" : "Tes rayons sont vides : touche la porte éclairée de l'étage pour poser ton premier livre."}</p>
+      <ul class="sr-only"><li><button data-act="add-book">Ajouter un livre</button></li><li><button data-act="log" ${reading.length ? "" : "disabled"}>J'ai lu</button></li></ul>
       <ul class="sr-only" aria-label="Tes livres">${S.books.map(b => `<li><button data-book="${esc(b.id)}">${esc(label(b))}</button></li>`).join("")}</ul>`;
     scene3d.setBooks(S.books);
   } else app.innerHTML = `<div id="case">
@@ -434,7 +437,7 @@ function render() {
       </section>
     </main>
     </div>`;
-  dock.innerHTML = `<button class="tool primary" data-act="log" ${reading.length ? "" : "disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3c-7 1-12 6-14 14l-2 4 4-2c8-2 13-7 12-16z"/><path d="M6 17c3-4 6-7 10-10"/></svg>J'ai lu</button>
+  dock.innerHTML = scene3d ? "" : `<button class="tool primary" data-act="log" ${reading.length ? "" : "disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3c-7 1-12 6-14 14l-2 4 4-2c8-2 13-7 12-16z"/><path d="M6 17c3-4 6-7 10-10"/></svg>J'ai lu</button>
     <button class="tool ghost" data-act="add-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter un livre</button>`;
   renderSky();
   tick = setInterval(updateCountdowns, 1000); updateCountdowns();
@@ -740,21 +743,21 @@ function pickSuggestion(b) {
 }
 // La feuille 3D est vue à la verticale : son contour à l'écran est un rectangle, sur lequel on cale le formulaire.
 function placeSheet(room = scene3d?.state) {
-  const f = $(room === "nook" ? "#flog" : "#fadd"); if (!f || !scene3d || scene3d.state !== room) return; const r = scene3d.paperRect(room); if (!r) return;
+  const f = $(room === "journal" ? "#flog" : "#fadd"); if (!f || !scene3d || scene3d.state !== room) return; const r = scene3d.paperRect(room); if (!r) return;
   Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" }); f.classList.add("ready"); document.body.classList.add("study-ready");
 }
 addEventListener("resize", () => setTimeout(placeSheet, 60));
-function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open", "study-ready"); if (scene3d?.state === "study" || scene3d?.state === "nook") scene3d.setState("room"); }
+function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open", "study-ready"); if (scene3d?.state === "study" || scene3d?.state === "journal") scene3d.setState("room"); }
 // Le coin lecture : le journal ouvert sur la table basse, où l'on note ce qu'on vient de lire.
-function openNook(bookId) {
+function openJournal(bookId) {
   const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
   study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-  <form class="sheet onpaper journal" id="flog" autocomplete="off"><h1>Ce soir, j'ai lu</h1>
+  <form class="sheet onpaper journal" id="flog" autocomplete="off"><h1>J'ai lu</h1>
     <label for="lb">Livre</label><select id="lb">${list.map(b => `<option value="${esc(b.id)}" ${b === sel ? "selected" : ""}>${esc(bookLabel(b))}</option>`).join("")}</select>
     <label for="lp">Page atteinte</label><input id="lp" type="number" inputmode="numeric" required min="1">
     <label for="ls">Ce que je retiens <span class="count" id="lcount"></span></label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
     <div class="err" id="lerr"></div><button class="inkbtn" style="width:100%;margin-top:12px">Noter dans le journal</button></form>`;
-  study.hidden = false; document.body.classList.add("study-open"); scene3d.setState("nook");
+  study.hidden = false; document.body.classList.add("study-open"); scene3d.setState("journal");
   const upd = () => { const b = list.find(x => x.id === $("#lb").value), n = Math.max(0, (+$("#lp").value || 0) - b.current_page), need = Math.min(150 + 20 * n, 800);
     $("#lcount").textContent = n ? `· ${$("#ls").value.trim().length} / ${need} car. pour ${plural(n, "page")}` : ""; };
   ["input", "change"].forEach(ev => $("#flog").addEventListener(ev, upd));
@@ -788,7 +791,7 @@ document.addEventListener("click", async e => {
     if (act === "close-book") closeBook();
     else if (act === "back-room") scene3d?.setState("room");
     else if (act === "toggle-sky") { if (suppressClick) { suppressClick = false; return; } haptic(); setSky(!skyOpen); }
-    else if (act === "log") { if (scene3d && bookview.hidden && !el.dataset.id) openNook(); else dlgLog(el.dataset.id || openBook); }
+    else if (act === "log") { if (scene3d && bookview.hidden && !el.dataset.id) openJournal(); else dlgLog(el.dataset.id || openBook); }
     else if (act === "add-book") openStudy();
     else if (act === "close-study") closeStudy();
     else if (act === "cover") dlgCover(openBook);
@@ -818,7 +821,7 @@ async function initScene() {
   try {
     const { createScene } = await import("./scene.js");
     scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(false); bookview.scrollTop = 0; }, onCeiling: () => setSky(true),
-      onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; }, onArrive: v => { if (v === "ceiling") document.body.classList.add("sky-ready"); else placeSheet(v); } });
+      onState: v => { document.body.dataset.view = v; }, onArrive: v => { if (v === "ceiling") document.body.classList.add("sky-ready"); else placeSheet(v); }, onDoor: () => openStudy(), onJournal: () => { if (S.books.some(b => b.status === "en_cours")) openJournal(); else openStudy(); } });
     document.body.classList.add("has3d"); document.body.dataset.view = "room";
   } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
 }

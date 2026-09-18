@@ -223,6 +223,7 @@ export function createScene(canvas, cb = {}) {
   for (const s of [-1, 1]) caseSide(s, ZB + CASE_D, 1.4, y2, 6, .47, R);
   // porte éclairée à l'étage
   const door = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.3), new THREE.MeshBasicMaterial({ color: "#e9a45a", transparent: true })); door.position.set(0, y2 + 1.15, ZB + .04); scene.add(door);
+  const doorHit = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0), new THREE.MeshBasicMaterial({ visible: false })); doorHit.position.set(0, y2 + 1.3, ZB + .06); scene.add(doorHit);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
   // rambardes (avec une ouverture pour l'échelle)
   const rail = (x0, z0, x1, z1) => { const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(2, Math.round(len / .16)), rot = Math.atan2(x1 - x0, z1 - z0);
@@ -242,11 +243,32 @@ export function createScene(canvas, cb = {}) {
   // mobilier
   const leather = new THREE.MeshStandardMaterial({ color: "#9a683a", roughness: .55 }), linen = new THREE.MeshStandardMaterial({ color: "#b9ab8c", roughness: .9 });
   const cyl = (rt, rb, h, mat, x, y, z, open) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 28, 1, !!open), mat); m.position.set(x, y, z); m.castShadow = !open; m.receiveShadow = true; into.add(m); return m; };
-  const tx = 1.25, tz = .9; cyl(.42, .42, .035, wood, tx, .745, tz); cyl(.4, .36, .03, wood, tx, .715, tz); cyl(.035, .06, .42, wood, tx, .5, tz); cyl(.07, .035, .1, wood, tx, .26, tz); cyl(.06, .09, .2, wood, tx, .12, tz); cyl(.24, .28, .035, wood, tx, .018, tz);
+  const tx = 1.25, tz = .9; cyl(.5, .5, .035, wood, tx, .745, tz); cyl(.48, .44, .03, wood, tx, .715, tz); cyl(.035, .06, .42, wood, tx, .5, tz); cyl(.07, .035, .1, wood, tx, .26, tz); cyl(.06, .09, .2, wood, tx, .12, tz); cyl(.24, .28, .035, wood, tx, .018, tz);
   const shadeMat = new THREE.MeshStandardMaterial({ color: "#f3d9a4", emissive: "#ffb765", emissiveIntensity: 1.6, side: THREE.DoubleSide, roughness: .9 });
   const lamp = (x, y, z, k = 1) => { cyl(.07 * k, .09 * k, .04, brass, x, y + .02, z); cyl(.015, .015, .34 * k, brass, x, y + .19 * k, z); cyl(.11 * k, .2 * k, .2 * k, shadeMat, x, y + .44 * k, z, true);
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); s.scale.set(1.5 * k, 1.5 * k, 1); s.position.set(x, y + .44 * k, z); scene.add(s); };
-  const glow = glowTex(); lamp(tx, .76, tz); lamp(-1.35, y2, ZB + .75, .9);
+  const glow = glowTex(); lamp(tx + .3, .76, tz - .28, .85); lamp(-1.35, y2, ZB + .75, .9);
+  // Le journal de lecture, ouvert sur la table ronde : reliure en cuir, tranches des pages, ruban, page de gauche déjà écrite
+  const journal = new THREE.Group(); journal.position.set(tx - .1, .762, tz + .08); journal.rotation.y = .55; scene.add(journal);
+  const JP = { w: .27, h: .40 }, journalUp = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), journal.rotation.y);
+  const writtenTex = canvasTex(512, 758, (g, w, h) => { g.fillStyle = "#efe6d0"; g.fillRect(0, 0, w, h); const r = rnd(17);
+    for (let i = 0; i < 1200; i++) { g.fillStyle = r() > .5 ? "#fff" : "#8a7a55"; g.globalAlpha = .05; g.fillRect(r() * w, r() * h, 1 + r() * 2, 1 + r() * 2); } g.globalAlpha = 1;
+    g.strokeStyle = "rgba(34,27,20,.12)"; g.lineWidth = 1; for (let y = 90; y < h - 40; y += 34) { g.beginPath(); g.moveTo(50, y); g.lineTo(w - 40, y); g.stroke(); }
+    g.fillStyle = "#2b2118"; g.font = "600 22px " + SANS; g.fillText("Carnet de lecture", 50, 56); g.fillRect(50, 66, 180, 2);
+    g.strokeStyle = "#2b2118"; g.lineWidth = 1.6; g.lineCap = "round";
+    for (let y = 108; y < h - 40; y += 34) { if (r() < .12) continue; let x = 50 + (r() < .3 ? 60 : 0); const end = w - 60 - r() * 120;
+      while (x < end) { const len = 14 + r() * 40; g.beginPath(); g.moveTo(x, y - 6); for (let k = 0; k < len; k += 4) g.lineTo(x + k, y - 4 - Math.sin(k * .9 + r() * 3) * (3 + r() * 3)); g.stroke(); x += len + 9; } }
+    g.globalAlpha = .55; g.strokeStyle = "#6a1f1f"; g.lineWidth = 2; g.beginPath(); g.moveTo(60, 380); g.quadraticCurveTo(220, 366, w - 90, 386); g.stroke(); g.globalAlpha = 1; });
+  { const J = journal, cover = new THREE.MeshStandardMaterial({ color: "#3a2415", roughness: .62 }), edge = new THREE.MeshStandardMaterial({ color: "#e4d9bf", roughness: .95 }), pageTop = new THREE.MeshStandardMaterial({ map: paperTex(), roughness: .95, emissive: "#efe6d0", emissiveIntensity: .12 });
+    const m = new THREE.Mesh(new THREE.BoxGeometry(2 * JP.w + .08, .018, JP.h + .05), cover); m.position.y = .009; m.castShadow = m.receiveShadow = true; J.add(m);
+    for (const sd of [-1, 1]) { const blk = new THREE.Mesh(new THREE.BoxGeometry(JP.w, .022, JP.h), [edge, edge, sd < 0 ? new THREE.MeshStandardMaterial({ map: writtenTex, roughness: .95, emissive: "#efe6d0", emissiveIntensity: .12 }) : pageTop, edge, edge, edge]); blk.position.set(sd * (JP.w / 2 + .006), .029, 0); blk.receiveShadow = true; J.add(blk);
+      for (let k = 0; k < 4; k++) { const leaf = new THREE.Mesh(new THREE.BoxGeometry(JP.w - .004 - k * .003, .0015, JP.h - .006 - k * .004), edge); leaf.position.set(sd * (JP.w / 2 + .006), .0405 + k * .0016, 0); J.add(leaf); } }
+    const spine = new THREE.Mesh(new THREE.BoxGeometry(.012, .026, JP.h), cover); spine.position.y = .031; J.add(spine);
+    const ribbon = new THREE.Mesh(new THREE.BoxGeometry(.012, .002, .22), new THREE.MeshStandardMaterial({ color: "#7a1f1f", roughness: .8 })); ribbon.position.set(.05, .042, JP.h / 2 + .02); ribbon.rotation.y = .12; J.add(ribbon);
+    const pen = new THREE.Mesh(new THREE.CylinderGeometry(.005, .0035, .15, 8), new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .35 })); pen.rotation.set(Math.PI / 2, 0, .45); pen.position.set(JP.w + .07, .01, .1); J.add(pen);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.0055, .0055, .03, 8), brass); cap.rotation.set(Math.PI / 2, 0, .45); cap.position.set(JP.w + .07 - Math.sin(.45) * .06, .01, .1 - Math.cos(.45) * .06); J.add(cap); }
+  const journalPage = new THREE.Mesh(new THREE.PlaneGeometry(JP.w, JP.h), new THREE.MeshBasicMaterial({ visible: false })); journalPage.rotation.x = -Math.PI / 2; journalPage.position.set(JP.w / 2 + .006, .047, 0); journal.add(journalPage);
+  const journalHit = new THREE.Mesh(new THREE.BoxGeometry(2 * JP.w + .2, .12, JP.h + .16), new THREE.MeshBasicMaterial({ visible: false })); journalHit.position.y = .05; journal.add(journalHit);
   // Mobilier aux arêtes adoucies : boîtes arrondies (extrusion biseautée), accoudoirs en capsule, pieds tournés
   const softGeo = (w, h, d, r) => { r = Math.min(r, w / 2 - .001, h / 2 - .001, d / 2 - .001); const a = w / 2 - r, b = h / 2 - r, c = Math.min(r * .6, a, b), sh = new THREE.Shape();
     sh.moveTo(-a + c, -b); sh.lineTo(a - c, -b); sh.quadraticCurveTo(a, -b, a, -b + c); sh.lineTo(a, b - c); sh.quadraticCurveTo(a, b, a - c, b); sh.lineTo(-a + c, b); sh.quadraticCurveTo(-a, b, -a, b - c); sh.lineTo(-a, -b + c); sh.quadraticCurveTo(-a, -b, -a + c, -b);
@@ -337,68 +359,6 @@ export function createScene(canvas, cb = {}) {
     into = scene;
   }
 
-  // ───────────── Le coin lecture : cheminée, fauteuil, fenêtre sur la nuit, et le journal de lecture ouvert sur une table ─────────────
-  const nook = new THREE.Group(); nook.visible = false; scene.add(nook); let journal = null; const nookUp = new THREE.Vector3(0, 0, -1);
-  const NX0 = -7.7, NX1 = -2.82, NZ0 = SZ0, NZ1 = SZ0 - 4.7, NH = 2.9;
-  let fireLight = null, fireSprite = null;
-  {
-    into = nook; const g0 = generic.length, R3 = rnd(41), nxc = (NX0 + NX1) / 2, nzc = (NZ0 + NZ1) / 2, nw = NX1 - NX0, nl = NZ0 - NZ1;
-    const plum = new THREE.MeshStandardMaterial({ color: "#3a1c1c", roughness: .92 }), stone = new THREE.MeshStandardMaterial({ color: "#3b3532", roughness: .95 }), soot = new THREE.MeshStandardMaterial({ color: "#050403", roughness: 1 });
-    const velvet = new THREE.MeshStandardMaterial({ color: "#5a1f22", roughness: .95 });
-    const fl = new THREE.Mesh(new THREE.PlaneGeometry(nw, nl), floorMat); fl.rotation.x = -Math.PI / 2; fl.position.set(nxc, SY + .002, nzc); fl.receiveShadow = true; nook.add(fl);
-    const rg = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 3.4), new THREE.MeshStandardMaterial({ map: rugTex(), roughness: .95, color: "#8a7a80" })); rg.rotation.x = -Math.PI / 2; rg.rotation.z = Math.PI / 2; rg.position.set(nxc - .5, SY + .008, nzc - .3); nook.add(rg);
-    box(nw, NH, .1, plum, nxc, SY + NH / 2, NZ1 - .05, false); box(.1, NH, nl, plum, NX0 - .05, SY + NH / 2, nzc, false);
-    // mur mitoyen avec le cabinet, percé d'une arche
-    box(.1, NH, ARCH.z0 - NZ1, plum, NX1 + .05, SY + NH / 2, (ARCH.z0 + NZ1) / 2, false); box(.1, NH, NZ0 - ARCH.z1, plum, NX1 + .05, SY + NH / 2, (NZ0 + ARCH.z1) / 2, false);
-    box(.1, NH - ARCH.h, ARCH.z1 - ARCH.z0, plum, NX1 + .05, SY + ARCH.h + (NH - ARCH.h) / 2, (ARCH.z0 + ARCH.z1) / 2, false);
-    box(nw, .08, nl, new THREE.MeshStandardMaterial({ color: "#241610", roughness: 1 }), nxc, SY + NH + .04, nzc, false);
-    for (const z of [NZ1 + .8, NZ1 + 2.0, NZ1 + 3.2, NZ1 + 4.4]) box(nw, .16, .14, woodDark, nxc, SY + NH - .08, z, false);   // poutres
-    // cheminée sur le mur de gauche
-    const fz = nzc - .2;
-    box(.36, 1.35, 1.7, stone, NX0 + .18, SY + .675, fz); box(.42, .09, 1.9, wood, NX0 + .21, SY + 1.4, fz); box(.02, .9, 1.0, soot, NX0 + .36, SY + .5, fz, false);
-    box(.34, .12, .9, stone, NX0 + .17, SY + .06, fz, false); box(.8, .02, 1.3, stone, NX0 + .4, SY + .011, fz, false);
-    for (const dz of [-.3, 0, .3]) { const log = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .5, 10), new THREE.MeshStandardMaterial({ color: "#2a1a10", roughness: 1 })); log.rotation.x = Math.PI / 2; log.rotation.z = .2 * dz; log.position.set(NX0 + .27, SY + .14 + Math.abs(dz) * .15, fz + dz); nook.add(log); }
-    const fireTex = canvasTex(128, 192, (g, w, h) => { g.clearRect(0, 0, w, h); const flame = (x, y, rw, rh, c1, c2) => { const gr = g.createRadialGradient(x, y, 0, x, y, rh); gr.addColorStop(0, c1); gr.addColorStop(.55, c2); gr.addColorStop(1, "rgba(255,120,30,0)"); g.fillStyle = gr; g.save(); g.scale(rw / rh, 1); g.beginPath(); g.arc(x * rh / rw, y, rh, 0, 7); g.fill(); g.restore(); };
-      flame(64, 130, 44, 60, "rgba(255,240,180,.95)", "rgba(255,150,40,.7)"); flame(44, 100, 22, 48, "rgba(255,220,120,.8)", "rgba(255,110,20,.5)"); flame(84, 92, 20, 52, "rgba(255,210,110,.8)", "rgba(255,100,20,.5)"); });
-    const fireMat = new THREE.SpriteMaterial({ map: fireTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true });
-    fireSprite = new THREE.Sprite(fireMat); fireSprite.scale.set(1.1, 1.25, 1); fireSprite.position.set(NX0 + .3, SY + .5, fz); nook.add(fireSprite);
-    const emb = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ff8a3a" })); emb.scale.set(1.6, 1.2, 1); emb.position.set(NX0 + .34, SY + .4, fz); nook.add(emb);
-    for (const dz of [-.55, .55]) { cyl(.03, .04, .02, brass, NX0 + .21, SY + 1.455, fz + dz); cyl(.014, .016, .16, new THREE.MeshStandardMaterial({ color: "#efe3c2", roughness: .6, emissive: "#ffb765", emissiveIntensity: .25 }), NX0 + .21, SY + 1.545, fz + dz); }
-    // fenêtre sur la nuit, rideaux
-    const nightTex = canvasTex(256, 384, (g, w, h) => { const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, "#0a1230"); bg.addColorStop(1, "#1c2d5e"); g.fillStyle = bg; g.fillRect(0, 0, w, h); const r = rnd(13); g.fillStyle = "#f3dfa8";
-      for (let i = 0; i < 90; i++) { g.globalAlpha = .4 + r() * .6; g.beginPath(); g.arc(r() * w, r() * h * .8, .5 + r() * 1.3, 0, 7); g.fill(); } g.globalAlpha = 1;
-      const m = g.createRadialGradient(178, 92, 4, 178, 92, 40); m.addColorStop(0, "#fff6dc"); m.addColorStop(.45, "#f6e6b8"); m.addColorStop(.5, "rgba(246,230,184,.25)"); m.addColorStop(1, "rgba(246,230,184,0)"); g.fillStyle = m; g.beginPath(); g.arc(178, 92, 40, 0, 7); g.fill();
-      g.fillStyle = "#101a24"; for (let i = 0; i < 5; i++) { g.beginPath(); g.ellipse(30 + i * 52, h - 30 - (i % 2) * 18, 40, 28 + (i % 3) * 10, 0, 0, 7); g.fill(); } });
-    const win = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.5), new THREE.MeshStandardMaterial({ map: nightTex, emissive: "#ffffff", emissiveMap: nightTex, emissiveIntensity: .8, roughness: 1 })); win.position.set(nxc - .3, SY + 1.7, NZ1 + .02); nook.add(win);
-    box(1.24, .07, .08, wood, nxc - .3, SY + 2.48, NZ1 + .06, false); box(1.24, .09, .12, wood, nxc - .3, SY + .92, NZ1 + .08, false);
-    for (const dx of [-.62, 0, .62]) box(.06, 1.56, .06, wood, nxc - .3 + dx, SY + 1.7, NZ1 + .05, false); box(1.16, .05, .06, wood, nxc - .3, SY + 1.7, NZ1 + .05, false);
-    for (const dx of [-.92, .92]) { const c = box(.36, 2.3, .16, velvet, nxc - .3 + dx, SY + 1.45, NZ1 + .14); c.rotation.y = dx < 0 ? .15 : -.15; }
-    // fauteuil face au feu, pouf, table basse avec le journal, guéridon et lampe
-    chair(NX0 + 1.45, fz, -Math.PI / 2, SY);
-    { const g = new THREE.Group(); soft(g, .58, .2, .44, .08, leather, 0, .38, 0); for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .22, b * .15, .27); g.position.set(NX0 + .75, SY, fz); g.rotation.y = Math.PI / 2; nook.add(g); }
-    const T = new THREE.Group(); T.position.set(NX0 + 1.45, SY, fz - 1.15); nook.add(T); into = T;
-    box(.92, .04, .7, wood, 0, .53, 0); box(.84, .03, .62, woodDark, 0, .5, 0, false); for (const a of [-1, 1]) for (const b of [-1, 1]) leg(T, a * .4, b * .29, .5);
-    const jm = new THREE.MeshStandardMaterial({ map: paperTex(), roughness: .95, emissive: "#efe6d0", emissiveIntensity: .14 });
-    const leftPage = new THREE.Mesh(new THREE.PlaneGeometry(PAPER.w, PAPER.h), jm); leftPage.rotation.x = -Math.PI / 2; leftPage.position.set(-.185, .5535, 0); T.add(leftPage);
-    journal = new THREE.Mesh(new THREE.PlaneGeometry(PAPER.w, PAPER.h), jm); journal.rotation.x = -Math.PI / 2; journal.position.set(.175, .5535, 0); journal.receiveShadow = true; T.add(journal);
-    box(.74, .016, PAPER.h + .03, new THREE.MeshStandardMaterial({ color: "#2a1a10", roughness: .7 }), 0, .543, 0, false); box(.02, .02, PAPER.h + .02, new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .6 }), 0, .565, 0, false);
-    const pen = new THREE.Mesh(new THREE.CylinderGeometry(.006, .004, .16, 8), new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .4 })); pen.rotation.set(Math.PI / 2, 0, .2); pen.position.set(.39, .56, .12); T.add(pen);
-    into = nook;
-    cyl(.28, .28, .03, wood, nxc + 1.15, SY + .62, NZ1 + 1.0); cyl(.03, .04, .6, wood, nxc + 1.15, SY + .3, NZ1 + 1.0); cyl(.2, .24, .03, wood, nxc + 1.15, SY + .015, NZ1 + 1.0); lamp(nxc + 1.15, SY + .64, NZ1 + 1.0, .85);
-    // petite bibliothèque sur le mur mitoyen, au fond
-    const rows = 5, rowH = .44, y0 = SY + .1, bz0 = NZ1 + .05, bz1 = ARCH.z0 - .25;
-    box(.03, rows * rowH + .06, bz1 - bz0, woodDark, NX1 - .015, y0 + (rows * rowH) / 2, (bz0 + bz1) / 2, false);
-    for (let k = 0; k <= rows; k++) box(CASE_D, .04, bz1 - bz0, wood, NX1 - CASE_D / 2, y0 + k * rowH, (bz0 + bz1) / 2, false);
-    for (const z of [bz0, bz1]) box(CASE_D + .02, rows * rowH + .06, .06, wood, NX1 - (CASE_D + .02) / 2, y0 + (rows * rowH) / 2, z, false);
-    for (let k = 0; k < rows; k++) fillRow(bz0 + .05, bz1 - .05, y0 + k * rowH + .02, NX1, 1, rowH, R3);
-    fireLight = new THREE.PointLight("#ff9a4a", 16, 7, 1.4);
-    const l4 = new THREE.PointLight("#ffb27a", 3.5, 5.5, 1.5); l4.position.set(nxc, SY + NH - .4, nzc); scene.add(l4); fireLight.position.set(NX0 + .55, SY + .7, fz); scene.add(fireLight);
-    const l3 = new THREE.PointLight("#ffb46c", 7, 4.2, 1.6); l3.position.set(nxc + 1.15, SY + 1.15, NZ1 + 1.0); scene.add(l3);
-    const mine = generic.splice(g0), inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: .75 }), mine.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
-    mine.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(.7)); }); nook.add(inst);
-    into = scene;
-  }
-
   { const geo = new THREE.BoxGeometry(1, 1, 1), mat = new THREE.MeshStandardMaterial({ roughness: .75 }), inst = new THREE.InstancedMesh(geo, mat, generic.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
     generic.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(.85)); });
     inst.receiveShadow = true; scene.add(inst); }
@@ -406,7 +366,7 @@ export function createScene(canvas, cb = {}) {
   // Lumières
   scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .6));
   const pl = (x, y, z, i, d = 9) => { const l = new THREE.PointLight("#ffb46c", i, d, 1.8); l.position.set(x, y, z); scene.add(l); return l; };
-  pl(tx, 1.25, tz, 9); pl(-1.35, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.3, ZB + .5, 5, 6);
+  pl(tx + .3, 1.28, tz - .28, 7); pl(-1.35, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.3, ZB + .5, 5, 6);
   const key = new THREE.SpotLight("#ffd9a8", 46, 16, .95, .7, 1.4); key.position.set(.6, H - .3, 2.6); key.target.position.set(-.2, 0, -.6); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0006; scene.add(key, key.target);
   const pic = new THREE.SpotLight("#ffcf94", 7, 7, 1.05, .8, 1.2); pic.position.set(0, H1 - .15, ZB + 1.55); pic.target.position.set(0, 1.5, ZB); scene.add(pic, pic.target);
   box(1.4, .05, .1, brass, 0, H1 - .1, ZB + BAL_B - .1, false);
@@ -470,13 +430,13 @@ export function createScene(canvas, cb = {}) {
     study: { group: study, sheet: sheet3d, up: deskUp, ms: [3000, 2600],
       P: pw => [V3(0, SY + 1.45, -1.9), V3(0, SY + 1.35, ZB - .5), V3(pw.x * .5, SY + 1.7, pw.z + 1.25)],
       T: pw => [V3(0, SY + 1.25, ZB - 1.5), V3(pw.x * .6, SY + 1.0, pw.z + .2), pw.clone()] },
-    nook: { group: nook, sheet: journal, up: nookUp, ms: [3400, 3000],
-      P: pw => [V3(0, SY + 1.45, -1.9), V3(0, SY + 1.35, ZB - .55), V3(-1.4, SY + 1.4, ZB - 1.1), V3(-3.4, SY + 1.4, ZB - 1.1), V3(pw.x + .7, SY + 1.55, pw.z + .9)],
-      T: pw => [V3(0, SY + 1.25, ZB - 1.4), V3(-1.8, SY + 1.15, ZB - 1.1), V3(-4.0, SY + 1.05, ZB - 1.4), V3(pw.x - .6, SY + .8, pw.z - .8), pw.clone()] },
+    journal: { group: journal, sheet: journalPage, up: journalUp, keep: true, alt: .43, ms: [1900, 1700],
+      P: pw => [V3(pw.x * .55, 1.75, pw.z + 1.9)],
+      T: pw => [pw.clone()] },
   };
   function paperWorld(name) { const r = rooms[name]; r.group.updateMatrixWorld(true); return r.sheet.getWorldPosition(new THREE.Vector3()); }
   function goRoom(name, entering) {
-    const r = rooms[name], pw = paperWorld(name), above = pw.clone(); above.y += .56;
+    const r = rooms[name], pw = paperWorld(name), above = pw.clone(); above.y += r.alt || .56;
     const P = [V3(...VIEWS.room.p), ...r.P(pw), above], T = [V3(...VIEWS.room.t), ...r.T(pw), pw.clone()];
     if (entering) { P[0] = cam.p.clone(); T[0] = cam.t.clone(); } else { P.reverse(); T.reverse(); }
     tw = { t0: performance.now(), ms: r.ms[entering ? 0 : 1], smooth: true, entering, room: name, cp: new THREE.CatmullRomCurve3(P, false, "centripetal"), ct: new THREE.CatmullRomCurve3(T, false, "centripetal") }; invalidate();
@@ -503,9 +463,9 @@ export function createScene(canvas, cb = {}) {
   function invalidate() { if (!raf && alive) raf = requestAnimationFrame(frame); }
   function frame(now) {
     raf = 0; let busy = dragging;
-    if (tw) { const k = Math.min(1, (now - tw.t0) / tw.ms), e = tw.smooth ? io(k) : ease(k); if (tw.cp) { tw.cp.getPoint(e, cam.p); tw.ct.getPoint(e, cam.t); const n = tw.entering ? e : 1 - e; lift = seg(n, .72, 1); door.material.opacity = 1 - seg(n, .12, .4); } else { cam.p.lerpVectors(from.p, goal.p, e); cam.t.lerpVectors(from.t, goal.t, e); }
-      if (k >= 1) { const arrived = tw.cp ? tw.entering : state === "ceiling"; tw = null; for (const [n, r] of Object.entries(rooms)) if (state !== n) r.group.visible = false; if (arrived) { applyCamera(); cb.onArrive?.(state); } } else busy = true; }
-    if (nook.visible && fireLight) { busy = true; fireLight.intensity = 15.5 + Math.sin(now / 83) * 1.6 + Math.sin(now / 41) * .7 + Math.sin(now / 197) * .6; fireSprite.scale.set(1.1 + Math.sin(now / 67) * .06, 1.25 + Math.sin(now / 53) * .1, 1); }
+    if (tw) { const k = Math.min(1, (now - tw.t0) / tw.ms), e = tw.smooth ? io(k) : ease(k); if (tw.cp) { tw.cp.getPoint(e, cam.p); tw.ct.getPoint(e, cam.t); const n = tw.entering ? e : 1 - e; lift = seg(n, .72, 1); if (tw.room === "study") door.material.opacity = 1 - seg(n, .12, .4); } else { cam.p.lerpVectors(from.p, goal.p, e); cam.t.lerpVectors(from.t, goal.t, e); }
+      if (state === "ceiling" && !tw.cp && !tw.said && k >= .62) { tw.said = true; cb.onArrive?.("ceiling"); }
+      if (k >= 1) { const arrived = tw.cp ? tw.entering : false; tw = null; for (const [n, r] of Object.entries(rooms)) if (state !== n && !r.keep) r.group.visible = false; if (arrived) { applyCamera(); cb.onArrive?.(state); } } else busy = true; }
     for (const a of tweens) { const k = Math.min(1, (now - a.t0) / a.ms); a.step(a.linear ? k : ease(k)); if (k >= 1) { tweens.delete(a); a.done?.(); } else busy = true; }
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
     applyCamera(); renderer.render(scene, camera); if (busy) invalidate();
@@ -532,7 +492,7 @@ export function createScene(canvas, cb = {}) {
     if (!down) return; const d = down; down = null; dragging = false;
     if (!d.moved && performance.now() - d.t < 500) {
       const hit = pick(e, pickables);
-      if (state === "room") { const h = hit || pick(e, [bayHit]); if (h) { cb.haptic?.(); setState("shelf"); } }
+      if (state === "room") { const h = hit || pick(e, [doorHit, journalHit, bayHit]); if (h) { cb.haptic?.(); if (h.object === doorHit) cb.onDoor?.(); else if (h.object === journalHit) cb.onJournal?.(); else setState("shelf"); } }
       else if (state === "shelf" && hit) pullOut(hit.object);
     } else if (state === "room" && d.axis === "pull" && armed) { cb.onCeiling?.(); }
     invalidate();
@@ -577,8 +537,8 @@ export function createScene(canvas, cb = {}) {
   }
 
   function paperRect(name = state) {
-    const rm = rooms[name]; if (!rm) return null; applyCamera(); camera.updateMatrixWorld(true); rm.group.updateMatrixWorld(true); const r = canvas.getBoundingClientRect(), xs = [], ys = [];
-    for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = rm.sheet.localToWorld(new THREE.Vector3(a * PAPER.w / 2, b * PAPER.h / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
+    const rm = rooms[name]; if (!rm) return null; const PW = rm.sheet.geometry.parameters.width, PH = rm.sheet.geometry.parameters.height; applyCamera(); camera.updateMatrixWorld(true); rm.group.updateMatrixWorld(true); const r = canvas.getBoundingClientRect(), xs = [], ys = [];
+    for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = rm.sheet.localToWorld(new THREE.Vector3(a * PW / 2, b * PH / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
     return { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
   }
   addEventListener("resize", resize); resize();
