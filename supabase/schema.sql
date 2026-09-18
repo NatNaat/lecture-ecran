@@ -15,7 +15,7 @@ create table if not exists app_config (
   summary_base    int  not null default 150,              -- caractères mini d'un résumé…
   summary_per_page int not null default 20,               -- …+ par page lue
   summary_max_req int  not null default 800,              -- plafond de l'exigence
-  sec_per_page    int  not null default 45,               -- vitesse de lecture maximale crédible
+  sec_per_page    int  not null default 0,                -- délai mini par page entre deux déclarations ; 0 = désactivé (la dictée va plus vite que ce délai)
   max_pages_per_log int not null default 100,
   overtime_factor int  not null default 2,
   tz              text not null default 'Europe/Paris',

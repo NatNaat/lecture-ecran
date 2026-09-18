@@ -42,8 +42,8 @@ begin
   assert (r->>'balance_min')::int = 20, '20 pages = 20 min';
   assert (select current_page from books where id = bid) = 30, 'page courante mise à jour';
 
-  r := log_reading(k, 'Test — p. 30', 110, long_txt2);
-  assert (r->>'ok')::boolean = false, '80 pages aussitôt après : trop rapide';
+  r := log_reading(k, 'Test — p. 30', 140, long_txt2);
+  assert (r->>'ok')::boolean = false, 'plus de 100 pages d''un coup refusées';
 
   update readings set created_at = now() - interval '3 hours';
   r := log_reading(k, 'Test — p. 30', 50, long_txt);
