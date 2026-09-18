@@ -496,8 +496,15 @@ export function createScene(canvas, cb = {}) {
   // Parallaxe : la caméra suit un peu l'inclinaison du téléphone (ou la souris), sauf quand un formulaire est calé sur une feuille
   const par = { x: 0, y: 0, tx: 0, ty: 0, beta0: null, asked: false };
   const onTilt = e => { if (e.gamma == null) return; if (par.beta0 === null) par.beta0 = e.beta; par.tx = THREE.MathUtils.clamp(e.gamma / 22, -1, 1); par.ty = THREE.MathUtils.clamp((e.beta - par.beta0) / 22, -1, 1); invalidate(); };
-  function askTilt() { if (par.asked) return; par.asked = true; const D = window.DeviceOrientationEvent; if (!D) return;
-    if (typeof D.requestPermission === "function") D.requestPermission().then(r => { if (r === "granted") addEventListener("deviceorientation", onTilt); }).catch(() => {}); else addEventListener("deviceorientation", onTilt); }
+  // iOS n'affiche la demande d'accès aux mouvements que pendant un vrai geste (doigt qui se relève, clic) : on la tente à ce moment-là,
+  // et on réessaie au geste suivant tant qu'elle n'a pas abouti.
+  function askTilt() {
+    const D = window.DeviceOrientationEvent; if (par.asked || !D) return;
+    const done = () => { par.asked = true; removeEventListener("touchend", askTilt, true); removeEventListener("click", askTilt, true); };
+    if (typeof D.requestPermission !== "function") { done(); addEventListener("deviceorientation", onTilt); return; }
+    D.requestPermission().then(r => { done(); if (r === "granted") addEventListener("deviceorientation", onTilt); }).catch(() => {});
+  }
+  addEventListener("touchend", askTilt, true); addEventListener("click", askTilt, true);
   if (matchMedia("(pointer: fine)").matches) addEventListener("pointermove", e => { par.tx = (e.clientX / innerWidth - .5) * 1.4; par.ty = (e.clientY / innerHeight - .5) * 1.4; invalidate(); });
   const lastCam = { p: new THREE.Vector3(), q: new THREE.Quaternion(), ok: false };
 
@@ -538,7 +545,7 @@ export function createScene(canvas, cb = {}) {
   const pick = (e, list) => { const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera); return ray.intersectObjects(list, false)[0]; };
   const tween = (ms, step, done) => { tweens.add({ t0: performance.now(), ms, step, done }); invalidate(); };
   let pressed = null; const unpress = () => { if (!pressed) return; const m = pressed, z0 = m.position.z; pressed = null; if (m !== held) tween(180, e => { m.position.z = z0 + (m.userData.home.z - z0) * e; }); };
-  canvas.addEventListener("pointerdown", e => { askTilt(); if (state === "ceiling" || rooms[state] || held) return;
+  canvas.addEventListener("pointerdown", e => { if (state === "ceiling" || rooms[state] || held) return;
     if (state === "shelf") { const h = pick(e, pickables); if (h && h.object.userData.kind !== "flat") { pressed = h.object; const m = pressed, z0 = m.position.z; tween(140, k => { if (pressed === m) m.position.z = z0 + (m.userData.home.z + .04 - z0) * k; }); } }
     down = { x: e.clientX, y: e.clientY, t: performance.now(), sx: shelf.x, sy: shelf.y, moved: false, axis: null }; armed = false; canvas.setPointerCapture?.(e.pointerId); });
   canvas.addEventListener("pointermove", e => {
