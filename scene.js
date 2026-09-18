@@ -271,7 +271,7 @@ export function createScene(canvas, cb = {}) {
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
   const study = new THREE.Group(); study.visible = false; scene.add(study); let sheet3d = null; const deskUp = new THREE.Vector3(0, 0, -1), PAPER = { w: .34, h: .62 };
-  const SY = H1 + SLAB, SZ0 = ZB - .15, SZ1 = ZB - 5.4, SW = 2.6, SH = 2.9, DESK = { x: .35, z: -7.25 };
+  const SY = H1 + SLAB, SZ0 = ZB - .15, SZ1 = ZB - 5.4, SW = 2.6, SH = 2.9, DESK = { x: .35, z: -7.25 }, ARCH = { z0: ZB - 1.75, z1: ZB - .45, h: 2.2 };
   {
     into = study; const g0 = generic.length, R2 = rnd(29);
     const green = new THREE.MeshStandardMaterial({ color: "#13241c", roughness: .92 }), ceilMat = new THREE.MeshStandardMaterial({ color: "#2b1c10", roughness: 1 });
@@ -279,7 +279,9 @@ export function createScene(canvas, cb = {}) {
     const zc = (SZ0 + SZ1) / 2, len = SZ0 - SZ1;
     const fl = new THREE.Mesh(new THREE.PlaneGeometry(2 * SW, len), floorMat); fl.rotation.x = -Math.PI / 2; fl.position.set(0, SY + .002, zc); fl.receiveShadow = true; study.add(fl);
     const rg = new THREE.Mesh(new THREE.PlaneGeometry(2.7, 3.7), new THREE.MeshStandardMaterial({ map: rugTex(), roughness: .95, color: "#b08a8a" })); rg.rotation.x = -Math.PI / 2; rg.rotation.z = .12; rg.position.set(.3, SY + .008, DESK.z + .5); study.add(rg);
-    box(2 * SW, SH, .1, green, 0, SY + SH / 2, SZ1 - .05, false); for (const s of [-1, 1]) box(.1, SH, len, green, s * (SW + .05), SY + SH / 2, zc, false);
+    box(2 * SW, SH, .1, green, 0, SY + SH / 2, SZ1 - .05, false); box(.1, SH, len, green, SW + .05, SY + SH / 2, zc, false);
+    box(.1, SH, ARCH.z0 - SZ1, green, -SW - .05, SY + SH / 2, (ARCH.z0 + SZ1) / 2, false); box(.1, SH, SZ0 - ARCH.z1, green, -SW - .05, SY + SH / 2, (SZ0 + ARCH.z1) / 2, false);
+    box(.1, SH - ARCH.h, ARCH.z1 - ARCH.z0, green, -SW - .05, SY + ARCH.h + (SH - ARCH.h) / 2, (ARCH.z0 + ARCH.z1) / 2, false);
     box(2 * SW, .08, len, ceilMat, 0, SY + SH + .04, zc, false);
     // rayonnages : mur du fond et mur de droite
     const rows = 5, rowH = .44, y0 = SY + .1, top = y0 + rows * rowH;
@@ -332,6 +334,68 @@ export function createScene(canvas, cb = {}) {
     const l2 = new THREE.PointLight("#ff9d55", 4, 3.8, 1.7); l2.position.set(-.6, SY + 1.5, SZ1 + .9); scene.add(l2);
     const mine = generic.splice(g0), inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: .75 }), mine.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
     mine.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(.7)); }); study.add(inst);
+    into = scene;
+  }
+
+  // ───────────── Le coin lecture : cheminée, fauteuil, fenêtre sur la nuit, et le journal de lecture ouvert sur une table ─────────────
+  const nook = new THREE.Group(); nook.visible = false; scene.add(nook); let journal = null; const nookUp = new THREE.Vector3(0, 0, -1);
+  const NX0 = -7.7, NX1 = -2.82, NZ0 = SZ0, NZ1 = SZ0 - 4.7, NH = 2.9;
+  let fireLight = null, fireSprite = null;
+  {
+    into = nook; const g0 = generic.length, R3 = rnd(41), nxc = (NX0 + NX1) / 2, nzc = (NZ0 + NZ1) / 2, nw = NX1 - NX0, nl = NZ0 - NZ1;
+    const plum = new THREE.MeshStandardMaterial({ color: "#3a1c1c", roughness: .92 }), stone = new THREE.MeshStandardMaterial({ color: "#3b3532", roughness: .95 }), soot = new THREE.MeshStandardMaterial({ color: "#050403", roughness: 1 });
+    const velvet = new THREE.MeshStandardMaterial({ color: "#5a1f22", roughness: .95 });
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(nw, nl), floorMat); fl.rotation.x = -Math.PI / 2; fl.position.set(nxc, SY + .002, nzc); fl.receiveShadow = true; nook.add(fl);
+    const rg = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 3.4), new THREE.MeshStandardMaterial({ map: rugTex(), roughness: .95, color: "#8a7a80" })); rg.rotation.x = -Math.PI / 2; rg.rotation.z = Math.PI / 2; rg.position.set(nxc - .5, SY + .008, nzc - .3); nook.add(rg);
+    box(nw, NH, .1, plum, nxc, SY + NH / 2, NZ1 - .05, false); box(.1, NH, nl, plum, NX0 - .05, SY + NH / 2, nzc, false);
+    // mur mitoyen avec le cabinet, percé d'une arche
+    box(.1, NH, ARCH.z0 - NZ1, plum, NX1 + .05, SY + NH / 2, (ARCH.z0 + NZ1) / 2, false); box(.1, NH, NZ0 - ARCH.z1, plum, NX1 + .05, SY + NH / 2, (NZ0 + ARCH.z1) / 2, false);
+    box(.1, NH - ARCH.h, ARCH.z1 - ARCH.z0, plum, NX1 + .05, SY + ARCH.h + (NH - ARCH.h) / 2, (ARCH.z0 + ARCH.z1) / 2, false);
+    box(nw, .08, nl, new THREE.MeshStandardMaterial({ color: "#241610", roughness: 1 }), nxc, SY + NH + .04, nzc, false);
+    for (const z of [NZ1 + .8, NZ1 + 2.0, NZ1 + 3.2, NZ1 + 4.4]) box(nw, .16, .14, woodDark, nxc, SY + NH - .08, z, false);   // poutres
+    // cheminée sur le mur de gauche
+    const fz = nzc - .2;
+    box(.36, 1.35, 1.7, stone, NX0 + .18, SY + .675, fz); box(.42, .09, 1.9, wood, NX0 + .21, SY + 1.4, fz); box(.02, .9, 1.0, soot, NX0 + .36, SY + .5, fz, false);
+    box(.34, .12, .9, stone, NX0 + .17, SY + .06, fz, false); box(.8, .02, 1.3, stone, NX0 + .4, SY + .011, fz, false);
+    for (const dz of [-.3, 0, .3]) { const log = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .5, 10), new THREE.MeshStandardMaterial({ color: "#2a1a10", roughness: 1 })); log.rotation.x = Math.PI / 2; log.rotation.z = .2 * dz; log.position.set(NX0 + .27, SY + .14 + Math.abs(dz) * .15, fz + dz); nook.add(log); }
+    const fireTex = canvasTex(128, 192, (g, w, h) => { g.clearRect(0, 0, w, h); const flame = (x, y, rw, rh, c1, c2) => { const gr = g.createRadialGradient(x, y, 0, x, y, rh); gr.addColorStop(0, c1); gr.addColorStop(.55, c2); gr.addColorStop(1, "rgba(255,120,30,0)"); g.fillStyle = gr; g.save(); g.scale(rw / rh, 1); g.beginPath(); g.arc(x * rh / rw, y, rh, 0, 7); g.fill(); g.restore(); };
+      flame(64, 130, 44, 60, "rgba(255,240,180,.95)", "rgba(255,150,40,.7)"); flame(44, 100, 22, 48, "rgba(255,220,120,.8)", "rgba(255,110,20,.5)"); flame(84, 92, 20, 52, "rgba(255,210,110,.8)", "rgba(255,100,20,.5)"); });
+    const fireMat = new THREE.SpriteMaterial({ map: fireTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true });
+    fireSprite = new THREE.Sprite(fireMat); fireSprite.scale.set(1.1, 1.25, 1); fireSprite.position.set(NX0 + .3, SY + .5, fz); nook.add(fireSprite);
+    const emb = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ff8a3a" })); emb.scale.set(1.6, 1.2, 1); emb.position.set(NX0 + .34, SY + .4, fz); nook.add(emb);
+    for (const dz of [-.55, .55]) { cyl(.03, .04, .02, brass, NX0 + .21, SY + 1.455, fz + dz); cyl(.014, .016, .16, new THREE.MeshStandardMaterial({ color: "#efe3c2", roughness: .6, emissive: "#ffb765", emissiveIntensity: .25 }), NX0 + .21, SY + 1.545, fz + dz); }
+    // fenêtre sur la nuit, rideaux
+    const nightTex = canvasTex(256, 384, (g, w, h) => { const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, "#0a1230"); bg.addColorStop(1, "#1c2d5e"); g.fillStyle = bg; g.fillRect(0, 0, w, h); const r = rnd(13); g.fillStyle = "#f3dfa8";
+      for (let i = 0; i < 90; i++) { g.globalAlpha = .4 + r() * .6; g.beginPath(); g.arc(r() * w, r() * h * .8, .5 + r() * 1.3, 0, 7); g.fill(); } g.globalAlpha = 1;
+      const m = g.createRadialGradient(178, 92, 4, 178, 92, 40); m.addColorStop(0, "#fff6dc"); m.addColorStop(.45, "#f6e6b8"); m.addColorStop(.5, "rgba(246,230,184,.25)"); m.addColorStop(1, "rgba(246,230,184,0)"); g.fillStyle = m; g.beginPath(); g.arc(178, 92, 40, 0, 7); g.fill();
+      g.fillStyle = "#101a24"; for (let i = 0; i < 5; i++) { g.beginPath(); g.ellipse(30 + i * 52, h - 30 - (i % 2) * 18, 40, 28 + (i % 3) * 10, 0, 0, 7); g.fill(); } });
+    const win = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.5), new THREE.MeshStandardMaterial({ map: nightTex, emissive: "#ffffff", emissiveMap: nightTex, emissiveIntensity: .8, roughness: 1 })); win.position.set(nxc - .3, SY + 1.7, NZ1 + .02); nook.add(win);
+    box(1.24, .07, .08, wood, nxc - .3, SY + 2.48, NZ1 + .06, false); box(1.24, .09, .12, wood, nxc - .3, SY + .92, NZ1 + .08, false);
+    for (const dx of [-.62, 0, .62]) box(.06, 1.56, .06, wood, nxc - .3 + dx, SY + 1.7, NZ1 + .05, false); box(1.16, .05, .06, wood, nxc - .3, SY + 1.7, NZ1 + .05, false);
+    for (const dx of [-.92, .92]) { const c = box(.36, 2.3, .16, velvet, nxc - .3 + dx, SY + 1.45, NZ1 + .14); c.rotation.y = dx < 0 ? .15 : -.15; }
+    // fauteuil face au feu, pouf, table basse avec le journal, guéridon et lampe
+    chair(NX0 + 1.45, fz, -Math.PI / 2, SY);
+    { const g = new THREE.Group(); soft(g, .58, .2, .44, .08, leather, 0, .38, 0); for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .22, b * .15, .27); g.position.set(NX0 + .75, SY, fz); g.rotation.y = Math.PI / 2; nook.add(g); }
+    const T = new THREE.Group(); T.position.set(NX0 + 1.45, SY, fz - 1.15); nook.add(T); into = T;
+    box(.92, .04, .7, wood, 0, .53, 0); box(.84, .03, .62, woodDark, 0, .5, 0, false); for (const a of [-1, 1]) for (const b of [-1, 1]) leg(T, a * .4, b * .29, .5);
+    const jm = new THREE.MeshStandardMaterial({ map: paperTex(), roughness: .95, emissive: "#efe6d0", emissiveIntensity: .14 });
+    const leftPage = new THREE.Mesh(new THREE.PlaneGeometry(PAPER.w, PAPER.h), jm); leftPage.rotation.x = -Math.PI / 2; leftPage.position.set(-.185, .5535, 0); T.add(leftPage);
+    journal = new THREE.Mesh(new THREE.PlaneGeometry(PAPER.w, PAPER.h), jm); journal.rotation.x = -Math.PI / 2; journal.position.set(.175, .5535, 0); journal.receiveShadow = true; T.add(journal);
+    box(.74, .016, PAPER.h + .03, new THREE.MeshStandardMaterial({ color: "#2a1a10", roughness: .7 }), 0, .543, 0, false); box(.02, .02, PAPER.h + .02, new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .6 }), 0, .565, 0, false);
+    const pen = new THREE.Mesh(new THREE.CylinderGeometry(.006, .004, .16, 8), new THREE.MeshStandardMaterial({ color: "#1d1712", roughness: .4 })); pen.rotation.set(Math.PI / 2, 0, .2); pen.position.set(.39, .56, .12); T.add(pen);
+    into = nook;
+    cyl(.28, .28, .03, wood, nxc + 1.15, SY + .62, NZ1 + 1.0); cyl(.03, .04, .6, wood, nxc + 1.15, SY + .3, NZ1 + 1.0); cyl(.2, .24, .03, wood, nxc + 1.15, SY + .015, NZ1 + 1.0); lamp(nxc + 1.15, SY + .64, NZ1 + 1.0, .85);
+    // petite bibliothèque sur le mur mitoyen, au fond
+    const rows = 5, rowH = .44, y0 = SY + .1, bz0 = NZ1 + .05, bz1 = ARCH.z0 - .25;
+    box(.03, rows * rowH + .06, bz1 - bz0, woodDark, NX1 - .015, y0 + (rows * rowH) / 2, (bz0 + bz1) / 2, false);
+    for (let k = 0; k <= rows; k++) box(CASE_D, .04, bz1 - bz0, wood, NX1 - CASE_D / 2, y0 + k * rowH, (bz0 + bz1) / 2, false);
+    for (const z of [bz0, bz1]) box(CASE_D + .02, rows * rowH + .06, .06, wood, NX1 - (CASE_D + .02) / 2, y0 + (rows * rowH) / 2, z, false);
+    for (let k = 0; k < rows; k++) fillRow(bz0 + .05, bz1 - .05, y0 + k * rowH + .02, NX1, 1, rowH, R3);
+    fireLight = new THREE.PointLight("#ff9a4a", 16, 7, 1.4);
+    const l4 = new THREE.PointLight("#ffb27a", 3.5, 5.5, 1.5); l4.position.set(nxc, SY + NH - .4, nzc); scene.add(l4); fireLight.position.set(NX0 + .55, SY + .7, fz); scene.add(fireLight);
+    const l3 = new THREE.PointLight("#ffb46c", 7, 4.2, 1.6); l3.position.set(nxc + 1.15, SY + 1.15, NZ1 + 1.0); scene.add(l3);
+    const mine = generic.splice(g0), inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: .75 }), mine.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
+    mine.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(.7)); }); nook.add(inst);
     into = scene;
   }
 
@@ -400,24 +464,33 @@ export function createScene(canvas, cb = {}) {
   const cam = { p: new THREE.Vector3(...VIEWS.room.p), t: new THREE.Vector3(...VIEWS.room.t) }, from = { p: cam.p.clone(), t: cam.t.clone() }, goal = { p: cam.p.clone(), t: cam.t.clone() };
   let tw = null; const tweens = new Set();
   const SHELF_DIST = 1.55, shelfView = () => ({ p: [shelf.x, shelf.y, ZB + CASE_D + SHELF_DIST], t: [shelf.x, shelf.y - .02, ZB] });
-  function paperWorld() { study.updateMatrixWorld(true); return sheet3d.getWorldPosition(new THREE.Vector3()); }
-  function goStudy(entering) {
-    const pw = paperWorld(), above = pw.clone(); above.y += .56;
-    const P = [new THREE.Vector3(...VIEWS.room.p), new THREE.Vector3(0, SY + 1.45, -1.9), new THREE.Vector3(0, SY + 1.35, ZB - .5), new THREE.Vector3(pw.x * .5, SY + 1.7, pw.z + 1.25), above];
-    const T = [new THREE.Vector3(...VIEWS.room.t), new THREE.Vector3(0, SY + 1.25, ZB - 1.5), new THREE.Vector3(pw.x * .6, SY + 1.0, pw.z + .2), pw.clone(), pw.clone()];
+  // Les pièces annexes : on y entre par la porte de la mezzanine, la caméra finit à la verticale d'une feuille.
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const rooms = {
+    study: { group: study, sheet: sheet3d, up: deskUp, ms: [3000, 2600],
+      P: pw => [V3(0, SY + 1.45, -1.9), V3(0, SY + 1.35, ZB - .5), V3(pw.x * .5, SY + 1.7, pw.z + 1.25)],
+      T: pw => [V3(0, SY + 1.25, ZB - 1.5), V3(pw.x * .6, SY + 1.0, pw.z + .2), pw.clone()] },
+    nook: { group: nook, sheet: journal, up: nookUp, ms: [3400, 3000],
+      P: pw => [V3(0, SY + 1.45, -1.9), V3(0, SY + 1.35, ZB - .55), V3(-1.4, SY + 1.4, ZB - 1.1), V3(-3.4, SY + 1.4, ZB - 1.1), V3(pw.x + .7, SY + 1.55, pw.z + .9)],
+      T: pw => [V3(0, SY + 1.25, ZB - 1.4), V3(-1.8, SY + 1.15, ZB - 1.1), V3(-4.0, SY + 1.05, ZB - 1.4), V3(pw.x - .6, SY + .8, pw.z - .8), pw.clone()] },
+  };
+  function paperWorld(name) { const r = rooms[name]; r.group.updateMatrixWorld(true); return r.sheet.getWorldPosition(new THREE.Vector3()); }
+  function goRoom(name, entering) {
+    const r = rooms[name], pw = paperWorld(name), above = pw.clone(); above.y += .56;
+    const P = [V3(...VIEWS.room.p), ...r.P(pw), above], T = [V3(...VIEWS.room.t), ...r.T(pw), pw.clone()];
     if (entering) { P[0] = cam.p.clone(); T[0] = cam.t.clone(); } else { P.reverse(); T.reverse(); }
-    tw = { t0: performance.now(), ms: entering ? 3000 : 2600, smooth: true, entering, cp: new THREE.CatmullRomCurve3(P, false, "centripetal"), ct: new THREE.CatmullRomCurve3(T, false, "centripetal") }; invalidate();
+    tw = { t0: performance.now(), ms: r.ms[entering ? 0 : 1], smooth: true, entering, room: name, cp: new THREE.CatmullRomCurve3(P, false, "centripetal"), ct: new THREE.CatmullRomCurve3(T, false, "centripetal") }; invalidate();
   }
   function goTo(v, ms = 1100, smooth = false) { from.p.copy(cam.p); from.t.copy(cam.t); goal.p.set(...v.p); goal.t.set(...v.t); tw = { t0: performance.now(), ms, smooth }; invalidate(); }
   function setState(s, opt = {}) {
     if (s === "shelf") { shelf.x = THREE.MathUtils.clamp(opt.x ?? focusX, BAY.x0 + .6, BAY.x1 - .6); shelf.y = 1.75; }
-    const viaDoor = s === "study" || state === "study", entering = s === "study"; if (entering) study.visible = true;
-    state = s; yaw = 0; pull = 0; if (viaDoor) goStudy(entering); else goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1500 : 1200); cb.onState?.(s);
+    const entering = !!rooms[s], roomName = entering ? s : rooms[state] ? state : null; if (entering) rooms[s].group.visible = true;
+    state = s; yaw = 0; pull = 0; if (roomName) goRoom(roomName, entering); else goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1500 : 1200); cb.onState?.(s);
   }
   function applyCamera() {
     camera.position.copy(cam.p); const t = cam.t.clone();
     if (state === "room") { const e = ease(Math.min(1, pull)) * .5; camera.position.lerp(new THREE.Vector3(0, 3.2, 3.2), e); t.lerp(new THREE.Vector3(0, H, .2), e); t.x += yaw * 7; camera.position.x += yaw * 1.2; }
-    if (lift > .001) camera.up.set(0, 1, 0).lerp(deskUp, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
+    const rm = rooms[state] || (tw && rooms[tw.room]); if (lift > .001 && rm) camera.up.set(0, 1, 0).lerp(rm.up, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
   }
   function resize() {
@@ -431,7 +504,8 @@ export function createScene(canvas, cb = {}) {
   function frame(now) {
     raf = 0; let busy = dragging;
     if (tw) { const k = Math.min(1, (now - tw.t0) / tw.ms), e = tw.smooth ? io(k) : ease(k); if (tw.cp) { tw.cp.getPoint(e, cam.p); tw.ct.getPoint(e, cam.t); const n = tw.entering ? e : 1 - e; lift = seg(n, .72, 1); door.material.opacity = 1 - seg(n, .12, .4); } else { cam.p.lerpVectors(from.p, goal.p, e); cam.t.lerpVectors(from.t, goal.t, e); }
-      if (k >= 1) { const arrived = tw.cp && tw.entering; tw = null; if (state !== "study") study.visible = false; if (arrived) { applyCamera(); cb.onArrive?.("study"); } } else busy = true; }
+      if (k >= 1) { const arrived = tw.cp ? tw.entering : state === "ceiling"; tw = null; for (const [n, r] of Object.entries(rooms)) if (state !== n) r.group.visible = false; if (arrived) { applyCamera(); cb.onArrive?.(state); } } else busy = true; }
+    if (nook.visible && fireLight) { busy = true; fireLight.intensity = 15.5 + Math.sin(now / 83) * 1.6 + Math.sin(now / 41) * .7 + Math.sin(now / 197) * .6; fireSprite.scale.set(1.1 + Math.sin(now / 67) * .06, 1.25 + Math.sin(now / 53) * .1, 1); }
     for (const a of tweens) { const k = Math.min(1, (now - a.t0) / a.ms); a.step(a.linear ? k : ease(k)); if (k >= 1) { tweens.delete(a); a.done?.(); } else busy = true; }
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
     applyCamera(); renderer.render(scene, camera); if (busy) invalidate();
@@ -440,7 +514,7 @@ export function createScene(canvas, cb = {}) {
   // ───────────── Gestes ─────────────
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null, armed = false, held = null;
   const pick = (e, list) => { const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera); return ray.intersectObjects(list, false)[0]; };
-  canvas.addEventListener("pointerdown", e => { if (state === "ceiling" || state === "study" || held) return; down = { x: e.clientX, y: e.clientY, t: performance.now(), sx: shelf.x, sy: shelf.y, moved: false, axis: null }; armed = false; canvas.setPointerCapture?.(e.pointerId); });
+  canvas.addEventListener("pointerdown", e => { if (state === "ceiling" || rooms[state] || held) return; down = { x: e.clientX, y: e.clientY, t: performance.now(), sx: shelf.x, sy: shelf.y, moved: false, axis: null }; armed = false; canvas.setPointerCapture?.(e.pointerId); });
   canvas.addEventListener("pointermove", e => {
     if (!down) return; const dx = e.clientX - down.x, dy = e.clientY - down.y;
     if (!down.moved && Math.hypot(dx, dy) < 8) return; down.moved = true; dragging = true; tw = state === "shelf" ? null : tw;
@@ -502,9 +576,9 @@ export function createScene(canvas, cb = {}) {
     });
   }
 
-  function paperRect() {
-    applyCamera(); camera.updateMatrixWorld(true); study.updateMatrixWorld(true); const r = canvas.getBoundingClientRect(), xs = [], ys = [];
-    for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = sheet3d.localToWorld(new THREE.Vector3(a * PAPER.w / 2, b * PAPER.h / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
+  function paperRect(name = state) {
+    const rm = rooms[name]; if (!rm) return null; applyCamera(); camera.updateMatrixWorld(true); rm.group.updateMatrixWorld(true); const r = canvas.getBoundingClientRect(), xs = [], ys = [];
+    for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = rm.sheet.localToWorld(new THREE.Vector3(a * PAPER.w / 2, b * PAPER.h / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
     return { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
   }
   addEventListener("resize", resize); resize();

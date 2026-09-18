@@ -207,6 +207,11 @@ body.has3d #study { background: none; }
 .sheet.onpaper .note { font-size: 12px; margin-top: 8px; }
 .sheet.onpaper .inkbtn { margin-top: auto !important; min-height: 46px; }
 .sheet.onpaper .searchwrap { position: relative; }
+.sheet.onpaper.journal h1 { font-size: 19px; }
+.sheet.onpaper select { width: 100%; font: 16px var(--sans); color: var(--ink); background: none; border: 0; border-bottom: 1px solid rgba(34,27,20,.45); border-radius: 0; padding: 5px 0 6px; -webkit-appearance: none; appearance: none; }
+.sheet.onpaper textarea { flex: 1; min-height: 120px; width: 100%; resize: none; border: 0; border-radius: 0; padding: 4px 0; font: 17px/28px var(--sans); color: var(--ink); background: repeating-linear-gradient(180deg, transparent 0 27px, rgba(34,27,20,.28) 27px 28px); }
+.sheet.onpaper textarea:focus-visible { outline: none; }
+.sheet.onpaper .count { font-size: 11px; }
 .sheet.onpaper #sugg { position: absolute; z-index: 3; left: -4%; right: -4%; top: 100%; max-height: 46dvh; margin: 0; padding: 2px 12px; border-radius: 0 0 10px 10px; background: var(--paper); box-shadow: 0 16px 30px rgba(0,0,0,.5); }
 .sheet.onpaper .hit .noc { width: 38px; height: 57px; font-size: 18px; } .sheet.onpaper .hit b { font-size: 14.5px; } .sheet.onpaper .hit i, .sheet.onpaper .hit small { font-size: 12.5px; }
 body.has3d .studyback { opacity: 0; transition: opacity .5s var(--ease); } body.has3d.study-ready .studyback { opacity: 1; }
@@ -225,7 +230,7 @@ body.has3d .studyback { opacity: 0; transition: opacity .5s var(--ease); } body.
 .cvgrid img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cvgrid p { grid-column: 1 / -1; }
 body.study-open #dock, body.study-open .hint { transform: translate(-50%, 110%); opacity: 0; }
-body.has3d[data-view="study"] .skyhead { opacity: 0; } body.has3d[data-view="study"] #sky { background: none; }
+body.has3d[data-view="study"] .skyhead, body.has3d[data-view="nook"] .skyhead { opacity: 0; } body.has3d[data-view="study"] #sky, body.has3d[data-view="nook"] #sky { background: none; }
 
 /* ───────── Mode 3D : la pièce est dessinée dans le canevas, l'interface flotte par-dessus ───────── */
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: none; touch-action: none; outline: none; }
@@ -237,12 +242,12 @@ body.has3d #scene { height: 100lvh; }
 body.has3d #app { padding-top: 0; transform: none; position: static; will-change: auto; }
 body.has3d #sky { z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(5,9,25,.82), rgba(5,9,25,.35) 130px, transparent 210px); }
 body.has3d #sky::before { opacity: 0; animation: none; transition: opacity .35s var(--ease); }
-body.has3d.sky-open #sky::before { opacity: .9; transition: opacity .7s var(--ease) .75s; }
+body.has3d.sky-ready #sky::before { opacity: .9; transition: opacity .6s var(--ease); }
 body.has3d #sky::after { content: ""; position: fixed; inset: 0; background: linear-gradient(180deg, var(--night-2) -12%, var(--night-1) 30%, var(--night-0) 78%); opacity: 0; transition: opacity .35s var(--ease); pointer-events: none; z-index: -1; }
 body.has3d.sky-open #sky { pointer-events: auto; z-index: 5; }
-body.has3d.sky-open #sky::after { opacity: 1; transition: opacity .7s var(--ease) .75s; }
+body.has3d.sky-ready #sky::after { opacity: 1; transition: opacity .6s var(--ease); }
 body.has3d .skybody { transition: opacity .3s var(--ease); }
-body.has3d.sky-open .skybody { transition: opacity .6s var(--ease) 1s; }
+body.has3d.sky-open .skybody { opacity: 0; transition: opacity .5s var(--ease); } body.has3d.sky-ready .skybody { opacity: 1; }
 body.has3d .skyhead { transition: opacity .4s var(--ease); }
 body.has3d[data-view="shelf"] .skyhead { opacity: 0; }
 body.has3d[data-view="shelf"] #sky { background: none; }
@@ -255,7 +260,8 @@ body.has3d #bookview:not([hidden]) { animation: pagein .45s var(--ease); }
 body:not([data-view="room"]) .hint, body.sky-open .hint { opacity: 0; }
 .skyclose { position: fixed; z-index: 7; right: 12px; top: calc(env(safe-area-inset-top) + 10px); width: 44px; height: 44px; border-radius: 22px; display: none; place-items: center; color: var(--cream); background: rgba(255,255,255,.1); }
 .skyclose svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-body.has3d.sky-open .skyclose { display: grid; animation: card .5s var(--ease) 1s both; }
+body.has3d.sky-ready .skyclose { display: grid; animation: card .5s var(--ease) both; }
+body:not(.has3d).sky-open .skyclose { display: grid; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
@@ -498,7 +504,7 @@ function renderSky() {
 // Retour haptique : iOS n'expose pas navigator.vibrate ; basculer un interrupteur natif (Safari 17.4+) déclenche le même petit cran.
 function haptic() { try { if (navigator.vibrate) navigator.vibrate(12); else document.querySelector(".haptic").click(); } catch {} }
 function setSky(open) {
-  skyOpen = open; document.body.classList.toggle("sky-open", open); document.documentElement.style.removeProperty("--pull"); document.documentElement.style.removeProperty("--reveal");
+  skyOpen = open; document.body.classList.toggle("sky-open", open); if (!open || !scene3d) document.body.classList.toggle("sky-ready", open); document.documentElement.style.removeProperty("--pull"); document.documentElement.style.removeProperty("--reveal");
   if (open) window.scrollTo(0, 0); else sky.scrollTop = 0;
   scene3d?.setState(open ? "ceiling" : "room");
   const g = document.querySelector(".grab"); if (g) { g.setAttribute("aria-expanded", open); g.querySelector(".grablabel").textContent = open ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"; }
@@ -733,12 +739,30 @@ function pickSuggestion(b) {
   haptic(); ($("#ap").value ? $("#ac") : $("#ap")).focus();
 }
 // La feuille 3D est vue à la verticale : son contour à l'écran est un rectangle, sur lequel on cale le formulaire.
-function placeSheet() {
-  const f = $("#fadd"); if (!f || !scene3d || scene3d.state !== "study") return; const r = scene3d.paperRect();
+function placeSheet(room = scene3d?.state) {
+  const f = $(room === "nook" ? "#flog" : "#fadd"); if (!f || !scene3d || scene3d.state !== room) return; const r = scene3d.paperRect(room); if (!r) return;
   Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" }); f.classList.add("ready"); document.body.classList.add("study-ready");
 }
 addEventListener("resize", () => setTimeout(placeSheet, 60));
-function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open", "study-ready"); if (scene3d?.state === "study") scene3d.setState("room"); }
+function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open", "study-ready"); if (scene3d?.state === "study" || scene3d?.state === "nook") scene3d.setState("room"); }
+// Le coin lecture : le journal ouvert sur la table basse, où l'on note ce qu'on vient de lire.
+function openNook(bookId) {
+  const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
+  study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
+  <form class="sheet onpaper journal" id="flog" autocomplete="off"><h1>Ce soir, j'ai lu</h1>
+    <label for="lb">Livre</label><select id="lb">${list.map(b => `<option value="${esc(b.id)}" ${b === sel ? "selected" : ""}>${esc(bookLabel(b))}</option>`).join("")}</select>
+    <label for="lp">Page atteinte</label><input id="lp" type="number" inputmode="numeric" required min="1">
+    <label for="ls">Ce que je retiens <span class="count" id="lcount"></span></label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
+    <div class="err" id="lerr"></div><button class="inkbtn" style="width:100%;margin-top:12px">Noter dans le journal</button></form>`;
+  study.hidden = false; document.body.classList.add("study-open"); scene3d.setState("nook");
+  const upd = () => { const b = list.find(x => x.id === $("#lb").value), n = Math.max(0, (+$("#lp").value || 0) - b.current_page), need = Math.min(150 + 20 * n, 800);
+    $("#lcount").textContent = n ? `· ${$("#ls").value.trim().length} / ${need} car. pour ${plural(n, "page")}` : ""; };
+  ["input", "change"].forEach(ev => $("#flog").addEventListener(ev, upd));
+  $("#flog").onsubmit = async e => { e.preventDefault(); const btn = $("#flog button.inkbtn"); btn.disabled = true;
+    try { const b = list.find(x => x.id === $("#lb").value); const r = await api.logReading(S.config.secret, bookLabel(b), +$("#lp").value, $("#ls").value);
+      if (!r.ok) { $("#lerr").textContent = r.error; btn.disabled = false; return; }
+      haptic(); closeStudy(); await reload(); } catch (err) { $("#lerr").textContent = err.message; btn.disabled = false; } };
+}
 
 function dlgEdit(rid) {
   const r = S.readings.find(x => x.id === rid);
@@ -764,7 +788,7 @@ document.addEventListener("click", async e => {
     if (act === "close-book") closeBook();
     else if (act === "back-room") scene3d?.setState("room");
     else if (act === "toggle-sky") { if (suppressClick) { suppressClick = false; return; } haptic(); setSky(!skyOpen); }
-    else if (act === "log") dlgLog(el.dataset.id || openBook);
+    else if (act === "log") { if (scene3d && bookview.hidden && !el.dataset.id) openNook(); else dlgLog(el.dataset.id || openBook); }
     else if (act === "add-book") openStudy();
     else if (act === "close-study") closeStudy();
     else if (act === "cover") dlgCover(openBook);
@@ -794,7 +818,7 @@ async function initScene() {
   try {
     const { createScene } = await import("./scene.js");
     scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(false); bookview.scrollTop = 0; }, onCeiling: () => setSky(true),
-      onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; }, onArrive: v => { if (v === "study") placeSheet(); } });
+      onPull: p => document.documentElement.style.setProperty("--reveal", Math.min(1, p * 1.6).toFixed(2)), onState: v => { document.body.dataset.view = v; }, onArrive: v => { if (v === "ceiling") document.body.classList.add("sky-ready"); else placeSheet(v); } });
     document.body.classList.add("has3d"); document.body.dataset.view = "room";
   } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
 }
