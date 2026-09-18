@@ -117,13 +117,14 @@ function titlePageTex(book) {
 }
 // Les couvertures d'Open Library n'autorisent pas la lecture de leurs pixels (pas d'en-tête CORS sur l'image finale) :
 // on passe par le relais d'images wsrv.nl, qui les sert avec l'autorisation. Seule l'adresse de la couverture lui est transmise.
-const proxied = url => "https://wsrv.nl/?w=384&output=jpg&url=" + encodeURIComponent(url.replace(/^https?:\/\//, ""));
+const proxied = url => "https://wsrv.nl/?w=512&output=jpg&q=88&url=" + encodeURIComponent(url.replace(/^https?:\/\//, ""));
+const hiRes = u => u.replace(/(covers\.openlibrary\.org\/b\/(?:id|isbn)\/[^-/]+)-M\.jpg/, (m, a) => a + "-L.jpg").replace(/([?&]zoom=)1(?!\d)/, (m, a) => a + "3");
 const covers = new Map();
 function loadCover(url) {
   if (!covers.has(url)) covers.set(url, new Promise(res => {
     const img = new Image(); img.crossOrigin = "anonymous";
     img.onload = () => { try {
-      if (img.naturalWidth < 20) return res(null);
+      if (img.naturalWidth < 60) { if (!triedLo && hiRes(url) !== url) { triedLo = true; img.src = proxied(url); return; } return res(null); }
       const c = document.createElement("canvas"), W = c.width = 40, H = c.height = 60, g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, W, H);
       const d = g.getImageData(0, 0, W, H).data, bins = new Map();
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4, k = (d[i] >> 4) << 8 | (d[i + 1] >> 4) << 4 | d[i + 2] >> 4, edge = x < 5 || y < 5 || x >= W - 5 || y >= H - 5 ? 3 : 1;
@@ -134,7 +135,8 @@ function loadCover(url) {
       const tex = new THREE.Texture(img); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4; tex.needsUpdate = true;
       res({ tex, color: hex(main), ink: lum > .55 ? "#221b14" : "#f0e4c6", accent: far ? hex(rgb(far)) : lum > .55 ? "#221b14" : "#d9b972" });
     } catch { res(null); } };
-    img.onerror = () => res(null); img.src = proxied(url);
+    let triedLo = false; img.onerror = () => { if (triedLo || hiRes(url) === url) return res(null); triedLo = true; img.src = proxied(url); };   // grande image d'abord, puis l'image d'origine
+    img.src = proxied(hiRes(url));
   }));
   return covers.get(url);
 }

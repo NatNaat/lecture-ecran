@@ -152,10 +152,29 @@ body.sky-open #dock, #dock:empty { transform: translate(-50%, 110%); }
 @keyframes openflap { from { transform: rotateY(0); opacity: 1; } 70% { opacity: 1; } to { transform: rotateY(-118deg); opacity: 0; } }
 .page .close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font: 500 15px var(--sans); color: var(--ink-2); }
 .page .close svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.titlepage { padding: 15px 0 20px; border-bottom: 1px solid var(--paper-line); margin-bottom: 8px; }
-.titlepage h1 { font: 700 32px/1.1 var(--sans); letter-spacing: -.02em; text-wrap: balance; }
-.titlepage .by { font: 400 18px/1.4 var(--sans); color: var(--ink-2); margin-top: 8px; }
-.titlepage .facts { font: 13px/1.5 var(--sans); color: var(--ink-2); margin-top: 15px; font-variant-numeric: tabular-nums; }
+.bookhero { display: flex; gap: 16px; align-items: flex-end; padding: 10px 0 18px; }
+.bigcover { position: relative; flex: none; width: 112px; aspect-ratio: 2 / 3; border-radius: 3px 6px 6px 3px; overflow: hidden; background: var(--leather), var(--bg, #3b1414); display: grid; place-items: center; padding: 12px; text-align: center; font: 700 13px/1.2 var(--sans); color: var(--cream);
+  box-shadow: 0 12px 24px -8px rgba(0,0,0,.45), 0 2px 5px rgba(0,0,0,.3), inset 3px 0 4px -2px rgba(255,255,255,.25); }
+.bigcover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.heroinfo { min-width: 0; flex: 1; }
+.heroinfo .state { font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
+.heroinfo h1 { font: 700 26px/1.1 var(--sans); letter-spacing: -.02em; text-wrap: balance; overflow-wrap: anywhere; }
+.heroinfo .by { font: 400 16px/1.35 var(--sans); color: var(--ink-2); margin-top: 6px; }
+.heroinfo .where { font: 400 15px/1 var(--sans); margin-top: 12px; font-variant-numeric: tabular-nums; } .heroinfo .where b { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+/* la règle des pages : chaque séance est un segment ; ce qui a été lu avant l'appli est hachuré (pas seulement une autre teinte) */
+.pagemap { position: relative; height: 18px; border-radius: 4px; background: rgba(60,40,15,.12); overflow: hidden; }
+.pagemap .seg, .maplegend i.seg { background: var(--ink); } .pagemap .pre, .maplegend i.pre { background: repeating-linear-gradient(135deg, rgba(34,27,20,.5) 0 2px, transparent 2px 5px); }
+.pagemap .seg, .pagemap .pre { position: absolute; top: 0; bottom: 0; } .pagemap .seg { box-shadow: inset -1.5px 0 0 var(--paper); }
+.maplegend { display: flex; align-items: center; gap: 12px; justify-content: space-between; margin-top: 5px; font: 11.5px/1 var(--sans); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.maplegend .lg { display: inline-flex; align-items: center; gap: 5px; } .maplegend i { display: inline-block; width: 12px; height: 9px; border-radius: 2px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 18px 0 4px; border-top: 1px solid var(--paper-line); border-bottom: 1px solid var(--paper-line); }
+.stats > div { padding: 10px 6px 10px 0; } .stats > div + div { padding-left: 10px; border-left: 1px solid var(--paper-line); }
+.stats dt { font: 500 11px/1.25 var(--sans); color: var(--ink-2); } .stats dd { margin: 4px 0 0; font: 700 17px/1.1 var(--sans); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.filhead { display: flex; align-items: baseline; justify-content: space-between; margin: 30px 0 14px; } .filhead h2 { margin: 0; }
+.sortbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font: 500 13px var(--sans); color: var(--ink-2); } .sortbtn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.fil { list-style: none; margin: 0; padding: 0; }
+.iconbtn { display: grid; place-items: center; width: 36px; height: 36px; margin: -8px -8px -8px 0; border-radius: 18px; color: var(--ink-2); } .iconbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.facts { font: 12.5px/1.5 var(--sans); color: var(--ink-2); margin-top: 14px; font-variant-numeric: tabular-nums; }
 .gauge { height: 4px; margin: 12px 0 0; background: rgba(60,40,15,.16); border-radius: 2px; overflow: hidden; }
 .gauge i { display: block; height: 100%; width: 100%; background: var(--ink); transform-origin: left; }
 .inkrow { display: flex; gap: 10px; margin: 16px 0 6px; } .inkrow > * { flex: 1; }
@@ -163,10 +182,16 @@ body.sky-open #dock, #dock:empty { transform: translate(-50%, 110%); }
 .inkbtn.line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px rgba(34,27,20,.55); }
 .inkbtn:active { transform: scale(.98); } .inkbtn:disabled { opacity: .4; }
 .page h2 { font: 700 20px/1.25 var(--sans); letter-spacing: -.02em; margin: 32px 0 15px; }
-.entry { margin: 0 0 26px; }
-.entry .fol { display: flex; justify-content: space-between; align-items: baseline; font: 600 13px/1.4 var(--sans); letter-spacing: .02em; font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--paper-line); padding-bottom: 4px; margin-bottom: 8px; }
-.entry .fol time { font-weight: 400; color: var(--ink-2); }
-.entry .txt { font: 17px/1.6 var(--sans); white-space: pre-wrap; max-width: 62ch; hyphens: auto; }
+.page h2.manage { margin-top: 36px; }
+.inkrow.wrap { flex-wrap: wrap; } .inkrow.wrap > * { flex: 1 1 46%; }
+.entry { margin: 0 0 28px; padding-left: 40px; position: relative; border-radius: 8px; transition: background .6s var(--ease); }
+.entry.flash { background: rgba(34,27,20,.08); }
+.entry::before { content: ""; position: absolute; left: 13px; top: 30px; bottom: -24px; width: 1px; background: var(--paper-line); } .entry:last-child::before { display: none; }
+.entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.entry .no { position: absolute; left: 0; top: -1px; width: 27px; height: 27px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--sans); color: var(--paper); background: var(--ink); font-variant-numeric: tabular-nums; }
+.entry .rg { font: 700 15px/1.2 var(--sans); letter-spacing: -.01em; font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 400 12px/1.3 var(--sans); color: var(--ink-2); letter-spacing: 0; }
+.entry .fol time { margin-left: auto; font: 400 12px/1.3 var(--sans); color: var(--ink-2); text-align: right; }
+.entry .txt { font: 17px/1.62 var(--sans); white-space: pre-wrap; max-width: 62ch; hyphens: auto; }
 .textlink { min-height: 44px; font: 500 13px var(--sans); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
 .page .quiet { font: 15px/1.5 var(--sans); color: var(--ink-2); padding: 4px 0; }
 
@@ -499,28 +524,44 @@ function spine(b, lean) {
 const flatBook = (b, i) => `<button class="flat" data-book="${esc(b.id)}" style="${cloth(b)};--h:${Math.max(22, Math.min(34, Math.round((b.total_pages || 260) / 14)))}px;--dx:${(hash(b.title) % 14) - 4}px" aria-label="${esc(b.title)}, abandonné"><span>${esc(b.title)}</span></button>`;
 
 // ───────────── Le livre ouvert ─────────────
+// Couvertures en meilleure définition : grande taille chez Open Library, zoom 3 chez Google Books ; retour à l'image d'origine si elle manque.
+const hiRes = u => !u ? u : u.replace(/(covers\.openlibrary\.org\/b\/(?:id|isbn)\/[^-/]+)-M\.jpg/, (m, a) => a + "-L.jpg").replace(/([?&]zoom=)1(?!\d)/, (m, a) => a + "3");
+const coverImg = (b, cls = "") => b.cover_url ? `<img class="${cls}" src="${esc(hiRes(b.cover_url))}" data-lo="${esc(b.cover_url)}" alt="" onload="if(this.naturalWidth<60&&this.src!==this.dataset.lo)this.src=this.dataset.lo" onerror="if(this.src!==this.dataset.lo)this.src=this.dataset.lo;else this.remove()">` : "";
+let bookSort = "pages";
 function showBook(animate = true) {
   const b = S.books.find(x => x.id === openBook); if (!b) return closeBook();
   const rs = S.readings.filter(r => r.book_id === b.id).sort((a, c) => a.page_start - c.page_start);
   const pct = b.total_pages ? Math.min(100, Math.round(100 * b.current_page / b.total_pages)) : null;
-  const status = { en_cours: "en cours de lecture", fini: "lu jusqu'au bout", abandonne: "abandonné en route" }[b.status];
+  const status = { en_cours: "En cours", fini: "Lu jusqu'au bout", abandonne: "Abandonné" }[b.status];
+  const summed = rs.reduce((a, r) => a + r.pages, 0), avg = rs.length ? Math.round(summed / rs.length) : 0, left = b.total_pages ? Math.max(0, b.total_pages - b.current_page) : null;
+  const pre = rs.length ? rs[0].page_start : b.current_page, days = new Set(rs.map(r => dayKey(r.created_at))).size, order = bookSort === "recent" ? [...rs].reverse() : rs, T = b.total_pages || Math.max(b.current_page, 1);
   bookview.innerHTML = `<div class="tome">
     ${animate ? `<div class="flap" style="${cloth(b)}${b.cover_url ? `;background-image:url('${esc(b.cover_url)}')` : ""}">${b.cover_url ? "" : esc(b.title)}</div>` : ""}
     <article class="page">
       <button class="close" data-act="close-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reposer sur l'étagère</button>
-      <header class="titlepage"><h1>${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p>
-        <p class="facts">Page ${b.current_page}${b.total_pages ? ` sur ${b.total_pages} · ${pct} %` : ""} · ${status}<br>commencé le ${fmtDate(b.started_at)} · ${plural(rs.reduce((a, r) => a + r.pages, 0), "page")} résumées</p>
-        ${pct !== null ? `<div class="gauge" role="img" aria-label="${pct} % lu"><i style="transform:scaleX(${pct / 100})"></i></div>` : ""}</header>
+      <header class="bookhero">
+        <div class="bigcover" style="${cloth(b)}">${coverImg(b)}<span>${esc(b.title)}</span></div>
+        <div class="heroinfo"><p class="state">${status}</p><h1>${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p>
+          <p class="where">p. <b>${b.current_page}</b>${b.total_pages ? ` / ${b.total_pages}` : ""}${pct !== null ? ` · ${pct} %` : ""}</p></div>
+      </header>
+      ${rs.length || b.current_page ? `<div class="pagemap" role="img" aria-label="Pages résumées : ${rs.map(r => `${r.page_start} à ${r.page_end}`).join(", ") || "aucune"}">
+        ${pre > 0 ? `<i class="pre" style="left:0;width:${100 * pre / T}%"></i>` : ""}
+        ${rs.map((r, i) => `<button class="seg" data-act="goto-entry" data-id="${esc(r.id)}" style="left:${100 * r.page_start / T}%;width:${Math.max(.8, 100 * r.pages / T)}%" aria-label="Séance ${i + 1}, pages ${r.page_start} à ${r.page_end}"></button>`).join("")}</div>
+        <div class="maplegend"><span>0</span>${pre > 0 ? `<span class="lg"><i class="pre"></i>lu avant l'appli</span>` : ""}<span class="lg"><i class="seg"></i>résumé</span><span>${b.total_pages || b.current_page}</span></div>` : ""}
+      <dl class="stats"><div><dt>Séances</dt><dd>${rs.length}</dd></div><div><dt>Pages résumées</dt><dd>${summed}</dd></div><div><dt>Par séance</dt><dd>${avg || "—"}</dd></div>
+        <div><dt>${left !== null && b.status === "en_cours" ? "Pour finir" : "Jours de lecture"}</dt><dd>${left !== null && b.status === "en_cours" ? (avg ? `≈ ${Math.ceil(left / avg)} séance${Math.ceil(left / avg) > 1 ? "s" : ""}` : `${left} p.`) : days}</dd></div></dl>
       <div class="inkrow">${b.status === "en_cours" ? `<button class="inkbtn" data-act="log" data-id="${esc(b.id)}">J'ai lu</button>` : `<button class="inkbtn" data-act="status" data-v="en_cours">Reprendre</button>`}
         <button class="inkbtn line" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
-      <h2>Fil de lecture</h2>
-      ${rs.length ? rs.map(r => `<section class="entry"><div class="fol"><span>p. ${r.page_start} → ${r.page_end}</span><time>${fmtDateTime(r.created_at)}</time></div>
-        <div class="txt">${esc(r.summary)}</div><button class="textlink" data-act="edit" data-id="${esc(r.id)}">Corriger ce résumé</button></section>`).join("")
+      <div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries" aria-label="Changer l'ordre du fil">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
+      ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><div class="fol"><span class="no">${n}</span><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time>
+          <button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div>
+        <div class="txt">${esc(r.summary)}</div></li>`; }).join("")}</ol>`
         : `<p class="quiet">Les pages sont encore blanches. Ton premier résumé s'écrira ici après ta prochaine lecture.</p>`}
-      <h2>Ranger</h2>
-      <div class="inkrow"><button class="inkbtn line" data-act="cover">Changer la couverture</button></div>
-      <div class="inkrow">${b.status === "en_cours" ? `<button class="inkbtn line" data-act="status" data-v="fini">Marquer comme fini</button><button class="inkbtn line" data-act="status" data-v="abandonne">Abandonner</button>` : ""}
-        ${rs.length ? "" : `<button class="inkbtn line" data-act="del-book">Retirer de la bibliothèque</button>`}</div>
+      <h2 class="manage">Ranger</h2>
+      <div class="inkrow wrap"><button class="inkbtn line" data-act="cover">Couverture</button>
+        ${b.status === "en_cours" ? `<button class="inkbtn line" data-act="status" data-v="fini">Marquer fini</button><button class="inkbtn line" data-act="status" data-v="abandonne">Abandonner</button>` : ""}
+        ${rs.length ? "" : `<button class="inkbtn line" data-act="del-book">Retirer</button>`}</div>
+      <p class="facts">Commencé le ${fmtDate(b.started_at)}${b.finished_at ? ` · fini le ${fmtDate(b.finished_at)}` : ""}</p>
     </article></div>`;
   bookview.hidden = false; if (animate) bookview.scrollTop = 0;
 }
@@ -855,7 +896,7 @@ function openStudy() {
 function pickSuggestion(b, showFields) {
   addPick = b; addCtl?.abort(); $("#sugg").innerHTML = ""; $("#aq").value = ""; $("#aqx").hidden = true; showFields();
   $("#at").value = b.title; $("#aa").value = b.author || ""; $("#ap").value = b.total_pages || "";
-  $("#athumb").innerHTML = `${esc(b.title[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="" onerror="this.remove()">` : ""}`;
+  $("#athumb").innerHTML = `${esc(b.title[0])}${coverImg(b)}`;
   $("#aeds").innerHTML = b.editions.length > 1 ? `<span class="chiplbl">Éditions</span>` + b.editions.map(e => `<button type="button" data-pages="${e.pages}" aria-pressed="${e.pages === b.total_pages}">${e.pages} p.<small>${esc([e.publisher, e.year].filter(Boolean).join(" ") || "sans date")}</small></button>`).join("") : "";
   haptic(); ($("#ap").value ? $("#ac") : $("#ap")).focus();
 }
@@ -902,6 +943,8 @@ document.addEventListener("click", async e => {
     else if (act === "close-study") closeStudy();
     else if (act === "cover") dlgCover(openBook);
     else if (act === "edit") dlgEdit(el.dataset.id);
+    else if (act === "sort-entries") { bookSort = bookSort === "recent" ? "pages" : "recent"; const y = bookview.scrollTop; showBook(false); bookview.scrollTop = y; }
+    else if (act === "goto-entry") { const t = document.getElementById("e-" + el.dataset.id); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1400); } }
     else if (act === "export") exportBook();
     else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); }
     else if (act === "del-book") { if (confirm("Retirer ce livre de la bibliothèque ?")) { await api.deleteBook(openBook); closeBook(); await reload(); } }
