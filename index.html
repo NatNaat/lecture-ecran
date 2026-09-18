@@ -672,6 +672,17 @@ async function searchBnf(q, signal, mode = "any") {
       lang: all("language")[0] || "", cover_url: isbn13 ? `https://covers.openlibrary.org/b/isbn/${isbn13}-M.jpg?default=false` : null, openlibrary_key: null, src: "BnF" };
   }).filter(b => b.title);
 }
+// Google Books : le catalogue le plus large (poches récents, couvertures, pages), classé par pertinence. Nécessite la clé de config.js.
+const gbMap = (it, i) => { const v = it.volumeInfo || {}, ids = v.industryIdentifiers || [], isbn = (ids.find(x => x.type === "ISBN_13") || ids.find(x => x.type === "ISBN_10") || {}).identifier;
+  const img = v.imageLinks && (v.imageLinks.thumbnail || v.imageLinks.smallThumbnail);
+  return { title: v.title || "", author: (v.authors || []).slice(0, 2).join(", "), total_pages: v.pageCount > 10 ? v.pageCount : null, year: String(v.publishedDate || "").slice(0, 4), publisher: (v.publisher || "").replace(/^[EÉ]ditions? /i, ""),
+    lang: v.language === "fr" ? "fre" : v.language || "", cover_url: img ? img.replace(/^http:/, "https:").replace(/&edge=curl/, "") : isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false` : null, openlibrary_key: null, src: "Google Books", rank: i }; };
+async function searchGB(q, signal) {
+  const key = (window.LE_CONFIG || {}).googleBooksKey; if (!key) throw new Error("pas de clé");
+  const isbn = isbnOf(q), r = await fetch(`https://www.googleapis.com/books/v1/volumes?maxResults=30&printType=books&orderBy=relevance&key=${encodeURIComponent(key)}&q=${encodeURIComponent(isbn ? "isbn:" + isbn : q)}`, { signal });
+  if (!r.ok) throw new Error("Google Books " + r.status);
+  return ((await r.json()).items || []).map(gbMap).filter(b => b.title);
+}
 async function searchOL(q, signal, mode = "any") {
   const isbn = isbnOf(q);
   const r = await fetch(`https://openlibrary.org/search.json?limit=40&fields=key,title,author_name,cover_i,number_of_pages_median,first_publish_year,language,edition_count&${isbn ? "isbn=" + isbn : (mode === "title" ? "title=" + encodeURIComponent(prefixed(q)) : "q=" + encodeURIComponent(q))}`, { signal });
@@ -681,7 +692,7 @@ async function searchOL(q, signal, mode = "any") {
 // Un titre propre : sans mention de support, d'édition ou de collection, sans le nom de l'auteur accolé, sans sous-titre générique.
 const GENERIC_SUB = /^(romans?|récits?|nouvelles?|théâtre|poèmes?|poésies?|essais?|contes?|textes? intégra(l|ux)|(édition|version) .*|nouvelle édition.*|œuvres? .*|(comédie|tragédie|drame|pièce)( en .*)?|tradu(it|ction) .*|suivi de .*|précédé de .*|avec .*|préface .*|texte .*|\d+e? ?éd.*)$/i;
 function cleanTitle(raw, author) {
-  let t = String(raw || "").replace(/\s*\[[^\]]*\]/g, " ").replace(/\s*\((?:[^)]*\b(?:[eé]dition|folio|poche|collection|coll|classiques?|french|english|illustr|tome|vol|int[eé]gral|bilingue)[^)]*)\)/gi, " ").replace(/\s+/g, " ").trim();
+  let t = String(raw || "").replace(/\s*\[[^\]]*\]/g, " ").replace(/\s*\((?:[^)]*(?:[eé]dition|folio|poche|collection|coll\.|classiques?|french|english|illustr|tome |vol\.|int[eé]gral|bilingue|nouvelle traduction)[^)]*)\)/gi, " ").replace(/\s+/g, " ").trim();
   const names = new Set(); String(author || "").split(/,|&| et /).forEach(a => { const n = norm(a), w = n.split(" "); if (n) { names.add(n); names.add(w[w.length - 1]); if (w.length > 1) names.add(w.slice(1).join(" ") + " " + w[0]); } });
   const isAuthor = seg => { const n = norm(seg).replace(/^(par|de|d|by) /, ""); return n.length > 2 && names.has(n); };
   for (const sep of [" / ", " — ", " – ", " - ", " : ", ", "]) { const parts = t.split(sep); if (parts.length > 1) { const kept = parts.filter(x => !isAuthor(x)); if (kept.length && kept.length < parts.length) t = kept.join(sep); } }
@@ -694,7 +705,7 @@ function cleanTitle(raw, author) {
 }
 const DERIVED = /\b(etude|analyse|profil|commentaire|resume|fiche|dossier|lecture|adaptation|manga|bande dessinee|d apres|explique|questionnaire|livret|cahier|guide|anthologie|extraits|morceaux choisis|colloque|actes)\b/;
 async function searchBooks(q, signal, onPartial) {
-  const isbnFirst = !!isbnOf(q), jobs = isbnFirst ? [searchBnf(q, signal), searchOL(q, signal)] : [searchOL(q, signal, "title"), searchOL(q, signal), searchBnf(q, signal, "title"), searchBnf(q, signal)];
+  const isbnFirst = !!isbnOf(q), jobs = isbnFirst ? [searchGB(q, signal), searchBnf(q, signal), searchOL(q, signal)] : [searchGB(q, signal), searchOL(q, signal, "title"), searchOL(q, signal), searchBnf(q, signal, "title"), searchBnf(q, signal)];
   const got = []; let failed = 0, pending = jobs.length;
   await Promise.all(jobs.map(j => j.then(v => { got.push(...v); pending--; if (pending && onPartial && !signal?.aborted) onPartial(rankBooks(q, got)); }, () => { failed++; pending--; })));
   if (signal?.aborted) throw new DOMException("annulé", "AbortError");
@@ -711,7 +722,7 @@ function rankBooks(q, list) {
     b.score = words.filter(w => hay.includes(w)).length / Math.max(1, words.length) * 10
       + (tq && mainNA === tq ? 5 : tq && mainNA.startsWith(tq) ? 3 : tq && t.includes(tq) ? 1.5 : 0) + Math.min(3, Math.log2(b.pop || 1))          // le titre correspond à ce qui est tapé
       + (key3.some(w => au.split(" ").some(x => x.startsWith(w))) ? 1.5 : 0)                               // l'auteur est dans la requête
-      + (isbnQ && b.src === "BnF" ? 4 : 0) + (b.lang === "fre" ? 2 : b.lang ? -1 : 0) + (b.total_pages ? 1 : 0) + (b.cover_url ? .5 : 0)
+      + (b.src === "Google Books" ? Math.max(0, 2.5 - b.rank * .15) : 0) + (isbnQ && b.src === "BnF" ? 4 : 0) + (b.lang === "fre" ? 2 : b.lang ? -1 : 0) + (b.total_pages ? 1 : 0) + (b.cover_url ? .5 : 0)
       - (DERIVED.test(t) && !DERIVED.test(nq) ? 5 : 0)                                                     // études, adaptations, fiches : après l'œuvre elle-même
       - Math.min(3, Math.max(0, main.split(" ").length - Math.max(3, titleWords.length + 1)) * .6) - i / 1000;
     const key = mainNA + "|" + (norm(String(b.author || "").split(",")[0]).split(" ").pop() || ""), g = groups.get(key);
@@ -720,6 +731,7 @@ function rankBooks(q, list) {
   return [...groups.values()].map(g => {
     const b = g.best, seenEd = new Set(), votes = new Map(); g.all.forEach(e => votes.set(e.title, (votes.get(e.title) || 0) + 1 + (/^(le|la|les|l'|un|une) /i.test(e.title) ? .5 : 0)));
     b.title = [...votes.entries()].sort((x, y) => y[1] - x[1] || x[0].length - y[0].length)[0][0];
+    const av = new Map(); g.all.forEach(e => String(e.author || "").split(", ").filter(Boolean).forEach((a, k) => av.set(a, (av.get(a) || 0) + (k ? .6 : 1)))); if (av.size) b.author = [...av.entries()].sort((x, y) => y[1] - x[1])[0][0];
     b.editions = g.all.filter(e => e.total_pages).sort((x, y) => (y.lang === "fre") - (x.lang === "fre") || String(y.year).localeCompare(String(x.year)))
       .filter(e => { const k = e.total_pages + "|" + e.publisher; if (seenEd.has(k)) return false; seenEd.add(k); return true; }).slice(0, 6).map(e => ({ pages: e.total_pages, year: e.year, publisher: e.publisher }));
     if (!b.total_pages && b.editions[0]) b.total_pages = b.editions[0].pages;
@@ -825,7 +837,7 @@ function openStudy() {
         el.innerHTML = `${coverThumb(b)}<span><b>${esc(b.title)}</b><i>${esc(b.author || "Auteur inconnu")}</i>
           <small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " p." : null, b.editions.length > 1 ? b.editions.length + " éditions" : null].filter(Boolean).map(esc).join(" · ")}</small></span>`;
         el.onclick = () => pickSuggestion(b, showFields); sugg.append(el); });
-      if (!final && list.length) sugg.insertAdjacentHTML("beforeend", `<p class="note" style="margin:6px 0">La BnF répond encore…</p>`); };
+      if (!final && list.length) sugg.insertAdjacentHTML("beforeend", `<p class="note" style="margin:6px 0">D'autres catalogues répondent encore…</p>`); };
     try { show(await searchBooks(text, ctl.signal, l => show(l, false)), true);
     } catch (err) { if (err.name !== "AbortError" && ctl === addCtl) sugg.innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion, ou remplis la fiche à la main.</p>`; }
   };
