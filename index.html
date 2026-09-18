@@ -526,7 +526,8 @@ const flatBook = (b, i) => `<button class="flat" data-book="${esc(b.id)}" style=
 // ───────────── Le livre ouvert ─────────────
 // Couvertures en meilleure définition : grande taille chez Open Library, zoom 3 chez Google Books ; retour à l'image d'origine si elle manque.
 const hiRes = u => !u ? u : u.replace(/(covers\.openlibrary\.org\/b\/(?:id|isbn)\/[^-/]+)-M\.jpg/, (m, a) => a + "-L.jpg").replace(/([?&]zoom=)1(?!\d)/, (m, a) => a + "3");
-const coverImg = (b, cls = "") => b.cover_url ? `<img class="${cls}" src="${esc(hiRes(b.cover_url))}" data-lo="${esc(b.cover_url)}" alt="" onload="if(this.naturalWidth<60&&this.src!==this.dataset.lo)this.src=this.dataset.lo" onerror="if(this.src!==this.dataset.lo)this.src=this.dataset.lo;else this.remove()">` : "";
+const coverImg = (b, cls = "") => { if (!b.cover_url) return ""; const chain = [...new Set([b.cover_url, ...(b.covers || [])].flatMap(u => [hiRes(u), u]))];
+  return `<img class="${cls}" src="${esc(chain[0])}" data-alts="${esc(chain.slice(1).join("|"))}" alt="" onload="if(this.naturalWidth<60)nextCover(this)" onerror="nextCover(this)">`; };
 let bookSort = "pages";
 function showBook(animate = true) {
   const b = S.books.find(x => x.id === openBook); if (!b) return closeBook();
@@ -776,7 +777,8 @@ function rankBooks(q, list) {
     b.editions = g.all.filter(e => e.total_pages).sort((x, y) => (y.lang === "fre") - (x.lang === "fre") || String(y.year).localeCompare(String(x.year)))
       .filter(e => { const k = e.total_pages + "|" + e.publisher; if (seenEd.has(k)) return false; seenEd.add(k); return true; }).slice(0, 6).map(e => ({ pages: e.total_pages, year: e.year, publisher: e.publisher }));
     if (!b.total_pages && b.editions[0]) b.total_pages = b.editions[0].pages;
-    if (!b.cover_url || !b.cover_url.includes("/b/id/")) b.cover_url = (g.all.find(e => e.cover_url?.includes("/b/id/")) || g.all.find(e => e.cover_url) || b).cover_url;
+    const rel = u => /books\.google/.test(u) ? 0 : u.includes("/b/id/") ? 1 : 2;   // l'ordre d'arrivée des catalogues ne doit pas changer la couverture
+    b.covers = [...new Set(g.all.map(e => e.cover_url).filter(Boolean))].sort((x, y) => rel(x) - rel(y)).slice(0, 4); b.cover_url = b.covers[0] || null;
     if (!b.openlibrary_key) b.openlibrary_key = g.all.find(e => e.openlibrary_key)?.openlibrary_key || null;
     b.score += Math.min(2.5, Math.log2(g.all.length));                                                     // beaucoup d'éditions = œuvre connue
     return b;
@@ -791,7 +793,7 @@ async function coverCandidates(title, author, signal) {
   let docs = last ? await get("&author=" + encodeURIComponent(last)) : []; if (!docs.length) docs = await get("");
   return [...new Set(docs.map(d => `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`))];
 }
-async function resolveCover(bk, signal) { if (bk.cover_url && await imgOk(bk.cover_url)) return bk.cover_url; try { return (await coverCandidates(bk.title, bk.author, signal))[0] || null; } catch { return null; } }
+async function resolveCover(bk, signal) { for (const u of [bk.cover_url, ...(bk.covers || [])].filter((u, i, a) => u && a.indexOf(u) === i)) if (await imgOk(u)) return u; try { return (await coverCandidates(bk.title, bk.author, signal))[0] || null; } catch { return null; } }
 // Rattrapage : les livres déjà en bibliothèque sans couverture (ou avec une adresse morte) en reçoivent une, une fois.
 async function backfillCovers() {
   let tried = {}; try { tried = JSON.parse(localStorage.getItem("coverTried") || "{}"); } catch {}
@@ -817,7 +819,9 @@ async function dlgCover(bookId) {
 }
 
 const study = $("#study"); let addPick = null, addCtl = null, addTimer = 0;
-const coverThumb = b => `<span class="noc">${esc((b.title || "?")[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span>`;
+window.nextCover = img => { const rest = (img.dataset.alts || "").split("|").filter(Boolean); if (rest.length) { img.dataset.alts = rest.slice(1).join("|"); img.src = rest[0]; } else img.remove(); };
+const altsOf = (b, first) => esc([...(b.covers || []), b.cover_url].filter((u, i, a) => u && u !== first && a.indexOf(u) === i).join("|"));
+const coverThumb = b => `<span class="noc">${esc((b.title || "?")[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" data-alts="${altsOf(b, b.cover_url)}" alt="" loading="lazy" onerror="nextCover(this)">` : ""}</span>`;
 const pickCard = (b, compact) => `${coverThumb(b)}<span class="pk"><b>${esc(b.title)}</b><small>${compact ? "" : esc(b.author || "Auteur inconnu") + " · "}p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}</small></span>`;
 function bookPicker(list, sel) {
   return `<div class="pickwrap"><button type="button" class="bookpick" id="bpick" aria-haspopup="listbox" aria-expanded="false" ${list.length > 1 ? "" : "disabled"}>${pickCard(sel, true)}${list.length > 1 ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>` : ""}</button>
@@ -890,7 +894,7 @@ function openStudy() {
   $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#asubmit"); btn.disabled = true;
     try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0,
         cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
-      bk.cover_url = await resolveCover(bk); await api.addBook(bk); closeStudy(); await reload();
+      bk.cover_url = await resolveCover({ ...bk, covers: addPick?.covers }); await api.addBook(bk); closeStudy(); await reload();
     } catch (err) { $("#aerr").textContent = err.message; btn.disabled = false; } };
 }
 function pickSuggestion(b, showFields) {
