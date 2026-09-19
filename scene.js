@@ -322,7 +322,8 @@ export function createScene(canvas, cb = {}) {
   const soft = (g, w, h, d, r, mat, x, y, z, rx = 0) => { const m = new THREE.Mesh(softGeo(w, h, d, r), mat); m.position.set(x, y, z); m.rotation.x = rx; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
   const leg = (g, x, z, h = .2) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.03, .018, h, 24), wood); m.position.set(x, h / 2, z); m.castShadow = true; g.add(m); };
   const studs = new THREE.MeshStandardMaterial({ color: "#c9a457", roughness: .3, metalness: .9 }), studGeo = new THREE.SphereGeometry(.009, 12, 8), rollGeo = new THREE.CapsuleGeometry(.092, .5, 12, 32);
-  const chair = (x, z, ry, y = 0) => { const g = new THREE.Group();
+  const procSeats = [], seatSpots = [];   // sièges de secours, et emplacements des vrais modèles
+  const chair = (x, z, ry, y = 0) => { const g = new THREE.Group(); procSeats.push(g); seatSpots.push({ kind: "chair", parent: into, x, y, z, ry });
     soft(g, .78, .2, .74, .07, leather, 0, .3, 0);                                   // assise basse
     soft(g, .56, .15, .56, .07, leather, 0, .47, .04);                               // coussin
     soft(g, .76, .78, .2, .095, leather, 0, .72, -.3, -.16);                         // dossier incliné
@@ -336,7 +337,7 @@ export function createScene(canvas, cb = {}) {
   { const g = new THREE.Group(); soft(g, .62, .2, .46, .085, linen, 0, .4, 0); soft(g, .56, .06, .4, .025, wood, 0, .28, 0);
     for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .24, b * .16, .27);
     g.rotation.y = .7; g.scale.setScalar(.8);
-    g.position.set(-.85, 0, 1.15); scene.add(g); }
+    g.position.set(-.85, 0, 1.15); scene.add(g); procSeats.push(g); seatSpots.push({ kind: "ottoman", parent: scene, x: -.85, y: 0, z: 1.15, ry: .7 }); }
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
   const study = new THREE.Group(); study.visible = false; scene.add(study); let sheet3d = null; const deskUp = new THREE.Vector3(0, 0, -1), PAPER = { w: .34, h: .62 };
@@ -641,6 +642,16 @@ export function createScene(canvas, cb = {}) {
     for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = rm.sheet.localToWorld(new THREE.Vector3(a * PW / 2, b * PH / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
     return { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
   }
+  // Vrais modèles 3D (Poly Haven, domaine public) : bergère et pouf, reteintés en brun chaud. S'ils ne se chargent pas, les sièges faits par code restent.
+  (async () => { try {
+    const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js"), L = new GLTFLoader(), load = u => new Promise((res, rej) => L.load(u, g => res(g.scene), undefined, rej));
+    const [armchair, ottoman] = await Promise.all([load("models/ArmChair_01/ArmChair_01.gltf"), load("models/Ottoman_01/Ottoman_01.gltf")]);
+    const prep = (root, tint) => root.traverse(o => { if (!o.isMesh) return; o.castShadow = o.receiveShadow = true; o.material.color.setRGB(...tint); for (const k of ["map", "normalMap", "roughnessMap", "metalnessMap", "aoMap"]) if (o.material[k]) o.material[k].anisotropy = ANISO; });
+    prep(armchair, [.98, .62, .38]); prep(ottoman, [3.0, 1.85, 1.1]);
+    for (const sp of seatSpots) { const m = (sp.kind === "chair" ? armchair : ottoman).clone(true); m.position.set(sp.x, sp.y, sp.z); m.rotation.y = sp.ry; if (sp.kind === "ottoman") m.scale.setScalar(.62); sp.parent.add(m); }
+    procSeats.forEach(g => { g.visible = false; }); invalidate();
+  } catch (err) { console.warn("Modèles 3D indisponibles, sièges de secours :", err); } })();
+
   addEventListener("resize", resize); resize();
   cam.p.set(0, 2.7, 8.6); cam.t.set(0, 3.5, ZB); goTo(VIEWS.room, 2600, true);
   return { setBooks, setState, releaseBook, invalidate, paperRect, get state() { return state; }, dispose() { alive = false; cancelAnimationFrame(raf); removeEventListener("resize", resize); renderer.dispose(); } };
