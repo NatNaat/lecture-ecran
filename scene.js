@@ -72,7 +72,7 @@ function paintingTex(seed) {
 }
 function glimpseTex() {
   return canvasTex(256, 512, (g, w, h) => {
-    const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, "#3a2110"); bg.addColorStop(.5, "#a86a30"); bg.addColorStop(1, "#2a1609"); g.fillStyle = bg; g.fillRect(0, 0, w, h);
+    const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, "#5a3316"); bg.addColorStop(.5, "#d48a3e"); bg.addColorStop(1, "#3a1f0c"); g.fillStyle = bg; g.fillRect(0, 0, w, h);
     const lampe = g.createRadialGradient(w * .66, h * .52, 4, w * .66, h * .52, w * .75); lampe.addColorStop(0, "rgba(255,226,170,.95)"); lampe.addColorStop(.35, "rgba(240,160,80,.45)"); lampe.addColorStop(1, "rgba(240,160,80,0)"); g.fillStyle = lampe; g.fillRect(0, 0, w, h);
     const r = rnd(31); g.fillStyle = "rgba(30,15,6,.85)"; g.fillRect(0, 0, w * .4, h * .78);
     for (let k = 0; k < 6; k++) { const y = 20 + k * 62; g.fillStyle = "rgba(15,8,3,.9)"; g.fillRect(0, y + 50, w * .4, 6); for (let x = 4; x < w * .4 - 8;) { const bw = 5 + r() * 8, bh = 30 + r() * 16; g.fillStyle = ["#6a3d20", "#8a5a30", "#4a2416", "#a07a48", "#3a2a20"][(r() * 5) | 0]; g.globalAlpha = .8; g.fillRect(x, y + 50 - bh, bw, bh); g.globalAlpha = 1; x += bw + 1; } }
@@ -258,6 +258,11 @@ export function createScene(canvas, cb = {}) {
   for (const sd of [-1, 1]) box(.07, 2.3, .42, woodDark, sd * .5, y2 + 1.15, ZB - .16, false); box(1.07, .07, .42, woodDark, 0, y2 + 2.3, ZB - .16, false);   // embrasure profonde
   { const leaf = box(.045, 2.22, .86, wood, .45, y2 + 1.11, ZB - .8, false); leaf.rotation.y = .12; const knob = new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 10), brass); knob.position.set(.41, y2 + 1.05, ZB - 1.12); scene.add(knob); }
   const doorGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ffb35a", opacity: .55 })); doorGlow.scale.set(2.2, 3.2, 1); doorGlow.position.set(0, y2 + 1.15, ZB + .3); scene.add(doorGlow);
+  for (const sd of [-1, 1]) box(.035, 2.36, .03, brass, sd * .56, y2 + 1.18, ZB + .135, false); box(1.155, .035, .03, brass, 0, y2 + 2.36, ZB + .135, false);
+  { const lantern = new THREE.Mesh(new THREE.SphereGeometry(.07, 16, 12), new THREE.MeshBasicMaterial({ color: "#ffe2b0" })); lantern.position.set(0, y2 + 2.62, ZB + .2); scene.add(lantern); box(.02, .14, .02, brass, 0, y2 + 2.75, ZB + .2, false);
+    const lg = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .9 })); lg.scale.set(1.1, 1.1, 1); lg.position.copy(lantern.position); scene.add(lg);
+    const spill = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 1.25), new THREE.MeshBasicMaterial({ map: canvasTex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, 0, 4, w / 2, 0, h); gr.addColorStop(0, "rgba(255,190,110,.85)"); gr.addColorStop(1, "rgba(255,160,80,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, h); }), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+    spill.rotation.x = -Math.PI / 2; spill.position.set(0, y2 + .006, ZB + .66); scene.add(spill); }
   const doorHit = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0), new THREE.MeshBasicMaterial({ visible: false })); doorHit.position.set(0, y2 + 1.3, ZB + .06); scene.add(doorHit);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
   // rambardes (avec une ouverture pour l'échelle)
@@ -276,13 +281,14 @@ export function createScene(canvas, cb = {}) {
     const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: paintingTex(seed), roughness: .8 })); p.position.z = .028; g.add(p); g.position.set(x, y, z); g.rotation.y = ry; scene.add(g); };
   painting(-1.75, 2.1, ZB + CASE_D + .03, .55, .42, 4); painting(-1.75, 1.45, ZB + CASE_D + .03, .55, .42, 9); painting(1.75, 1.85, ZB + CASE_D + .03, .6, .78, 14);
   // mobilier
-  const leather = new THREE.MeshStandardMaterial({ color: "#9a683a", roughness: .55 }), linen = new THREE.MeshStandardMaterial({ color: "#b9ab8c", roughness: .9 });
+  const grain = canvasTex(128, 128, (g, w, h) => { g.fillStyle = "#808080"; g.fillRect(0, 0, w, h); const r = rnd(23); for (let i = 0; i < 2600; i++) { const v = 96 + r() * 64; g.fillStyle = `rgb(${v},${v},${v})`; g.fillRect(r() * w, r() * h, 1 + r() * 2, 1 + r() * 2); } }, [3, 3]);
+  const leather = new THREE.MeshStandardMaterial({ color: "#6e4326", roughness: .46, bumpMap: grain, bumpScale: .5 }), linen = new THREE.MeshStandardMaterial({ color: "#b9ab8c", roughness: .9 });
   const cyl = (rt, rb, h, mat, x, y, z, open) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 28, 1, !!open), mat); m.position.set(x, y, z); m.castShadow = !open; m.receiveShadow = true; into.add(m); return m; };
   const tx = 1.25, tz = .9; cyl(.5, .5, .035, wood, tx, .745, tz); cyl(.48, .44, .03, wood, tx, .715, tz); cyl(.035, .06, .42, wood, tx, .5, tz); cyl(.07, .035, .1, wood, tx, .26, tz); cyl(.06, .09, .2, wood, tx, .12, tz); cyl(.24, .28, .035, wood, tx, .018, tz);
   const shadeMat = new THREE.MeshStandardMaterial({ color: "#f3d9a4", emissive: "#ffb765", emissiveIntensity: 1.6, side: THREE.DoubleSide, roughness: .9 });
   const lamp = (x, y, z, k = 1) => { cyl(.07 * k, .09 * k, .04, brass, x, y + .02, z); cyl(.015, .015, .34 * k, brass, x, y + .19 * k, z); cyl(.11 * k, .2 * k, .2 * k, shadeMat, x, y + .44 * k, z, true);
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); s.scale.set(1.5 * k, 1.5 * k, 1); s.position.set(x, y + .44 * k, z); scene.add(s); };
-  const glow = glowTex(); lamp(tx + .3, .76, tz - .28, .85); lamp(-1.35, y2, ZB + .75, .9);
+  const glow = glowTex(); lamp(tx + .3, .76, tz - .28, .85); lamp(1.55, y2, ZB + .75, .9);
   // Le journal de lecture, ouvert sur la table ronde : reliure en cuir, tranches des pages, ruban, page de gauche déjà écrite
   const journal = new THREE.Group(); journal.position.set(tx - .1, .762, tz + .08); journal.rotation.y = .55; scene.add(journal);
   const JP = { w: .27, h: .40 }, journalUp = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), journal.rotation.y);
@@ -311,21 +317,20 @@ export function createScene(canvas, cb = {}) {
     const g = new THREE.ExtrudeGeometry(sh, { depth: d - 2 * r, bevelEnabled: true, bevelSize: r, bevelThickness: r, bevelSegments: 5, curveSegments: 6 }); g.translate(0, 0, -(d - 2 * r) / 2); return g; };
   const soft = (g, w, h, d, r, mat, x, y, z, rx = 0) => { const m = new THREE.Mesh(softGeo(w, h, d, r), mat); m.position.set(x, y, z); m.rotation.x = rx; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
   const leg = (g, x, z, h = .2) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.03, .018, h, 12), wood); m.position.set(x, h / 2, z); m.castShadow = true; g.add(m); };
-  const studs = new THREE.MeshStandardMaterial({ color: "#c9a457", roughness: .3, metalness: .9 });
-  const chair = (x, z, ry, y = 0) => { const g = new THREE.Group();
-    soft(g, .78, .2, .74, .06, leather, 0, .3, 0);                                   // assise basse
-    soft(g, .56, .15, .56, .07, leather, 0, .47, .04);                               // coussin
-    soft(g, .76, .78, .2, .09, leather, 0, .72, -.3, -.16);                          // dossier incliné
-    for (const a of [-1, 1]) { soft(g, .17, .34, .7, .08, leather, a * .33, .5, .02);   // accoudoirs
-      const roll = new THREE.Mesh(new THREE.CapsuleGeometry(.095, .5, 6, 14), leather); roll.rotation.x = Math.PI / 2; roll.position.set(a * .33, .68, .02); roll.castShadow = true; g.add(roll);
-      for (let k = 0; k < 5; k++) { const st = new THREE.Mesh(new THREE.SphereGeometry(.012, 8, 6), studs); st.position.set(a * .33, .4 + k * .045, .375); g.add(st); } }
-    soft(g, .34, .3, .1, .045, linen, .02, .66, -.14, -.3);                          // petit coussin
-    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .31, b * .29);
+  // Fauteuil club : un dossier enveloppant d'un seul tenant, extrudé avec de larges arrondis, sur une assise ronde et un coussin galbé
+  const horseshoe = (ro, ri, a0, a1, height, bevel) => { const sh = new THREE.Shape(); sh.absarc(0, 0, ro, a0, a1, false); sh.absarc(0, 0, ri, a1, a0, true); sh.closePath();
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: height, bevelEnabled: true, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 8, curveSegments: 40 }); geo.rotateX(-Math.PI / 2); return geo; };
+  const pillow = (r, t) => new THREE.LatheGeometry([[0, t], [r * .78, t], [r * .94, t * .62], [r, 0], [r * .94, -t * .62], [r * .78, -t], [0, -t]].map(([x, y]) => new THREE.Vector2(x, y)), 40);
+  const RAD = Math.PI / 180, armGeo = horseshoe(.4, .3, -38 * RAD, 218 * RAD, .24, .045), backGeo = horseshoe(.395, .31, 18 * RAD, 162 * RAD, .3, .045), seatGeo = new THREE.CylinderGeometry(.385, .36, .2, 44), cushGeo = pillow(.31, .065);
+  const chair = (x, z, ry, y = 0) => { const g = new THREE.Group(), put = (geo, mat, px, py, pz, rx = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(px, py, pz); m.rotation.x = rx; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
+    put(seatGeo, leather, 0, .2, 0); put(cushGeo, leather, 0, .37, .03); put(armGeo, leather, 0, .3, 0); put(backGeo, leather, 0, .58, 0);
+    for (const a of [-1, 1]) for (const b of [-1, 1]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(.028, .018, .1, 14), wood); l.position.set(a * .25, .05, b * .25); l.castShadow = true; g.add(l); }
     g.position.set(x, y, z); g.rotation.y = ry; into.add(g); };
   chair(1.7, -.35, -.45); chair(-1.4, .35, .7);
-  { const g = new THREE.Group(); soft(g, .62, .2, .46, .08, linen, 0, .4, 0); soft(g, .56, .06, .4, .025, wood, 0, .28, 0);
-    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .24, b * .16, .27);
-    g.position.set(-.95, 0, 1.2); g.rotation.y = .7; g.scale.setScalar(.8); scene.add(g); }
+  { const g = new THREE.Group(); const base = new THREE.Mesh(new THREE.CylinderGeometry(.27, .25, .2, 40), leather); base.position.y = .2; base.castShadow = base.receiveShadow = true; g.add(base);
+    const top = new THREE.Mesh(pillow(.285, .07), leather); top.position.y = .35; top.castShadow = true; g.add(top);
+    for (const a of [-1, 1]) for (const b of [-1, 1]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(.026, .016, .1, 14), wood); l.position.set(a * .17, .05, b * .17); g.add(l); }
+    g.position.set(-.85, 0, 1.15); scene.add(g); }
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
   const study = new THREE.Group(); study.visible = false; scene.add(study); let sheet3d = null; const deskUp = new THREE.Vector3(0, 0, -1), PAPER = { w: .34, h: .62 };
@@ -401,9 +406,9 @@ export function createScene(canvas, cb = {}) {
 
   // Lumières
   scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .36));
-  for (const sd of [-1, 1]) for (const z of [-2.3, .1]) { const x = sd * (W / 2 - CASE_D - .06); cyl(.05, .035, .12, brass, x, 2.95, z); const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .8 })); gl.scale.set(1.7, 2.1, 1); gl.position.set(x - sd * .08, 2.72, z); scene.add(gl); }   // appliques : flaques de lumière sur les rayonnages
+  for (const sd of [-1, 1]) for (const z of [-2.95, -.75]) { const x = sd * (W / 2 - CASE_D - .06); cyl(.05, .035, .12, brass, x, 2.95, z); const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, transparent: true, opacity: .55 })); gl.scale.set(1.25, 1.55, 1); gl.position.set(x - sd * .08, 2.72, z); scene.add(gl); }   // appliques : flaques de lumière ; halo sans test de profondeur, pour ne pas trancher dans l'échelle
   const pl = (x, y, z, i, d = 9) => { const l = new THREE.PointLight("#ffb46c", i, d, 1.8); l.position.set(x, y, z); scene.add(l); return l; };
-  pl(tx + .3, 1.28, tz - .28, 7); pl(-1.35, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.3, ZB + .5, 5, 6);
+  pl(tx + .3, 1.28, tz - .28, 7); pl(1.55, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.5, ZB + .55, 11, 6);
   const key = new THREE.SpotLight("#ffd9a8", 40, 16, .8, .75, 1.4); key.position.set(.5, H - .3, 2.2); key.target.position.set(0, .4, -1.6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0006; scene.add(key, key.target);
   const pic = new THREE.SpotLight("#ffd29a", 30, 7, .95, .7, 1.2); pic.position.set(0, H1 - .18, ZB + 1.75); pic.target.position.set(0, 1.55, ZB); pic.castShadow = true; pic.shadow.mapSize.set(1024, 1024); pic.shadow.bias = -.0012; pic.shadow.camera.near = .4; pic.shadow.camera.far = 6; scene.add(pic, pic.target); let picI = 30;
   box(1.4, .05, .1, brass, 0, H1 - .1, ZB + BAL_B - .1, false);
@@ -524,12 +529,6 @@ export function createScene(canvas, cb = {}) {
     }
   } catch (err) { console.warn("Finitions d'image indisponibles :", err); post = null; }
 
-  // Poussières dans la lumière des lampes
-  const DUST = 90, dustPos = new Float32Array(DUST * 3), dustSeed = []; { const r = rnd(77);
-    for (let i = 0; i < DUST; i++) { dustSeed.push([r() * 6.28, .04 + r() * .06, .5 + r()]); dustPos[i * 3] = -1.9 + r() * 3.8; dustPos[i * 3 + 1] = .4 + r() * 3.4; dustPos[i * 3 + 2] = -3 + r() * 6.5; } }
-  const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
-  const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ map: glowTex(), color: "#ffd9a0", size: .035, transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true })); scene.add(dust);
-
   const lastCam = { p: new THREE.Vector3(), q: new THREE.Quaternion(), ok: false };
 
   function resize() {
@@ -550,11 +549,10 @@ export function createScene(canvas, cb = {}) {
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
     // Signaux discrets dans la vue d'ensemble, à cadence réduite : la porte respire, un reflet passe sur le journal
     if (state === "room" && !document.hidden) {
-      const s1 = .5 + .5 * Math.sin(now / 900); door.material.color.setRGB(.82 + .18 * s1, .78 + .2 * s1, .72 + .24 * s1); doorGlow.material.opacity = .35 + .35 * s1; doorGlow.scale.set(2.0 + .5 * s1, 3.0 + .5 * s1, 1);
+      const s1 = .5 + .5 * Math.sin(now / 900); door.material.color.setRGB(.82 + .18 * s1, .78 + .2 * s1, .72 + .24 * s1); doorGlow.material.opacity = .5 + .4 * s1; doorGlow.scale.set(2.1 + .6 * s1, 3.1 + .6 * s1, 1);
       const c = (now % 4200) / 4200, g = c < .3 ? Math.sin(c / .3 * Math.PI) : 0; glint.material.opacity = g * .75; glint.position.set(JP.w / 2 + .006 - .1 + .2 * (c / .3), .06, JP.h * .3 - JP.h * .6 * (c / .3));
       if (!busy) setTimeout(invalidate, 50);
     } else { doorGlow.material.opacity = 0; glint.material.opacity = 0; }
-    if (state === "room") { const a = dustGeo.attributes.position; for (let i = 0; i < DUST; i++) { const [ph, sp, k] = dustSeed[i]; a.array[i * 3 + 1] += sp * .012; if (a.array[i * 3 + 1] > 4) a.array[i * 3 + 1] = .4; a.array[i * 3] += Math.sin(now / 1900 * k + ph) * .0006; } a.needsUpdate = true; dust.visible = true; } else dust.visible = false;
     applyCamera();
     if (post) { let blend = 0; if (lastCam.ok) { const v = camera.position.distanceTo(lastCam.p) * 3.2 + camera.quaternion.angleTo(lastCam.q) * 5.5; blend = Math.min(.4, Math.max(0, v - .015) * 2.0); if (tweens.size) blend = Math.max(blend, .14); }
       lastCam.p.copy(camera.position); lastCam.q.copy(camera.quaternion); lastCam.ok = true;
