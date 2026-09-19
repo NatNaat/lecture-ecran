@@ -12,9 +12,10 @@ const ease = t => 1 - Math.pow(1 - t, 4);
 const SANS = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif';
 
 // ───────────── Textures dessinées ─────────────
+let ANISO = 4;   // relevé au niveau réel de la carte à la création du rendu
 function canvasTex(w, h, draw, repeat) {
   const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d"), w, h);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = ANISO;
   if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat[0], repeat[1]); }
   return t;
 }
@@ -71,6 +72,15 @@ function paintingTex(seed) {
 }
 function glowTex() {
   return canvasTex(128, 128, (g, w) => { const gr = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); gr.addColorStop(0, "rgba(255,214,150,.95)"); gr.addColorStop(.3, "rgba(255,180,100,.35)"); gr.addColorStop(1, "rgba(255,160,80,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, w); });
+}
+// Ambiance réfléchie par les matériaux (laiton, fer, cuir) : une pièce sombre aux halos chauds, en équirectangulaire
+function envTex() {
+  const c = document.createElement("canvas"); c.width = 256; c.height = 128; const g = c.getContext("2d");
+  const gr = g.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, "#0b0704"); gr.addColorStop(.42, "#382312"); gr.addColorStop(.6, "#1f1208"); gr.addColorStop(1, "#080402");
+  g.fillStyle = gr; g.fillRect(0, 0, 256, 128);
+  const blob = (x, y, s, col) => { const rg = g.createRadialGradient(x, y, 0, x, y, s); rg.addColorStop(0, col); rg.addColorStop(1, "rgba(255,170,90,0)"); g.fillStyle = rg; g.fillRect(x - s, y - s, 2 * s, 2 * s); };
+  blob(58, 60, 26, "rgba(255,199,124,.95)"); blob(196, 68, 20, "rgba(255,178,98,.8)"); blob(120, 88, 34, "rgba(255,160,80,.35)"); blob(128, 22, 30, "rgba(110,130,190,.22)");
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.mapping = THREE.EquirectangularReflectionMapping; return t;
 }
 function leatherFill(g, w, h, color, seed) {
   g.fillStyle = color; g.fillRect(0, 0, w, h); const r = rnd(seed);
@@ -159,7 +169,9 @@ export function createScene(canvas, cb = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   const scene = new THREE.Scene(); scene.background = new THREE.Color("#060403"); scene.fog = new THREE.Fog("#060403", 12, 24);
+  { const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromEquirectangular(envTex()).texture; scene.environmentIntensity = .3; pm.dispose(); }
   const camera = new THREE.PerspectiveCamera(80, 1, .05, 40);
 
   const wood = new THREE.MeshStandardMaterial({ map: woodTex("#2a180e", "#0e0704", "#4a2c18"), roughness: .55, metalness: .05 });
@@ -168,6 +180,8 @@ export function createScene(canvas, cb = {}) {
   const iron = new THREE.MeshStandardMaterial({ color: "#2a1d10", roughness: .4, metalness: .7 });
   const brass = new THREE.MeshStandardMaterial({ color: "#b08a3e", roughness: .35, metalness: .85 });
   const paper = new THREE.MeshStandardMaterial({ color: "#d8cba8", roughness: .9 });
+  // Relief léger : la texture sert aussi de carte de relief, le grain accroche la lumière rasante
+  wood.bumpMap = wood.map; wood.bumpScale = .2; woodDark.bumpMap = woodDark.map; woodDark.bumpScale = .16; floorMat.bumpMap = floorMat.map; floorMat.bumpScale = .3;
   const unit = new THREE.BoxGeometry(1, 1, 1);
   let into = scene;   // parent courant des éléments construits (la grande salle, puis le cabinet)
   const box = (w, h, d, mat, x, y, z, shadow = true) => { const m = new THREE.Mesh(unit, mat); m.scale.set(w, h, d); m.position.set(x, y, z); m.castShadow = shadow; m.receiveShadow = true; into.add(m); return m; };
@@ -368,10 +382,10 @@ export function createScene(canvas, cb = {}) {
     inst.receiveShadow = true; scene.add(inst); }
 
   // Lumières
-  scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .6));
+  scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .5));
   const pl = (x, y, z, i, d = 9) => { const l = new THREE.PointLight("#ffb46c", i, d, 1.8); l.position.set(x, y, z); scene.add(l); return l; };
   pl(tx + .3, 1.28, tz - .28, 7); pl(-1.35, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.3, ZB + .5, 5, 6);
-  const key = new THREE.SpotLight("#ffd9a8", 46, 16, .95, .7, 1.4); key.position.set(.6, H - .3, 2.6); key.target.position.set(-.2, 0, -.6); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0006; scene.add(key, key.target);
+  const key = new THREE.SpotLight("#ffd9a8", 46, 16, .95, .7, 1.4); key.position.set(.6, H - .3, 2.6); key.target.position.set(-.2, 0, -.6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0006; scene.add(key, key.target);
   const pic = new THREE.SpotLight("#ffcf94", 7, 7, 1.05, .8, 1.2); pic.position.set(0, H1 - .15, ZB + 1.55); pic.target.position.set(0, 1.5, ZB); scene.add(pic, pic.target);
   box(1.4, .05, .1, brass, 0, H1 - .1, ZB + BAL_B - .1, false);
   const fill = new THREE.PointLight("#ffd2a0", 0, 4.5, 1.6); fill.position.set(0, -.95, .1); camera.add(fill); scene.add(camera);
@@ -458,9 +472,6 @@ export function createScene(canvas, cb = {}) {
     camera.position.copy(cam.p); const t = cam.t.clone();
     if (state === "room") tilted(camera.position, t);
     const rm = rooms[state] || (tw && rooms[tw.room]); if (lift > .001 && rm) camera.up.set(0, 1, 0).lerp(rm.up, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
-    const amp = rooms[state] || lift > .01 || state === "ceiling" ? 0 : state === "shelf" ? .05 : .2;
-    if (amp) { const now = performance.now(), bx = Math.sin(now / 3700) * .012, by = Math.sin(now / 2600) * .014, side = new THREE.Vector3().subVectors(t, camera.position).cross(camera.up).normalize();
-      camera.position.addScaledVector(side, par.x * amp + bx); camera.position.y += -par.y * amp * .6 + by; }
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
   }
   // Finitions d'image : l'image précédente est mêlée à la nouvelle quand la caméra bouge (flou de mouvement), puis un vignettage discret.
@@ -493,19 +504,6 @@ export function createScene(canvas, cb = {}) {
   const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
   const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ map: glowTex(), color: "#ffd9a0", size: .035, transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true })); scene.add(dust);
 
-  // Parallaxe : la caméra suit un peu l'inclinaison du téléphone (ou la souris), sauf quand un formulaire est calé sur une feuille
-  const par = { x: 0, y: 0, tx: 0, ty: 0, beta0: null, asked: false };
-  const onTilt = e => { if (e.gamma == null) return; if (par.beta0 === null) par.beta0 = e.beta; par.tx = THREE.MathUtils.clamp(e.gamma / 22, -1, 1); par.ty = THREE.MathUtils.clamp((e.beta - par.beta0) / 22, -1, 1); invalidate(); };
-  // iOS n'affiche la demande d'accès aux mouvements que pendant un vrai geste (doigt qui se relève, clic) : on la tente à ce moment-là,
-  // et on réessaie au geste suivant tant qu'elle n'a pas abouti.
-  function askTilt() {
-    const D = window.DeviceOrientationEvent; if (par.asked || !D) return;
-    const done = () => { par.asked = true; removeEventListener("touchend", askTilt, true); removeEventListener("click", askTilt, true); };
-    if (typeof D.requestPermission !== "function") { done(); addEventListener("deviceorientation", onTilt); return; }
-    D.requestPermission().then(r => { done(); if (r === "granted") addEventListener("deviceorientation", onTilt); }).catch(() => {});
-  }
-  addEventListener("touchend", askTilt, true); addEventListener("click", askTilt, true);
-  if (matchMedia("(pointer: fine)").matches) addEventListener("pointermove", e => { par.tx = (e.clientX / innerWidth - .5) * 1.4; par.ty = (e.clientY / innerHeight - .5) * 1.4; invalidate(); });
   const lastCam = { p: new THREE.Vector3(), q: new THREE.Quaternion(), ok: false };
 
   function resize() {
@@ -530,10 +528,9 @@ export function createScene(canvas, cb = {}) {
       const c = (now % 4200) / 4200, g = c < .3 ? Math.sin(c / .3 * Math.PI) : 0; glint.material.opacity = g * .75; glint.position.set(JP.w / 2 + .006 - .1 + .2 * (c / .3), .06, JP.h * .3 - JP.h * .6 * (c / .3));
       if (!busy) setTimeout(invalidate, 50);
     } else { doorGlow.material.opacity = 0; glint.material.opacity = 0; }
-    par.x += (par.tx - par.x) * .09; par.y += (par.ty - par.y) * .09; if (Math.abs(par.tx - par.x) + Math.abs(par.ty - par.y) > .004) busy = true;
     if (state === "room" || state === "shelf") { const a = dustGeo.attributes.position; for (let i = 0; i < DUST; i++) { const [ph, sp, k] = dustSeed[i]; a.array[i * 3 + 1] += sp * .012; if (a.array[i * 3 + 1] > 4) a.array[i * 3 + 1] = .4; a.array[i * 3] += Math.sin(now / 1900 * k + ph) * .0006; } a.needsUpdate = true; dust.visible = true; } else dust.visible = false;
     applyCamera();
-    if (post) { let blend = 0; if (lastCam.ok) { const v = camera.position.distanceTo(lastCam.p) * 3.2 + camera.quaternion.angleTo(lastCam.q) * 5.5; blend = Math.min(.72, Math.max(0, v - .012) * 3.4); if (tweens.size) blend = Math.max(blend, .28); }
+    if (post) { let blend = 0; if (lastCam.ok) { const v = camera.position.distanceTo(lastCam.p) * 3.2 + camera.quaternion.angleTo(lastCam.q) * 5.5; blend = Math.min(.4, Math.max(0, v - .015) * 2.0); if (tweens.size) blend = Math.max(blend, .14); }
       lastCam.p.copy(camera.position); lastCam.q.copy(camera.quaternion); lastCam.ok = true;
       try { post.render(blend); if (blend > .02) busy = true; } catch (err) { console.warn(err); post = null; renderer.setRenderTarget(null); renderer.render(scene, camera); } }
     else renderer.render(scene, camera);
