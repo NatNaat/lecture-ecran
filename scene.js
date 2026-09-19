@@ -38,17 +38,17 @@ function floorTex() {
 }
 function rugTex() {
   return canvasTex(512, 1024, (g, w, h) => {
-    g.fillStyle = "#3a1414"; g.fillRect(0, 0, w, h);
-    const band = (m, c, lw) => { g.strokeStyle = c; g.lineWidth = lw; g.strokeRect(m, m, w - 2 * m, h - 2 * m); };
-    band(10, "#c9a466", 8); band(30, "#16223f", 22); band(52, "#c9a466", 4); band(70, "#7a2a22", 14);
-    const r = rnd(5); g.fillStyle = "#c9a466";
-    for (let x = 40; x < w - 30; x += 28) for (const y of [30, h - 30]) { g.beginPath(); g.arc(x, y, 4, 0, 7); g.fill(); }
-    for (let y = 40; y < h - 30; y += 28) for (const x of [30, w - 30]) { g.beginPath(); g.arc(x, y, 4, 0, 7); g.fill(); }
-    for (let i = 0; i < 150; i++) { const x = 100 + r() * (w - 200), y = 100 + r() * (h - 200); g.fillStyle = ["#c9a466", "#16223f", "#8a3a2a", "#d8c9a0"][i % 4]; g.globalAlpha = .75;
-      g.save(); g.translate(x, y); g.rotate(Math.PI / 4); g.fillRect(-5, -5, 10, 10); g.restore(); }
-    g.globalAlpha = 1;
-    const loz = (rx, ry, c) => { g.fillStyle = c; g.beginPath(); g.moveTo(w / 2, h / 2 - ry); g.lineTo(w / 2 + rx, h / 2); g.lineTo(w / 2, h / 2 + ry); g.lineTo(w / 2 - rx, h / 2); g.closePath(); g.fill(); };
-    loz(150, 270, "#16223f"); loz(132, 240, "#b8935a"); loz(122, 224, "#4a1818"); loz(60, 110, "#16223f"); loz(46, 86, "#b8935a"); loz(34, 64, "#3a1414");
+    g.fillStyle = "#23100f"; g.fillRect(0, 0, w, h); const r = rnd(5);
+    const frame = (m, c, lw, a = 1) => { g.globalAlpha = a; g.strokeStyle = c; g.lineWidth = lw; g.strokeRect(m, m, w - 2 * m, h - 2 * m); g.globalAlpha = 1; };
+    g.fillStyle = "#10182a"; g.fillRect(18, 18, w - 36, h - 36); g.fillStyle = "#2a1312"; g.fillRect(64, 64, w - 128, h - 128);
+    frame(18, "#7d6438", 3, .7); frame(62, "#7d6438", 2, .6); frame(74, "#7d6438", 1, .4);
+    const rosette = (x, y, s, c, a) => { g.globalAlpha = a; g.fillStyle = c; for (let k = 0; k < 4; k++) { g.save(); g.translate(x, y); g.rotate(k * Math.PI / 2); g.beginPath(); g.ellipse(0, -s * .55, s * .22, s * .5, 0, 0, 7); g.fill(); g.restore(); } g.beginPath(); g.arc(x, y, s * .16, 0, 7); g.fill(); g.globalAlpha = 1; };
+    for (let x = 41; x < w - 30; x += 36) { rosette(x, 41, 11, "#8a6f40", .55); rosette(x, h - 41, 11, "#8a6f40", .55); }
+    for (let y = 77; y < h - 60; y += 36) { rosette(41, y, 11, "#8a6f40", .55); rosette(w - 41, y, 11, "#8a6f40", .55); }
+    for (let j = 0, y = 110; y < h - 100; y += 46, j++) for (let x = 104 + (j % 2) * 23; x < w - 96; x += 46) rosette(x, y, 13, j % 2 ? "#4a201c" : "#3c2a3a", .8);
+    const loz = (rx, ry, c, a = 1) => { g.globalAlpha = a; g.fillStyle = c; g.beginPath(); g.moveTo(w / 2, h / 2 - ry); g.quadraticCurveTo(w / 2 + rx * .55, h / 2 - ry * .45, w / 2 + rx, h / 2); g.quadraticCurveTo(w / 2 + rx * .55, h / 2 + ry * .45, w / 2, h / 2 + ry); g.quadraticCurveTo(w / 2 - rx * .55, h / 2 + ry * .45, w / 2 - rx, h / 2); g.quadraticCurveTo(w / 2 - rx * .55, h / 2 - ry * .45, w / 2, h / 2 - ry); g.fill(); g.globalAlpha = 1; };
+    loz(150, 250, "#7d6438", .55); loz(144, 242, "#10182a"); loz(112, 196, "#3a1615"); loz(60, 108, "#7d6438", .5); loz(54, 100, "#10182a"); rosette(w / 2, h / 2, 40, "#8a6f40", .6);
+    for (let i = 0; i < 5000; i++) { g.fillStyle = r() > .5 ? "#000" : "#a08060"; g.globalAlpha = .05; g.fillRect(r() * w, r() * h, 1.5, 1.5); } g.globalAlpha = 1;
   });
 }
 function skyTex() {
@@ -68,6 +68,16 @@ function paintingTex(seed) {
     const sky = g.createLinearGradient(0, 0, 0, h); sky.addColorStop(0, "#6b6a4a"); sky.addColorStop(.55, "#8a6a3a"); sky.addColorStop(1, "#2a2414"); g.fillStyle = sky; g.fillRect(0, 0, w, h);
     const r = rnd(seed); for (let i = 0; i < 26; i++) { g.fillStyle = ["#1d2414", "#3a3a1e", "#54401f", "#16180f"][i % 4]; g.globalAlpha = .55; g.beginPath(); g.ellipse(r() * w, h * (.55 + r() * .45), 20 + r() * 60, 10 + r() * 34, 0, 0, 7); g.fill(); }
     g.globalAlpha = 1;
+  });
+}
+function glimpseTex() {
+  return canvasTex(256, 512, (g, w, h) => {
+    const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, "#3a2110"); bg.addColorStop(.5, "#a86a30"); bg.addColorStop(1, "#2a1609"); g.fillStyle = bg; g.fillRect(0, 0, w, h);
+    const lampe = g.createRadialGradient(w * .66, h * .52, 4, w * .66, h * .52, w * .75); lampe.addColorStop(0, "rgba(255,226,170,.95)"); lampe.addColorStop(.35, "rgba(240,160,80,.45)"); lampe.addColorStop(1, "rgba(240,160,80,0)"); g.fillStyle = lampe; g.fillRect(0, 0, w, h);
+    const r = rnd(31); g.fillStyle = "rgba(30,15,6,.85)"; g.fillRect(0, 0, w * .4, h * .78);
+    for (let k = 0; k < 6; k++) { const y = 20 + k * 62; g.fillStyle = "rgba(15,8,3,.9)"; g.fillRect(0, y + 50, w * .4, 6); for (let x = 4; x < w * .4 - 8;) { const bw = 5 + r() * 8, bh = 30 + r() * 16; g.fillStyle = ["#6a3d20", "#8a5a30", "#4a2416", "#a07a48", "#3a2a20"][(r() * 5) | 0]; g.globalAlpha = .8; g.fillRect(x, y + 50 - bh, bw, bh); g.globalAlpha = 1; x += bw + 1; } }
+    g.fillStyle = "rgba(20,10,4,.9)"; g.fillRect(w * .5, h * .7, w * .5, h * .08); g.fillRect(w * .56, h * .78, 8, h * .22); g.fillRect(w * .9, h * .78, 8, h * .22);   // le bureau, à contre-jour
+    g.fillStyle = "rgba(25,12,5,.95)"; g.fillRect(0, h * .9, w, h * .1);
   });
 }
 function glowTex() {
@@ -92,18 +102,24 @@ function wrapWords(g, text, max) {
   if (cur) lines.push(cur); return lines;
 }
 function spineTex(book, color, horizontal, ratio = .25, ink = "#f0e4c6", accent = "#d9b972") {
+  const style = hash(book.title + "s") % 4;   // quatre façons de relier : filets, nerfs, étiquette, auteur en pied
   const h = 512, w = Math.max(64, Math.round(h * ratio));
   return canvasTex(horizontal ? h : w, horizontal ? w : h, g => {
     if (horizontal) { g.translate(h, 0); g.rotate(Math.PI / 2); }
     leatherFill(g, w, h, color, hash(book.title));
-    const sh = g.createLinearGradient(0, 0, w, 0); sh.addColorStop(0, "rgba(0,0,0,.45)"); sh.addColorStop(.25, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(0,0,0,.4)"); g.fillStyle = sh; g.fillRect(0, 0, w, h);
-    g.fillStyle = accent; g.fillRect(0, 34, w, 3); g.fillRect(0, h - 37, w, 3); const maxSize = Math.min(38, w * .42);
-    g.save(); g.translate(w / 2, h / 2); g.rotate(-Math.PI / 2); g.fillStyle = ink; g.textAlign = "center"; g.textBaseline = "middle";
+    // dos bombé : ombres marquées sur les bords, reflet doux au tiers
+    const sh = g.createLinearGradient(0, 0, w, 0); sh.addColorStop(0, "rgba(0,0,0,.7)"); sh.addColorStop(.12, "rgba(0,0,0,.25)"); sh.addColorStop(.32, "rgba(255,255,255,.13)"); sh.addColorStop(.6, "rgba(0,0,0,.05)"); sh.addColorStop(.88, "rgba(0,0,0,.35)"); sh.addColorStop(1, "rgba(0,0,0,.75)"); g.fillStyle = sh; g.fillRect(0, 0, w, h);
+    const rule = (y, t = 3) => { g.fillStyle = accent; g.fillRect(0, y, w, t); }, nerf = y => { g.fillStyle = "rgba(255,255,255,.16)"; g.fillRect(0, y - 5, w, 4); g.fillStyle = "rgba(0,0,0,.45)"; g.fillRect(0, y + 3, w, 5); g.fillStyle = accent; g.globalAlpha = .7; g.fillRect(0, y - 1, w, 2); g.globalAlpha = 1; };
+    if (style === 1) [52, 112, h - 118, h - 58].forEach(nerf); else if (style === 3) { rule(30); rule(h - 96, 2); rule(h - 33); } else { rule(34); rule(h - 37); if (style === 0) { rule(42, 1); rule(h - 44, 1); } }
+    if (style === 2) { g.fillStyle = "rgba(0,0,0,.38)"; g.fillRect(w * .1, 70, w * .8, h - 140); g.strokeStyle = accent; g.lineWidth = 2; g.globalAlpha = .8; g.strokeRect(w * .1, 70, w * .8, h - 140); g.globalAlpha = 1; }
+    if ((style === 1 || style === 3) && book.author && w >= 72) { const last = String(book.author).split(",")[0].trim().split(" ").pop().toUpperCase(); g.fillStyle = accent; g.textAlign = "center"; g.textBaseline = "middle"; g.font = `600 ${Math.min(17, w * .17)}px ${SANS}`; g.fillText(last, w / 2, style === 1 ? h - 88 : h - 64, w - 12); }
+    const maxSize = Math.min(38, w * .42), padTop = style === 1 ? 128 : 60, padBot = style === 1 ? 134 : style === 3 ? 110 : 60;
+    g.save(); g.translate(w / 2, (padTop + h - padBot) / 2); g.rotate(-Math.PI / 2); g.fillStyle = ink; g.textAlign = "center"; g.textBaseline = "middle";
     let size = maxSize, lines; const title = book.title.toUpperCase();
-    for (;; size -= 3) { g.font = `600 ${size}px ${SANS}`; lines = wrapWords(g, title, h - 110); if ((lines.length <= (w > 90 ? 2 : 1) && lines.every(l => g.measureText(l).width <= h - 100)) || size <= 15) break; }
+    for (;; size -= 3) { g.font = `600 ${size}px ${SANS}`; lines = wrapWords(g, title, h - padTop - padBot); if ((lines.length <= (w > 90 ? 2 : 1) && lines.every(l => g.measureText(l).width <= h - padTop - padBot + 8)) || size <= 14) break; }
     if (lines.length > 2) lines = [lines[0], lines.slice(1).join(" ")];
     lines = lines.slice(0, 2); const lh = size * 1.22 + 4;
-    lines.forEach((l, i) => g.fillText(l, 0, (i - (lines.length - 1) / 2) * lh, h - 96)); g.restore();
+    lines.forEach((l, i) => g.fillText(l, 0, (i - (lines.length - 1) / 2) * lh, h - padTop - padBot + 8)); g.restore();
   });
 }
 function coverTex(book, color) {
@@ -194,10 +210,10 @@ export function createScene(canvas, cb = {}) {
     for (const sd of [-1, 1]) box(full / 2 - hw, d1 - d0, .1, woodDark, sd * (hw + (full / 2 - hw) / 2), (d0 + d1) / 2, ZB - .05, false); }
   for (const s of [-1, 1]) box(.1, H, ZF - ZB + 2, woodDark, s * (W / 2 + .05), H / 2, (ZF + ZB) / 2 + 1, false);
   box(W + .4, .12, ZF - ZB + 2, woodDark, 0, H + .06, (ZF + ZB) / 2 + 1, false);
-  const sky = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 5.4), new THREE.MeshStandardMaterial({ map: skyTex(), emissiveMap: null, emissive: "#ffffff", emissiveIntensity: 0, roughness: 1 }));
+  const sky = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 5.6), new THREE.MeshStandardMaterial({ map: skyTex(), emissiveMap: null, emissive: "#ffffff", emissiveIntensity: 0, roughness: 1 }));
   sky.material.emissiveMap = sky.material.map; sky.material.emissiveIntensity = .55; sky.rotation.x = Math.PI / 2; sky.position.set(0, H - .005, .2); scene.add(sky);
-  for (const s of [-1, 1]) { box(.22, .3, 5.9, wood, s * 1.62, H - .15, .2, false); box(.9, .16, 5.9, woodDark, s * 2.0, H - .08, .2, false); }
-  for (const z of [-2.62, 3.02]) box(3.5, .3, .22, wood, 0, H - .15, z, false);
+  for (const s of [-1, 1]) { box(.2, .3, 6.1, wood, s * 2.1, H - .15, .2, false); box(.24, .16, 6.1, woodDark, s * 2.3, H - .08, .2, false); }
+  for (const z of [-2.72, 3.12]) box(4.4, .3, .22, wood, 0, H - .15, z, false);
 
   // Livres du décor : un seul maillage instancié
   const generic = [];
@@ -238,7 +254,9 @@ export function createScene(canvas, cb = {}) {
   caseBack(-W / 2 + CASE_D, -.55, y2, 6, .47, R); caseBack(.55, W / 2 - CASE_D, y2, 6, .47, R);
   for (const s of [-1, 1]) caseSide(s, ZB + CASE_D, 1.4, y2, 6, .47, R);
   // porte éclairée à l'étage
-  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.3), new THREE.MeshBasicMaterial({ color: "#e9a45a", transparent: true })); door.position.set(0, y2 + 1.15, ZB + .04); scene.add(door);
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.1), new THREE.MeshBasicMaterial({ map: glimpseTex(), color: "#e9a45a", transparent: true })); door.position.set(.1, y2 + 1.35, ZB - .9); scene.add(door);
+  for (const sd of [-1, 1]) box(.07, 2.3, .42, woodDark, sd * .5, y2 + 1.15, ZB - .16, false); box(1.07, .07, .42, woodDark, 0, y2 + 2.3, ZB - .16, false);   // embrasure profonde
+  { const leaf = box(.045, 2.22, .86, wood, .45, y2 + 1.11, ZB - .8, false); leaf.rotation.y = .12; const knob = new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 10), brass); knob.position.set(.41, y2 + 1.05, ZB - 1.12); scene.add(knob); }
   const doorGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ffb35a", opacity: .55 })); doorGlow.scale.set(2.2, 3.2, 1); doorGlow.position.set(0, y2 + 1.15, ZB + .3); scene.add(doorGlow);
   const doorHit = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0), new THREE.MeshBasicMaterial({ visible: false })); doorHit.position.set(0, y2 + 1.3, ZB + .06); scene.add(doorHit);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
@@ -304,10 +322,10 @@ export function createScene(canvas, cb = {}) {
     soft(g, .34, .3, .1, .045, linen, .02, .66, -.14, -.3);                          // petit coussin
     for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .31, b * .29);
     g.position.set(x, y, z); g.rotation.y = ry; into.add(g); };
-  chair(1.75, 1.75, -2.2); chair(-1.7, 2.4, 1.0);
+  chair(1.7, -.35, -.45); chair(-1.4, .35, .7);
   { const g = new THREE.Group(); soft(g, .62, .2, .46, .08, linen, 0, .4, 0); soft(g, .56, .06, .4, .025, wood, 0, .28, 0);
     for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .24, b * .16, .27);
-    g.position.set(-1.05, 0, 1.2); g.rotation.y = .5; g.scale.setScalar(.85); scene.add(g); }
+    g.position.set(-.95, 0, 1.2); g.rotation.y = .7; g.scale.setScalar(.8); scene.add(g); }
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
   const study = new THREE.Group(); study.visible = false; scene.add(study); let sheet3d = null; const deskUp = new THREE.Vector3(0, 0, -1), PAPER = { w: .34, h: .62 };
@@ -378,27 +396,29 @@ export function createScene(canvas, cb = {}) {
   }
 
   { const geo = new THREE.BoxGeometry(1, 1, 1), mat = new THREE.MeshStandardMaterial({ roughness: .75 }), inst = new THREE.InstancedMesh(geo, mat, generic.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
-    generic.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(.85)); });
+    generic.forEach((b, i) => { m4.makeScale(b.sx, b.sy, b.sz).setPosition(b.x, b.y, b.z); inst.setMatrixAt(i, m4); inst.setColorAt(i, col.set(b.c).multiplyScalar(b.y > H1 ? .36 : .56)); });
     inst.receiveShadow = true; scene.add(inst); }
 
   // Lumières
-  scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .5));
+  scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .36));
+  for (const sd of [-1, 1]) for (const z of [-2.3, .1]) { const x = sd * (W / 2 - CASE_D - .06); cyl(.05, .035, .12, brass, x, 2.95, z); const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .8 })); gl.scale.set(1.7, 2.1, 1); gl.position.set(x - sd * .08, 2.72, z); scene.add(gl); }   // appliques : flaques de lumière sur les rayonnages
   const pl = (x, y, z, i, d = 9) => { const l = new THREE.PointLight("#ffb46c", i, d, 1.8); l.position.set(x, y, z); scene.add(l); return l; };
   pl(tx + .3, 1.28, tz - .28, 7); pl(-1.35, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.3, ZB + .5, 5, 6);
-  const key = new THREE.SpotLight("#ffd9a8", 46, 16, .95, .7, 1.4); key.position.set(.6, H - .3, 2.6); key.target.position.set(-.2, 0, -.6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0006; scene.add(key, key.target);
-  const pic = new THREE.SpotLight("#ffcf94", 7, 7, 1.05, .8, 1.2); pic.position.set(0, H1 - .15, ZB + 1.55); pic.target.position.set(0, 1.5, ZB); scene.add(pic, pic.target);
+  const key = new THREE.SpotLight("#ffd9a8", 40, 16, .8, .75, 1.4); key.position.set(.5, H - .3, 2.2); key.target.position.set(0, .4, -1.6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0006; scene.add(key, key.target);
+  const pic = new THREE.SpotLight("#ffd29a", 30, 7, .95, .7, 1.2); pic.position.set(0, H1 - .18, ZB + 1.75); pic.target.position.set(0, 1.55, ZB); pic.castShadow = true; pic.shadow.mapSize.set(1024, 1024); pic.shadow.bias = -.0012; pic.shadow.camera.near = .4; pic.shadow.camera.far = 6; scene.add(pic, pic.target); let picI = 30;
   box(1.4, .05, .1, brass, 0, H1 - .1, ZB + BAL_B - .1, false);
-  const fill = new THREE.PointLight("#ffd2a0", 0, 4.5, 1.6); fill.position.set(0, -.95, .1); camera.add(fill); scene.add(camera);
+  const fill = new THREE.PointLight("#ffd2a0", 0, 4.5, 1.6); fill.position.set(0, -1.15, -.25); camera.add(fill); scene.add(camera);
 
   // ───────────── Tes livres ─────────────
   const user = new THREE.Group(); scene.add(user); let pickables = [], texLoader = new THREE.TextureLoader(); texLoader.setCrossOrigin("anonymous");
   const bayHit = new THREE.Mesh(new THREE.PlaneGeometry(BAY.x1 - BAY.x0, BAY.rows * BAY.rowH), new THREE.MeshBasicMaterial({ visible: false })); bayHit.position.set(0, BAY.y0 + BAY.rows * BAY.rowH / 2, ZB + CASE_D + .01); scene.add(bayHit);
   const rowY = k => BAY.y0 + k * BAY.rowH + .02, zFront = ZB + CASE_D - .03;
   function disposeUser() { user.traverse(o => { if (o.isMesh) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.map && m.userData.own && !m.userData.keepMap) m.map.dispose(); if (m.userData.own) m.dispose(); }); } }); user.clear(); pickables = []; }
-  function bookMesh(w, h, d, faceTex, color) {
+  const pagesMat = new THREE.MeshStandardMaterial({ map: canvasTex(64, 64, (g, w, h) => { g.fillStyle = "#e2d7ba"; g.fillRect(0, 0, w, h); g.fillStyle = "rgba(90,70,40,.35)"; for (let x = 1; x < w; x += 3) g.fillRect(x, 0, 1, h); }), roughness: .95 });
+  function bookMesh(w, h, d, faceTex, color, faceOut) {
     const side = new THREE.MeshStandardMaterial({ color, roughness: .85 }); side.userData.own = true;
     const face = new THREE.MeshStandardMaterial({ map: faceTex, roughness: .85, emissive: "#ffffff", emissiveMap: faceTex, emissiveIntensity: .28 }); face.userData.own = true;
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [side, side, paper, side, face, side]); m.castShadow = m.receiveShadow = true; return m;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), faceOut ? [pagesMat, side, pagesMat, pagesMat, face, side] : [side, side, paper, side, face, side]); m.castShadow = m.receiveShadow = true; return m;
   }
   function dress(m, b, ratio) {
     if (!b.cover_url) return;
@@ -418,7 +438,7 @@ export function createScene(canvas, cb = {}) {
     // en cours : de face, à hauteur d'yeux (rangée 2)
     let x = inner0 + .04;
     cur.slice(0, 6).forEach(b => {
-      const w = .3, h = .44, m = bookMesh(w, h, .05, coverTex(b, color(b)), color(b)); m.position.set(x + w / 2, rowY(2) + h / 2 + .005, zFront - .1); m.rotation.x = -.1; m.userData = { id: b.id, home: m.position.clone(), rx: -.1, kind: "face", w, h, d: .05, book: b, color: color(b) }; user.add(m); pickables.push(m);
+      const w = .3, h = .44, dd = Math.max(.03, Math.min(.075, (b.total_pages || 260) * .00012)), m = bookMesh(w, h, dd, coverTex(b, color(b)), color(b), true); m.position.set(x + w / 2, rowY(2) + h / 2 + .012, zFront - .1); m.rotation.x = -.14; m.userData = { id: b.id, home: m.position.clone(), rx: -.14, kind: "face", w, h, d: dd, book: b, color: color(b) }; user.add(m); pickables.push(m);
       dress(m, b);
       const lab = new THREE.Mesh(new THREE.PlaneGeometry(.3, .047), new THREE.MeshBasicMaterial({ map: b.total_pages ? progressTex(b.current_page / b.total_pages) : labelTex(`p. ${b.current_page}`), transparent: true })); lab.material.userData.own = true;
       lab.position.set(x + w / 2, rowY(2) - .02, ZB + CASE_D + .002); user.add(lab); x += w + .09;
@@ -431,17 +451,23 @@ export function createScene(canvas, cb = {}) {
     const order = [3, 1, 4, 0]; let ri = 0; x = inner0;
     done.forEach(b => { const t = Math.max(.055, Math.min(.12, (b.total_pages || 260) * .00014)), h = .37 + (hash(b.title) % 9) * .011;
       if (x + t > inner1) { ri++; x = inner0; } if (ri >= order.length) return;
-      const m = bookMesh(t, h, .27, spineTex(b, color(b), false, t / h), color(b)); m.position.set(x + t / 2, rowY(order[ri]) + h / 2, zFront - .135); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "spine", w: t, h, d: .27, book: b, color: color(b) }; user.add(m); pickables.push(m); dress(m, b, t / h); x += t + .004; });
-    focusX = BAY.x0 + .7; invalidate();
+      const m = bookMesh(t, h, .27, spineTex(b, color(b), false, t / h), color(b)); m.position.set(x + t / 2, rowY(order[ri]) + h / 2, zFront - .135 - (hash(b.title + "z") % 6) * .005); m.userData = { id: b.id, home: m.position.clone(), rx: 0, kind: "spine", w: t, h, d: .27, book: b, color: color(b) }; user.add(m); pickables.push(m); dress(m, b, t / h); x += t + .004; });
+    // cadrage : centré sur les rangées occupées, plus près quand il y en a peu
+    const used = [...new Set([...(cur.length || dropped.length ? [2] : []), ...order.slice(0, done.length ? ri + 1 : 0)])]; if (!used.length) used.push(2);
+    const lo = Math.min(...used), hi = Math.max(...used); shelfY = (rowY(lo) + rowY(hi) + BAY.rowH) / 2 - .04; SHELF_DIST = hi - lo + 1 <= 2 ? .86 : hi - lo + 1 === 3 ? 1.15 : 1.45;
+    // on arrive devant les livres en cours (sinon devant le début des rangées), pas au milieu du meuble
+    const xs = pickables.filter(m => m.userData.kind === (cur.length ? "face" : "spine")).map(m => m.position.x); focusX = xs.length ? THREE.MathUtils.clamp(cur.length ? (Math.min(...xs) + Math.max(...xs)) / 2 : Math.min(...xs) + .3, BAY.x0 + .4, BAY.x1 - .4) : 0;
+    if (state === "shelf") { shelf.y = shelfY; goTo(shelfView(), 900); }
+    invalidate();
   }
 
   // ───────────── Caméra ─────────────
-  const VIEWS = { room: { p: [0, 2.05, 5.7], t: [0, 2.9, ZB] }, ceiling: { p: [0, H - 1.25, .55], t: [0, H, .2] }, study: { p: [-.95, SY + 2.15, -5.45], t: [.3, SY + .7, -7.3] } };
+  const VIEWS = { room: { p: [0, 2.0, 5.0], t: [0, 2.85, ZB] }, ceiling: { p: [0, H - 1.25, .55], t: [0, H, .2] }, study: { p: [-.95, SY + 2.15, -5.45], t: [.3, SY + .7, -7.3] } };
   let lift = 0;   // 0 → 1 à l'approche de la feuille : la caméra bascule à la verticale du bureau
   let state = "room", shelf = { x: 0, y: 1.75 }, yaw = 0, pull = 0, focusX = BAY.x0 + .6;
   const cam = { p: new THREE.Vector3(...VIEWS.room.p), t: new THREE.Vector3(...VIEWS.room.t) }, from = { p: cam.p.clone(), t: cam.t.clone() }, goal = { p: cam.p.clone(), t: cam.t.clone() };
   let tw = null; const tweens = new Set();
-  const SHELF_DIST = 1.55, shelfView = () => ({ p: [shelf.x, shelf.y, ZB + CASE_D + SHELF_DIST], t: [shelf.x, shelf.y - .02, ZB] });
+  let SHELF_DIST = 1.2, shelfY = 1.75; const shelfView = () => ({ p: [shelf.x, shelf.y, ZB + CASE_D + SHELF_DIST], t: [shelf.x, shelf.y - .02, ZB] });
   // Les pièces annexes : on y entre par la porte de la mezzanine, la caméra finit à la verticale d'une feuille.
   const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
   const rooms = {
@@ -461,7 +487,7 @@ export function createScene(canvas, cb = {}) {
   }
   function goTo(v, ms = 1100, smooth = false) { from.p.copy(cam.p); from.t.copy(cam.t); goal.p.set(...v.p); goal.t.set(...v.t); tw = { t0: performance.now(), ms, smooth }; invalidate(); }
   function setState(s, opt = {}) {
-    if (s === "shelf") { shelf.x = THREE.MathUtils.clamp(opt.x ?? focusX, BAY.x0 + .6, BAY.x1 - .6); shelf.y = 1.75; }
+    if (s === "shelf") { shelf.x = THREE.MathUtils.clamp(opt.x ?? focusX, BAY.x0 + .4, BAY.x1 - .4); shelf.y = shelfY; }
     const entering = !!rooms[s], roomName = entering ? s : rooms[state] ? state : null; if (entering) rooms[s].group.visible = true;
     if (s === "ceiling" && state === "room") { const p = new THREE.Vector3(), t = new THREE.Vector3(); tilted(p, t); cam.p.copy(p); cam.t.copy(t); }
     state = s; yaw = 0; pull = 0; if (roomName) goRoom(roomName, entering); else goTo(s === "shelf" ? shelfView() : VIEWS[s], s === "shelf" ? 1300 : s === "ceiling" ? 1400 : 1200, s === "ceiling" || state === "ceiling"); cb.onState?.(s);
@@ -472,7 +498,7 @@ export function createScene(canvas, cb = {}) {
     camera.position.copy(cam.p); const t = cam.t.clone();
     if (state === "room") tilted(camera.position, t);
     const rm = rooms[state] || (tw && rooms[tw.room]); if (lift > .001 && rm) camera.up.set(0, 1, 0).lerp(rm.up, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
-    camera.lookAt(t); fill.intensity = state === "shelf" ? 2.0 : 0;
+    camera.lookAt(t); fill.intensity = state === "shelf" ? 2.6 : 0; picI += ((state === "shelf" ? 10 : 30) - picI) * .08; pic.intensity = picI;
   }
   // Finitions d'image : l'image précédente est mêlée à la nouvelle quand la caméra bouge (flou de mouvement), puis un vignettage discret.
   // Si le téléphone ne sait pas dessiner dans une texture flottante, on garde le rendu direct.
@@ -524,11 +550,11 @@ export function createScene(canvas, cb = {}) {
     if (!dragging && state === "room" && (Math.abs(yaw) > .001 || pull > .001)) { yaw *= .86; pull *= .82; cb.onPull?.(pull); busy = true; }
     // Signaux discrets dans la vue d'ensemble, à cadence réduite : la porte respire, un reflet passe sur le journal
     if (state === "room" && !document.hidden) {
-      const s1 = .5 + .5 * Math.sin(now / 900); door.material.color.setRGB(.914 + .086 * s1, .643 + .18 * s1, .353 + .25 * s1); doorGlow.material.opacity = .35 + .35 * s1; doorGlow.scale.set(2.0 + .5 * s1, 3.0 + .5 * s1, 1);
+      const s1 = .5 + .5 * Math.sin(now / 900); door.material.color.setRGB(.82 + .18 * s1, .78 + .2 * s1, .72 + .24 * s1); doorGlow.material.opacity = .35 + .35 * s1; doorGlow.scale.set(2.0 + .5 * s1, 3.0 + .5 * s1, 1);
       const c = (now % 4200) / 4200, g = c < .3 ? Math.sin(c / .3 * Math.PI) : 0; glint.material.opacity = g * .75; glint.position.set(JP.w / 2 + .006 - .1 + .2 * (c / .3), .06, JP.h * .3 - JP.h * .6 * (c / .3));
       if (!busy) setTimeout(invalidate, 50);
     } else { doorGlow.material.opacity = 0; glint.material.opacity = 0; }
-    if (state === "room" || state === "shelf") { const a = dustGeo.attributes.position; for (let i = 0; i < DUST; i++) { const [ph, sp, k] = dustSeed[i]; a.array[i * 3 + 1] += sp * .012; if (a.array[i * 3 + 1] > 4) a.array[i * 3 + 1] = .4; a.array[i * 3] += Math.sin(now / 1900 * k + ph) * .0006; } a.needsUpdate = true; dust.visible = true; } else dust.visible = false;
+    if (state === "room") { const a = dustGeo.attributes.position; for (let i = 0; i < DUST; i++) { const [ph, sp, k] = dustSeed[i]; a.array[i * 3 + 1] += sp * .012; if (a.array[i * 3 + 1] > 4) a.array[i * 3 + 1] = .4; a.array[i * 3] += Math.sin(now / 1900 * k + ph) * .0006; } a.needsUpdate = true; dust.visible = true; } else dust.visible = false;
     applyCamera();
     if (post) { let blend = 0; if (lastCam.ok) { const v = camera.position.distanceTo(lastCam.p) * 3.2 + camera.quaternion.angleTo(lastCam.q) * 5.5; blend = Math.min(.4, Math.max(0, v - .015) * 2.0); if (tweens.size) blend = Math.max(blend, .14); }
       lastCam.p.copy(camera.position); lastCam.q.copy(camera.quaternion); lastCam.ok = true;
@@ -553,7 +579,7 @@ export function createScene(canvas, cb = {}) {
       if (down.axis === "pull") { pull = Math.abs(dy) / 300; const a = pull > .42; if (a !== armed) { armed = a; cb.haptic?.(); } cb.onPull?.(pull); }
       else yaw = THREE.MathUtils.clamp(-dx / 900, -.22, .22);
     } else if (state === "shelf") {
-      const k = (2 * SHELF_DIST * .43) / (canvas.clientWidth || innerWidth); shelf.x = THREE.MathUtils.clamp(down.sx - dx * k, BAY.x0 + .6, BAY.x1 - .6); shelf.y = THREE.MathUtils.clamp(down.sy + dy * k, 1.2, 2.3);
+      const k = (2 * SHELF_DIST * .43) / (canvas.clientWidth || innerWidth); shelf.x = THREE.MathUtils.clamp(down.sx - dx * k, BAY.x0 + .45, BAY.x1 - .45); shelf.y = THREE.MathUtils.clamp(down.sy + dy * k, .9, 2.8);
       const v = shelfView(); cam.p.set(...v.p); cam.t.set(...v.t);
     }
     invalidate();

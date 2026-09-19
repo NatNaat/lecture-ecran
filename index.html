@@ -575,7 +575,7 @@ function renderSky() {
   const keep = sky.scrollTop;
   sky.innerHTML = `<header class="skyhead" role="status" aria-label="${bal < 0 ? `Dette de ${-bal} minutes` : `Solde de ${bal} minutes`}">
       <div class="reserve">${bal < 0 ? "−" + -bal : bal}<small>${bal < 0 ? `min de dette · ${plural(-bal, "page")} à lire` : Math.abs(bal) > 1 ? "minutes en réserve" : "minute en réserve"}</small></div>
-      <div class="hud">${active.length ? active.map(s => `<b>${esc(s.app)}</b> ouvert encore <b data-exp="${esc(s.expires_at)}">…</b>`).join("<br>") : `<b>${today.pages}</b> ${today.pages > 1 ? "pages lues" : "page lue"} aujourd'hui · <b>${st}</b> ${st > 1 ? "jours" : "jour"} d'affilée`}${auditDue() ? `<br><span class="due">Contrôle de la semaine à faire</span>` : ""}${DEMO ? " · démonstration" : ""}</div>
+      <div class="hud">${active.length ? active.map(s => `<b>${esc(s.app)}</b> ouvert encore <b data-exp="${esc(s.expires_at)}">…</b>`).join("<br>") : `<b>${today.pages}</b> ${today.pages > 1 ? "pages lues" : "page lue"} aujourd'hui · <b>${st}</b> ${st > 1 ? "jours" : "jour"} d'affilée`}${auditDue() ? `<br><span class="due">Contrôle hebdo à faire</span>` : ""}${DEMO ? " · démonstration" : ""}</div>
     </header>
     <div class="skybody" ${skyOpen ? "" : "inert"}><div class="tabs" role="tablist">
       <button role="tab" aria-selected="${skyTab === "stats"}" data-ctab="stats">Comptes</button>
