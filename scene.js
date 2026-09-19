@@ -282,7 +282,7 @@ export function createScene(canvas, cb = {}) {
   painting(-1.75, 2.1, ZB + CASE_D + .03, .55, .42, 4); painting(-1.75, 1.45, ZB + CASE_D + .03, .55, .42, 9); painting(1.75, 1.85, ZB + CASE_D + .03, .6, .78, 14);
   // mobilier
   const grain = canvasTex(128, 128, (g, w, h) => { g.fillStyle = "#808080"; g.fillRect(0, 0, w, h); const r = rnd(23); for (let i = 0; i < 2600; i++) { const v = 96 + r() * 64; g.fillStyle = `rgb(${v},${v},${v})`; g.fillRect(r() * w, r() * h, 1 + r() * 2, 1 + r() * 2); } }, [3, 3]);
-  const leather = new THREE.MeshStandardMaterial({ color: "#6e4326", roughness: .46, bumpMap: grain, bumpScale: .5 }), linen = new THREE.MeshStandardMaterial({ color: "#b9ab8c", roughness: .9 });
+  const leather = new THREE.MeshStandardMaterial({ color: "#8f5e34", roughness: .5, bumpMap: grain, bumpScale: .35 }), linen = new THREE.MeshStandardMaterial({ color: "#b9ab8c", roughness: .9 });
   const cyl = (rt, rb, h, mat, x, y, z, open) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 28, 1, !!open), mat); m.position.set(x, y, z); m.castShadow = !open; m.receiveShadow = true; into.add(m); return m; };
   const tx = 1.25, tz = .9; cyl(.5, .5, .035, wood, tx, .745, tz); cyl(.48, .44, .03, wood, tx, .715, tz); cyl(.035, .06, .42, wood, tx, .5, tz); cyl(.07, .035, .1, wood, tx, .26, tz); cyl(.06, .09, .2, wood, tx, .12, tz); cyl(.24, .28, .035, wood, tx, .018, tz);
   const shadeMat = new THREE.MeshStandardMaterial({ color: "#f3d9a4", emissive: "#ffb765", emissiveIntensity: 1.6, side: THREE.DoubleSide, roughness: .9 });
@@ -312,24 +312,30 @@ export function createScene(canvas, cb = {}) {
   const glint = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#fff4d6", opacity: 0 })); glint.scale.set(.32, .16, 1); glint.position.set(JP.w / 2 + .006, .06, 0); journal.add(glint);
   const journalHit = new THREE.Mesh(new THREE.BoxGeometry(2 * JP.w + .2, .12, JP.h + .16), new THREE.MeshBasicMaterial({ visible: false })); journalHit.position.y = .05; journal.add(journalHit);
   // Mobilier aux arêtes adoucies : boîtes arrondies (extrusion biseautée), accoudoirs en capsule, pieds tournés
-  const softGeo = (w, h, d, r) => { r = Math.min(r, w / 2 - .001, h / 2 - .001, d / 2 - .001); const a = w / 2 - r, b = h / 2 - r, c = Math.min(r * .6, a, b), sh = new THREE.Shape();
-    sh.moveTo(-a + c, -b); sh.lineTo(a - c, -b); sh.quadraticCurveTo(a, -b, a, -b + c); sh.lineTo(a, b - c); sh.quadraticCurveTo(a, b, a - c, b); sh.lineTo(-a + c, b); sh.quadraticCurveTo(-a, b, -a, b - c); sh.lineTo(-a, -b + c); sh.quadraticCurveTo(-a, -b, -a + c, -b);
-    const g = new THREE.ExtrudeGeometry(sh, { depth: d - 2 * r, bevelEnabled: true, bevelSize: r, bevelThickness: r, bevelSegments: 5, curveSegments: 6 }); g.translate(0, 0, -(d - 2 * r) / 2); return g; };
+  const softGeo = (w, h, d, r) => { r = Math.min(r, w / 2 - .001, h / 2 - .001, d / 2 - .001); const n = 10, geo = new THREE.BoxGeometry(w, h, d, n, n, n), pos = geo.attributes.position, nor = geo.attributes.normal, v = new THREE.Vector3(), c = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i);
+      // répartition : la moitié des pas de la grille couvre la face plane, l'autre moitié l'arrondi
+      for (const [ax, half] of [["x", w / 2], ["y", h / 2], ["z", d / 2]]) { const u = v[ax] / half, a = Math.abs(u), flat = (half - r) / half; v[ax] = Math.sign(u) * half * (a <= .6 ? a / .6 * flat : flat + (a - .6) / .4 * (1 - flat)); }
+      c.set(THREE.MathUtils.clamp(v.x, -w / 2 + r, w / 2 - r), THREE.MathUtils.clamp(v.y, -h / 2 + r, h / 2 - r), THREE.MathUtils.clamp(v.z, -d / 2 + r, d / 2 - r));
+      const dir = v.clone().sub(c); if (dir.lengthSq() > 1e-10) { dir.normalize(); pos.setXYZ(i, c.x + dir.x * r, c.y + dir.y * r, c.z + dir.z * r); nor.setXYZ(i, dir.x, dir.y, dir.z); } else pos.setXYZ(i, v.x, v.y, v.z); }
+    pos.needsUpdate = true; nor.needsUpdate = true; return geo; };
   const soft = (g, w, h, d, r, mat, x, y, z, rx = 0) => { const m = new THREE.Mesh(softGeo(w, h, d, r), mat); m.position.set(x, y, z); m.rotation.x = rx; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
-  const leg = (g, x, z, h = .2) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.03, .018, h, 12), wood); m.position.set(x, h / 2, z); m.castShadow = true; g.add(m); };
-  // Fauteuil club : un dossier enveloppant d'un seul tenant, extrudé avec de larges arrondis, sur une assise ronde et un coussin galbé
-  const horseshoe = (ro, ri, a0, a1, height, bevel) => { const sh = new THREE.Shape(); sh.absarc(0, 0, ro, a0, a1, false); sh.absarc(0, 0, ri, a1, a0, true); sh.closePath();
-    const geo = new THREE.ExtrudeGeometry(sh, { depth: height, bevelEnabled: true, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 8, curveSegments: 40 }); geo.rotateX(-Math.PI / 2); return geo; };
-  const pillow = (r, t) => new THREE.LatheGeometry([[0, t], [r * .78, t], [r * .94, t * .62], [r, 0], [r * .94, -t * .62], [r * .78, -t], [0, -t]].map(([x, y]) => new THREE.Vector2(x, y)), 40);
-  const RAD = Math.PI / 180, armGeo = horseshoe(.4, .3, -38 * RAD, 218 * RAD, .24, .045), backGeo = horseshoe(.395, .31, 18 * RAD, 162 * RAD, .3, .045), seatGeo = new THREE.CylinderGeometry(.385, .36, .2, 44), cushGeo = pillow(.31, .065);
-  const chair = (x, z, ry, y = 0) => { const g = new THREE.Group(), put = (geo, mat, px, py, pz, rx = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(px, py, pz); m.rotation.x = rx; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
-    put(seatGeo, leather, 0, .2, 0); put(cushGeo, leather, 0, .37, .03); put(armGeo, leather, 0, .3, 0); put(backGeo, leather, 0, .58, 0);
-    for (const a of [-1, 1]) for (const b of [-1, 1]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(.028, .018, .1, 14), wood); l.position.set(a * .25, .05, b * .25); l.castShadow = true; g.add(l); }
+  const leg = (g, x, z, h = .2) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.03, .018, h, 24), wood); m.position.set(x, h / 2, z); m.castShadow = true; g.add(m); };
+  const studs = new THREE.MeshStandardMaterial({ color: "#c9a457", roughness: .3, metalness: .9 }), studGeo = new THREE.SphereGeometry(.009, 12, 8), rollGeo = new THREE.CapsuleGeometry(.092, .5, 12, 32);
+  const chair = (x, z, ry, y = 0) => { const g = new THREE.Group();
+    soft(g, .78, .2, .74, .07, leather, 0, .3, 0);                                   // assise basse
+    soft(g, .56, .15, .56, .07, leather, 0, .47, .04);                               // coussin
+    soft(g, .76, .78, .2, .095, leather, 0, .72, -.3, -.16);                         // dossier incliné
+    for (const a of [-1, 1]) { soft(g, .17, .34, .7, .08, leather, a * .33, .5, .02);   // accoudoirs
+      const roll = new THREE.Mesh(rollGeo, leather); roll.rotation.x = Math.PI / 2; roll.position.set(a * .33, .68, .02); roll.castShadow = true; g.add(roll);
+      for (let k = 0; k < 7; k++) { const st = new THREE.Mesh(studGeo, studs); st.position.set(a * .33, .385 + k * .034, .372); g.add(st); } }
+    soft(g, .34, .3, .1, .048, linen, .02, .66, -.14, -.3);                          // petit coussin
+    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .31, b * .29);
     g.position.set(x, y, z); g.rotation.y = ry; into.add(g); };
   chair(1.7, -.35, -.45); chair(-1.4, .35, .7);
-  { const g = new THREE.Group(); const base = new THREE.Mesh(new THREE.CylinderGeometry(.27, .25, .2, 40), leather); base.position.y = .2; base.castShadow = base.receiveShadow = true; g.add(base);
-    const top = new THREE.Mesh(pillow(.285, .07), leather); top.position.y = .35; top.castShadow = true; g.add(top);
-    for (const a of [-1, 1]) for (const b of [-1, 1]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(.026, .016, .1, 14), wood); l.position.set(a * .17, .05, b * .17); g.add(l); }
+  { const g = new THREE.Group(); soft(g, .62, .2, .46, .085, linen, 0, .4, 0); soft(g, .56, .06, .4, .025, wood, 0, .28, 0);
+    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .24, b * .16, .27);
+    g.rotation.y = .7; g.scale.setScalar(.8);
     g.position.set(-.85, 0, 1.15); scene.add(g); }
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
