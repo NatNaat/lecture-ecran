@@ -260,6 +260,8 @@ export function createScene(canvas, cb = {}) {
   { const leaf = box(.045, 2.22, .86, wood, .45, y2 + 1.11, ZB - .8, false); leaf.rotation.y = .12; const knob = new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 10), brass); knob.position.set(.41, y2 + 1.05, ZB - 1.12); scene.add(knob); }
   const doorGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ffb35a", opacity: .55 })); doorGlow.scale.set(2.2, 3.2, 1); doorGlow.position.set(0, y2 + 1.15, ZB + .3); scene.add(doorGlow);
   for (const sd of [-1, 1]) box(.035, 2.36, .03, brass, sd * .56, y2 + 1.18, ZB + .135, false); box(1.155, .035, .03, brass, 0, y2 + 2.36, ZB + .135, false);
+  { const lantern = new THREE.Mesh(new THREE.SphereGeometry(.07, 16, 12), new THREE.MeshBasicMaterial({ color: "#ffe2b0" })); lantern.position.set(0, y2 + 2.62, ZB + .2); scene.add(lantern); box(.02, .14, .02, brass, 0, y2 + 2.75, ZB + .2, false);
+    const lg = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .9 })); lg.scale.set(1.1, 1.1, 1); lg.position.copy(lantern.position); scene.add(lg); }
   const doorHit = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0), new THREE.MeshBasicMaterial({ visible: false })); doorHit.position.set(0, y2 + 1.3, ZB + .06); scene.add(doorHit);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
   // rambardes (avec une ouverture pour l'échelle)
@@ -332,11 +334,7 @@ export function createScene(canvas, cb = {}) {
     soft(g, .34, .3, .1, .048, linen, .02, .66, -.14, -.3);                          // petit coussin
     for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .31, b * .29);
     g.position.set(x, y, z); g.rotation.y = ry; into.add(g); };
-  chair(1.7, -.35, -.45); chair(-1.4, .35, .7);
-  { const g = new THREE.Group(); soft(g, .62, .2, .46, .085, linen, 0, .4, 0); soft(g, .56, .06, .4, .025, wood, 0, .28, 0);
-    for (const a of [-1, 1]) for (const b of [-1, 1]) leg(g, a * .24, b * .16, .27);
-    g.rotation.y = .7; g.scale.setScalar(.8);
-    g.position.set(-.85, 0, 1.15); scene.add(g); procSeats.push(g); seatSpots.push({ kind: "ottoman", parent: scene, x: -.85, y: 0, z: 1.15, ry: .7 }); }
+  chair(1.7, -.35, -.45);
 
   // ───────────── Le cabinet de travail : on y entre par la porte de la mezzanine pour ajouter un livre ─────────────
   const study = new THREE.Group(); study.visible = false; scene.add(study); let sheet3d = null, deskGroup = null; const deskUp = new THREE.Vector3(0, 0, -1), PAPER = { w: .34, h: .62 };
