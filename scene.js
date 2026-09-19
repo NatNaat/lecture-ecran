@@ -260,10 +260,6 @@ export function createScene(canvas, cb = {}) {
   { const leaf = box(.045, 2.22, .86, wood, .45, y2 + 1.11, ZB - .8, false); leaf.rotation.y = .12; const knob = new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 10), brass); knob.position.set(.41, y2 + 1.05, ZB - 1.12); scene.add(knob); }
   const doorGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: "#ffb35a", opacity: .55 })); doorGlow.scale.set(2.2, 3.2, 1); doorGlow.position.set(0, y2 + 1.15, ZB + .3); scene.add(doorGlow);
   for (const sd of [-1, 1]) box(.035, 2.36, .03, brass, sd * .56, y2 + 1.18, ZB + .135, false); box(1.155, .035, .03, brass, 0, y2 + 2.36, ZB + .135, false);
-  { const lantern = new THREE.Mesh(new THREE.SphereGeometry(.07, 16, 12), new THREE.MeshBasicMaterial({ color: "#ffe2b0" })); lantern.position.set(0, y2 + 2.62, ZB + .2); scene.add(lantern); box(.02, .14, .02, brass, 0, y2 + 2.75, ZB + .2, false);
-    const lg = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .9 })); lg.scale.set(1.1, 1.1, 1); lg.position.copy(lantern.position); scene.add(lg);
-    const spill = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 1.25), new THREE.MeshBasicMaterial({ map: canvasTex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, 0, 4, w / 2, 0, h); gr.addColorStop(0, "rgba(255,190,110,.85)"); gr.addColorStop(1, "rgba(255,160,80,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, h); }), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
-    spill.rotation.x = -Math.PI / 2; spill.position.set(0, y2 + .006, ZB + .66); scene.add(spill); }
   const doorHit = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 3.0), new THREE.MeshBasicMaterial({ visible: false })); doorHit.position.set(0, y2 + 1.3, ZB + .06); scene.add(doorHit);
   box(1.2, .14, .12, wood, 0, y2 + 2.4, ZB + .07, false); for (const s of [-1, 1]) box(.1, 2.4, .12, wood, s * .55, y2 + 1.2, ZB + .07, false);
   // rambardes (avec une ouverture pour l'échelle)
@@ -416,7 +412,6 @@ export function createScene(canvas, cb = {}) {
 
   // Lumières
   scene.add(new THREE.HemisphereLight("#6b5240", "#2a1a10", .36));
-  for (const sd of [-1, 1]) for (const z of [-2.95, -.75]) { const x = sd * (W / 2 - CASE_D - .06); cyl(.05, .035, .12, brass, x, 2.95, z); const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, transparent: true, opacity: .55 })); gl.scale.set(1.25, 1.55, 1); gl.position.set(x - sd * .08, 2.72, z); scene.add(gl); }   // appliques : flaques de lumière ; halo sans test de profondeur, pour ne pas trancher dans l'échelle
   const pl = (x, y, z, i, d = 9) => { const l = new THREE.PointLight("#ffb46c", i, d, 1.8); l.position.set(x, y, z); scene.add(l); return l; };
   pl(tx + .3, 1.28, tz - .28, 7); pl(1.55, y2 + .5, ZB + .8, 5, 7); pl(0, y2 + 1.5, ZB + .55, 11, 6);
   const key = new THREE.SpotLight("#ffd9a8", 40, 16, .8, .75, 1.4); key.position.set(.5, H - .3, 2.2); key.target.position.set(0, .4, -1.6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0006; scene.add(key, key.target);
@@ -515,35 +510,8 @@ export function createScene(canvas, cb = {}) {
     const rm = rooms[state] || (tw && rooms[tw.room]); if (lift > .001 && rm) camera.up.set(0, 1, 0).lerp(rm.up, io(lift)).normalize(); else camera.up.set(0, 1, 0);   // à la verticale de la feuille, le « haut » de l'image suit le bureau
     camera.lookAt(t); fill.intensity = state === "shelf" ? 2.6 : 0; picI += ((state === "shelf" ? 10 : 30) - picI) * .08; pic.intensity = picI;
   }
-  // Finitions d'image : l'image précédente est mêlée à la nouvelle quand la caméra bouge (flou de mouvement), puis un vignettage discret.
-  // Si le téléphone ne sait pas dessiner dans une texture flottante, on garde le rendu direct.
-  let post = null;
-  try {
-    const okFloat = renderer.capabilities.isWebGL2 && (renderer.extensions.has("EXT_color_buffer_half_float") || renderer.extensions.has("EXT_color_buffer_float"));
-    if (okFloat && !new URLSearchParams(location.search).has("nopost")) {
-      const mk = samples => new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, samples, depthBuffer: samples > 0 });
-      const rtScene = mk(4), acc = [mk(0), mk(0)], qScene = new THREE.Scene(), qCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const mat = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false, uniforms: { tNew: { value: null }, tOld: { value: null }, uBlend: { value: 0 }, uVig: { value: 0 } },
-        vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }",
-        fragmentShader: "uniform sampler2D tNew; uniform sampler2D tOld; uniform float uBlend; uniform float uVig; varying vec2 vUv;\nvoid main() {\n  vec4 c = mix(texture2D(tNew, vUv), texture2D(tOld, vUv), uBlend);\n  float d = length((vUv - .5) * vec2(1., 1.2));\n  c.rgb *= 1. - uVig * smoothstep(.38, .98, d);\n  gl_FragColor = vec4(c.rgb, 1.);\n  #include <tonemapping_fragment>\n  #include <colorspace_fragment>\n}" });
-      qScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
-      let cur = 0, primed = false;
-      post = { size(w, h) { rtScene.setSize(w, h); acc[0].setSize(w, h); acc[1].setSize(w, h); primed = false; },
-        render(blend) {
-          renderer.setRenderTarget(rtScene); renderer.render(scene, camera);
-          mat.uniforms.tNew.value = rtScene.texture; mat.uniforms.tOld.value = acc[cur].texture; mat.uniforms.uBlend.value = primed ? blend : 0; mat.uniforms.uVig.value = 0;
-          renderer.setRenderTarget(acc[1 - cur]); renderer.render(qScene, qCam); cur = 1 - cur; primed = true;
-          mat.uniforms.tNew.value = acc[cur].texture; mat.uniforms.uBlend.value = 0; mat.uniforms.uVig.value = .42;
-          renderer.setRenderTarget(null); renderer.render(qScene, qCam);
-        } };
-    }
-  } catch (err) { console.warn("Finitions d'image indisponibles :", err); post = null; }
-
-  const lastCam = { p: new THREE.Vector3(), q: new THREE.Quaternion(), ok: false };
-
   function resize() {
     const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h;
-    if (post) { const b = renderer.getDrawingBufferSize(new THREE.Vector2()); post.size(b.x, b.y); }
     camera.fov = THREE.MathUtils.clamp(2 * THREE.MathUtils.radToDeg(Math.atan(.43 / camera.aspect)), 42, 84); camera.updateProjectionMatrix(); invalidate();
   }
 
@@ -564,10 +532,7 @@ export function createScene(canvas, cb = {}) {
       if (!busy) setTimeout(invalidate, 50);
     } else { doorGlow.material.opacity = 0; glint.material.opacity = 0; }
     applyCamera();
-    if (post) { let blend = 0; if (lastCam.ok) { const v = camera.position.distanceTo(lastCam.p) * 3.2 + camera.quaternion.angleTo(lastCam.q) * 5.5; blend = Math.min(.4, Math.max(0, v - .015) * 2.0); if (tweens.size) blend = Math.max(blend, .14); }
-      lastCam.p.copy(camera.position); lastCam.q.copy(camera.quaternion); lastCam.ok = true;
-      try { post.render(blend); if (blend > .02) busy = true; } catch (err) { console.warn(err); post = null; renderer.setRenderTarget(null); renderer.render(scene, camera); } }
-    else renderer.render(scene, camera);
+    renderer.render(scene, camera);
     if (busy) invalidate();
   }
 
@@ -645,32 +610,6 @@ export function createScene(canvas, cb = {}) {
     for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const v = rm.sheet.localToWorld(new THREE.Vector3(a * PW / 2, b * PH / 2, 0)).project(camera); xs.push(r.left + (v.x + 1) / 2 * r.width); ys.push(r.top + (1 - v.y) / 2 * r.height); }
     return { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
   }
-  // Vrais modèles 3D (Poly Haven, domaine public). Chacun remplace son équivalent fait par code ; s'il ne se charge pas, l'objet de secours reste.
-  (async () => { let GLTFLoader; try { ({ GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js")); } catch (err) { console.warn("Modèles 3D indisponibles :", err); return; }
-    const L = new GLTFLoader(), load = id => new Promise((res, rej) => L.load(`models/${id}/${id}.gltf`, g => res(g.scene), undefined, rej));
-    const prep = (root, tint) => { root.traverse(o => { if (!o.isMesh) return; o.castShadow = o.receiveShadow = true; if (tint) o.material.color.setRGB(...tint); for (const k of ["map", "normalMap", "roughnessMap", "metalnessMap", "aoMap"]) if (o.material[k]) o.material[k].anisotropy = ANISO; }); return root; };
-    // pose un modèle dans un support : base centrée à l'origine, taille ajustée (w, h ou d = dimension visée ; sx/sy/sz = étirement libre)
-    const holder = (model, fit = {}) => { const m = model.clone(true), h = new THREE.Group(), bb = new THREE.Box3().setFromObject(m), sz = bb.getSize(new THREE.Vector3()), c = bb.getCenter(new THREE.Vector3());
-      m.position.set(-c.x, fit.centerY ? -c.y : -bb.min.y, fit.backZ ? -bb.min.z : -c.z); h.add(m);
-      if (fit.sx) h.scale.set(fit.sx / sz.x, fit.sy / sz.y, fit.sz / sz.z); else h.scale.setScalar(fit.w ? fit.w / sz.x : fit.h ? fit.h / sz.y : fit.d ? fit.d / sz.z : 1); return h; };
-    const hide = name => (proc[name] || []).forEach(o => { o.visible = false; });
-    const jobs = {
-      ArmChair_01: m => { prep(m, [.98, .62, .38]); seatSpots.filter(sp => sp.kind === "chair").forEach(sp => { const h = holder(m); h.position.set(sp.x, sp.y, sp.z); h.rotation.y = sp.ry; sp.parent.add(h); }); procSeats.filter((g, i) => seatSpots[i].kind === "chair").forEach(g => { g.visible = false; }); },
-      Ottoman_01: m => { prep(m, [3.0, 1.85, 1.1]); seatSpots.filter(sp => sp.kind === "ottoman").forEach(sp => { const h = holder(m, { h: .39 }); h.position.set(sp.x, sp.y, sp.z); h.rotation.y = sp.ry; sp.parent.add(h); }); procSeats.filter((g, i) => seatSpots[i].kind === "ottoman").forEach(g => { g.visible = false; }); },
-      round_wooden_table_01: m => { prep(m, [.8, .62, .5]); const h = holder(m, { h: .762 }); h.position.set(tx, 0, tz); scene.add(h); hide("table"); },
-      Lantern_01: m => { prep(m); m.traverse(o => { if (o.isMesh && /glass/i.test(o.material.name || "")) { o.material.emissive = new THREE.Color("#ffb060"); o.material.emissiveIntensity = 1.4; } });
-        lampGlows.forEach(g => { const h = holder(m, { h: .34 * g.k / .85 }); h.position.set(g.x, g.y, g.z); h.rotation.y = .6; scene.add(h); g.s.position.y = g.y + .2 * g.k / .85; g.s.scale.setScalar(1.15 * g.k); }); hide("lamp"); },
-      ladder_sectioned_01: m => { prep(m, [.78, .58, .4]); const sp = proc.ladderSpec, g = new THREE.Group(), one = holder(m, { w: .5 }), secH = new THREE.Box3().setFromObject(one).getSize(new THREE.Vector3()).y, n = Math.ceil(sp.len / secH);
-        for (let i = 0; i < n; i++) { const sct = i ? holder(m, { w: .5 }) : one; sct.position.y = i * secH; sct.scale.y *= sp.len / (n * secH); g.add(sct); } g.position.copy(sp.foot); g.rotation.x = sp.rx; scene.add(g); hide("ladder"); },
-      fancy_picture_frame_01: m => { prep(m); frameSpots.filter(f => f.w >= f.h).forEach(f => { const h = holder(m, { w: f.w + .12, centerY: true, backZ: true }); h.position.set(f.x, f.y, f.z - .025); scene.add(h); }); (proc.painting || []).forEach((g, i) => { if (frameSpots[i].w >= frameSpots[i].h) g.visible = false; }); },
-      fancy_picture_frame_02: m => { prep(m); frameSpots.filter(f => f.w < f.h).forEach(f => { const h = holder(m, { h: f.h + .14, centerY: true, backZ: true }); h.position.set(f.x, f.y, f.z - .025); scene.add(h); }); (proc.painting || []).forEach((g, i) => { if (frameSpots[i].w < frameSpots[i].h) g.visible = false; }); },
-      small_wooden_table_01: m => { prep(m, [.62, .45, .32]); const h = holder(m, { sx: 1.95, sy: .81, sz: .98 }); deskGroup.add(h); hide("desk"); },
-      desk_lamp_arm_01: m => { prep(m); const h = holder(m, { h: .66 }); h.position.set(.78, .81, -.3); h.rotation.y = Math.PI; deskGroup.add(h); hide("desklamp"); },
-      marble_bust_01: m => { prep(m, [.95, .88, .78]); const h = holder(m, { h: .46 }); h.position.set(1.0, SY + 2.32, SZ1 + .17); study.add(h); },
-    };
-    await Promise.all(Object.entries(jobs).map(([id, place]) => load(id).then(m => { place(m); invalidate(); }).catch(err => console.warn("Modèle non chargé :", id, err))));
-  })();
-
   addEventListener("resize", resize); resize();
   cam.p.set(0, 2.7, 8.6); cam.t.set(0, 3.5, ZB); goTo(VIEWS.room, 2600, true);
   return { setBooks, setState, releaseBook, invalidate, paperRect, get state() { return state; }, dispose() { alive = false; cancelAnimationFrame(raf); removeEventListener("resize", resize); renderer.dispose(); } };
