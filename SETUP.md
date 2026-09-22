@@ -22,13 +22,13 @@ Compte 30 à 40 minutes, une seule fois. Tout est gratuit.
    ```
    puis sur GitHub : **Settings › Pages › Deploy from a branch › main / (root)**.
 2. Sur l'iPhone, ouvre `https://NatNaat.github.io/lecture-ecran/` dans **Safari**, connecte-toi, puis **Partager › Sur l'écran d'accueil**.
-3. Onglet **Livres** : ajoute le livre que tu lis, avec la page où tu en es.
-4. Onglet **Réglages** : vérifie la liste des applis bloquées (le nom doit être exactement celui que tu donneras aux automatisations).
+3. Onglet **Livres** › Ajouter : le livre que tu lis, avec la page où tu en es.
+4. Onglet **Profil** › Réglages : vérifie la liste des applis bloquées (le nom doit être exactement celui que tu donneras aux automatisations).
 
 ## 3. Le raccourci « Portier » — 5 min
 
 1. Envoie `shortcuts/Portier.shortcut` sur l'iPhone (AirDrop, ou dépose-le dans iCloud Drive et ouvre-le dans Fichiers) › **Ajouter le raccourci**.
-2. Ouvre-le en édition (⋯). Dans le bloc **Dictionnaire** du haut, `url` et `cle` sont déjà remplies : remplace seulement `COLLE_ICI_LE_SECRET` par le secret affiché dans la web app › Réglages.
+2. Ouvre-le en édition (⋯). Dans le bloc **Dictionnaire** du haut, `url` et `cle` sont déjà remplies : remplace seulement `COLLE_ICI_LE_SECRET` par le secret affiché dans la web app › Profil › Raccourci iPhone.
 3. Test : lance le raccourci à la main (sans entrée). Tu es renvoyé à l'écran d'accueil et un menu s'affiche : « est bloqué. Solde : … » avec *J'ai lu / Utiliser mon solde / Annuler*. Le nom de l'appli est vide, c'est normal : ce sont les automatisations qui le fournissent.
    À la première exécution iOS demande d'autoriser la connexion à supabase.co : **Toujours autoriser**.
 
@@ -51,7 +51,7 @@ Demande à quelqu'un de définir le **code Temps d'écran** (Réglages › Temps
 
 - **Restrictions relatives au contenu › Achats › Suppression d'apps : Ne pas autoriser** — tu ne peux plus supprimer Raccourcis ni réinstaller TikTok « propre ».
 - **Contenu web › Limiter les sites pour adultes › Ne jamais autoriser** : ajoute `tiktok.com`, `instagram.com`, `youtube.com`… pour fermer la porte Safari.
-- Dans la web app, fais chaque lundi le **contrôle de la semaine** : tu reportes le temps réel lu dans Réglages › Temps d'écran ; tout écart de plus de 10 min devient une dette doublée. C'est la parade à « je désactive l'automatisation cinq minutes » — iOS ne permet pas de verrouiller l'app Raccourcis elle-même.
+- Dans la web app (Profil), fais chaque lundi le **contrôle de la semaine** : tu reportes le temps réel lu dans Réglages › Temps d'écran ; tout écart de plus de 10 min devient une dette doublée. C'est la parade à « je désactive l'automatisation cinq minutes » — iOS ne permet pas de verrouiller l'app Raccourcis elle-même.
 
 ## Limites connues
 

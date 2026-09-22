@@ -4,347 +4,255 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pages contre minutes</title>
-<meta name="theme-color" content="#0b1433">
+<meta name="theme-color" content="#F4F3F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15141B" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Pages">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
+/* Même monde que le Cockpit D2 : lavande, Bricolage Grotesque + IBM Plex Sans, et le même hippo. */
 :root {
-  --night-0: #050919; --night-1: #0b1433; --night-2: #1a2c63;
-  --wood-0: #0d0806; --wood-1: #1a100a; --wood-2: #2a1a10; --wood-3: #3b2517; --wood-hi: #5a3a24;
-  --gold: #d9b972; --cream: #efe4c8; --cream-2: #bdb094; --cream-3: #8b8069;
-  --paper: #efe6d2; --paper-2: #e4d8bd; --paper-line: #c9bb9b; --ink: #221b14; --ink-2: #62574a;
-  --alert: #ffb59a; --fine: #a9dcc8;
-  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.22' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.01 0 0 0 1.2 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  --grain-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='600'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22 0.006' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.01 0 0 0 1.2 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  --stars: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120'%3E%3Cg fill='%23f0dca6'%3E%3Cpath d='M22 18l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1z'/%3E%3Cpath d='M112 52l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z' opacity='.75'/%3E%3Ccircle cx='140' cy='14' r='.9' opacity='.7'/%3E%3Ccircle cx='58' cy='44' r='.7' opacity='.55'/%3E%3Ccircle cx='86' cy='12' r='.6' opacity='.5'/%3E%3Ccircle cx='10' cy='76' r='.8' opacity='.6'/%3E%3Ccircle cx='146' cy='96' r='.7' opacity='.5'/%3E%3Ccircle cx='70' cy='92' r='.9' opacity='.65'/%3E%3Ccircle cx='38' cy='106' r='.6' opacity='.45'/%3E%3C/g%3E%3C/svg%3E");
-  --leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='l' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 -.14'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E");
-  --ease: cubic-bezier(.16, 1, .3, 1);
-  --row: 184px; --board: 18px; --dock: 84px; --skyh: 168px; --peek: 72px;
-  --top: calc(env(safe-area-inset-top) + var(--skyh));
+  --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
+  --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
+  --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8;
+  --hp: #8C88A8; --hp2: #B4B0CC; --hp3: #6A6686; --hpk: #1A1D1B; --hpp: #E79AA8; --hpg: #E3B341; --hpg2: #B5862A;
+  --display: "Bricolage Grotesque", "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --r: 16px; --tab: 64px; --ease: cubic-bezier(.2, .8, .2, 1);
 }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; } }
+:root[data-theme="dark"] {
+  --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; }
+
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; background: var(--night-0); min-height: calc(100% + env(safe-area-inset-top)); }
-body { margin: 0; color: var(--cream); font: 16px/1.5 var(--sans); min-height: 100dvh; overscroll-behavior-y: none; }
-body.sky-open { overflow: hidden; }
-::selection { background: var(--gold); color: #221703; }
-input, textarea { caret-color: var(--gold); }
-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); min-height: 100dvh; overflow-x: hidden; }
+::selection { background: var(--accent-soft); }
 h1, h2, h3, p { margin: 0; }
+h1, h2, h3, .display { font-family: var(--display); letter-spacing: -.01em; line-height: 1.1; text-wrap: balance; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
 [hidden] { display: none !important; }
-
-/* ───────── Le ciel : solde en tête, comptes et réglages quand on le tire ───────── */
-#sky { position: fixed; inset: 0; z-index: 0; overflow: hidden; padding: env(safe-area-inset-top) 0 0;
-  background: linear-gradient(180deg, var(--night-2) -12%, var(--night-1) 30%, var(--night-0) 78%); }
-#sky::before { content: ""; position: absolute; inset: 0; background: var(--stars); opacity: .9; pointer-events: none;
-  -webkit-mask-image: linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 170px, transparent 300px); mask-image: linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 170px, transparent 300px); animation: twinkle 7s ease-in-out infinite; }
-@keyframes twinkle { 0%, 100% { opacity: .9; } 50% { opacity: .6; } }
-body.sky-open #sky { overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 5; }
-.skyhead { position: relative; height: var(--skyh); max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6px 24px 22px; }
-.reserve { font: 700 52px/1 var(--sans); letter-spacing: -.03em; color: #fff6de; font-variant-numeric: tabular-nums; }
-.reserve small { font: 400 15px/1 var(--sans); color: var(--gold); margin-left: 8px; letter-spacing: .01em; }
-.hud { margin-top: 8px; font: 400 13px/1.45 var(--sans); color: var(--cream-2); font-variant-numeric: tabular-nums; }
-.hud b { font-weight: 600; color: var(--cream); }
-.hud .due { color: var(--gold); }
-.skybody { position: relative; max-width: 640px; margin: 0 auto; padding: 4px 16px calc(env(safe-area-inset-bottom) + 40px); opacity: var(--reveal, 0); pointer-events: none; transition: opacity .35s var(--ease); }
-body.sky-open .skybody { opacity: 1; pointer-events: auto; }
-body.dragging .skybody { transition: none; }
-.tabs { display: flex; gap: 6px; padding: 4px; margin: 0 0 22px; border-radius: 12px; background: rgba(255,255,255,.06); }
-.tabs button { flex: 1; min-height: 40px; border-radius: 9px; font: 600 15px var(--sans); color: var(--cream-2); transition: background .25s var(--ease), color .25s; }
-.tabs button[aria-selected="true"] { color: var(--cream); background: rgba(255,255,255,.12); }
-.skybody h2 { font: 700 18px/1.25 var(--sans); letter-spacing: -.02em; color: var(--cream); margin: 30px 0 10px; }
-.skybody p { margin: 0 0 10px; } .muted { color: var(--cream-2); } .small { font-size: 13px; }
-.figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.figures > div { padding: 12px; border-radius: 15px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }
-.figures b { display: block; font: 700 28px/1.1 var(--sans); letter-spacing: -.02em; color: #fff6de; font-variant-numeric: lining-nums tabular-nums; }
-.figures span { display: block; font-size: 13px; line-height: 1.3; margin-top: 4px; color: var(--cream-2); }
-.panel { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 15px; padding: 16px; margin-bottom: 12px; }
-.panel.flag { border-color: var(--alert); }
-.chart { width: 100%; height: auto; display: block; } .chart text { font: 11px var(--sans); fill: var(--cream-2); } .chart .v { fill: var(--cream); font-weight: 600; }
-table { width: 100%; border-collapse: collapse; font-size: 15px; }
-td, th { padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; }
-td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } th { font-size: 13px; color: var(--cream-3); font-weight: 600; }
-code.copy { display: block; background: rgba(0,0,0,.35); border-radius: 8px; padding: 10px; font-size: 13px; word-break: break-all; color: var(--cream-2); }
-.skybody label { display: block; font-size: 13px; color: var(--cream-2); margin: 15px 0 6px; }
-.skybody input, .skybody textarea { width: 100%; font: 16px var(--sans); color: var(--cream); background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 12px; }
-.skybody textarea { min-height: 96px; resize: vertical; }
-.row { display: flex; gap: 10px; align-items: flex-end; } .row > * { flex: 1; }
-.chalkbtn { width: 100%; min-height: 48px; border-radius: 12px; font: 600 15px var(--sans); color: var(--cream); background: rgba(255,255,255,.08); transition: transform .2s var(--ease); }
-.chalkbtn.solid { background: var(--gold); color: #221703; }
-.chalkbtn:active { transform: scale(.98); }
-.err { color: var(--alert); font-size: 13px; margin-top: 10px; } .err:empty, .okmsg:empty { display: none; }
-.okmsg { color: var(--fine); font-size: 13px; margin-top: 10px; }
-.page .err, dialog .err, .login form .err { color: #9a2c10; } dialog .okmsg { color: #1d5a45; }
-
-/* ───────── La bibliothèque : une feuille de bois posée sur le ciel ───────── */
-#app { position: relative; z-index: 1; padding-top: var(--top); transform: translateY(var(--pull, 0px)); transition: transform .55s var(--ease); will-change: transform; pointer-events: none; }
-#app > * { pointer-events: auto; }
-body.dragging #app { transition: none; }
-body.sky-open #app { transform: translateY(calc(100dvh - var(--top) - var(--peek) - env(safe-area-inset-bottom) + var(--pull, 0px))); z-index: 6; }
-#case { max-width: 720px; margin: 0 auto; min-height: calc(100dvh - var(--top)); position: relative; display: flex; flex-direction: column; overflow: hidden;
-  padding: 0 15px calc(var(--dock) + env(safe-area-inset-bottom)); border-radius: 26px 26px 0 0;
-  background: var(--grain-v), linear-gradient(90deg, var(--wood-3), var(--wood-1) 14px, var(--wood-1) calc(100% - 14px), var(--wood-3)); box-shadow: 0 -18px 50px rgba(0,0,0,.65); }
-.grab { display: grid; place-items: center; gap: 5px; width: calc(100% + 28px); margin: 0 -15px; min-height: 40px; padding: 9px 0 8px; font: 500 12px/1 var(--sans); color: var(--cream-3); letter-spacing: .02em;
-  background: var(--grain), linear-gradient(180deg, var(--wood-3), var(--wood-2)); box-shadow: 0 8px 15px -4px rgba(0,0,0,.7); position: relative; z-index: 2; touch-action: none; }
-.grab::before { content: ""; width: 40px; height: 4px; border-radius: 2px; background: rgba(239,228,200,.4); }
-body.sky-open .grab { min-height: var(--peek); color: var(--cream); font-size: 15px; }
-.alcove { flex: 1; position: relative; display: flex; flex-direction: column;
-  background: radial-gradient(110% 380px at 50% -60px, rgba(255,186,110,.16), transparent 72%), var(--grain-v), linear-gradient(180deg, #160d08, var(--wood-0)); }
-.shelf { position: relative; min-height: calc(var(--row) + var(--board)); padding: 0 10px var(--board); display: flex; align-items: flex-end; box-shadow: inset 0 36px 28px -18px rgba(0,0,0,.85); }
-.shelf::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--board); pointer-events: none;
-  background: var(--grain), linear-gradient(180deg, var(--wood-hi) 0 1px, var(--wood-3) 1px 55%, var(--wood-1)); box-shadow: 0 10px 16px rgba(0,0,0,.8); }
-.shelf.front { padding: 30px 0 calc(var(--board) + 4px); --board: 36px; }
-.fronts { flex: 1; min-width: 0; display: flex; align-items: flex-end; gap: 18px; padding: 12px 18px 44px; margin-bottom: -44px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 1; }
-.fronts::-webkit-scrollbar { display: none; }
-.shelf-label { position: absolute; left: 18px; top: 9px; font: 500 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--cream-3); }
-.stacks { position: relative; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-end; row-gap: var(--board); padding: 0 12px var(--board); min-height: calc((var(--row) + var(--board)) * 2); flex: 1;
-  background: repeating-linear-gradient(180deg, rgba(0,0,0,.9) 0, rgba(0,0,0,.22) 46px, transparent 90px, transparent var(--row), var(--wood-hi) var(--row), var(--wood-3) calc(var(--row) + 1px), var(--wood-3) calc(var(--row) + 10px), var(--wood-1) calc(var(--row) + var(--board))); }
-.slot { height: var(--row); display: flex; align-items: flex-end; }
-
-.facebook { flex: none; width: 98px; position: relative; text-align: left; transition: transform .4s var(--ease); }
-.facebook:active { transform: translateY(-6px); }
-.facebook .cv { display: block; width: 98px; height: 148px; border-radius: 2px 5px 5px 2px; object-fit: cover; position: relative; overflow: hidden; box-shadow: 10px 4px 16px -4px rgba(0,0,0,.9), -1px 0 0 rgba(0,0,0,.6); }
-.facebook .cv.cloth { padding: 18px 12px 15px 18px; display: flex; flex-direction: column; justify-content: space-between; overflow-wrap: anywhere; hyphens: auto; color: var(--cream);
-  font: 700 15px/1.15 var(--sans); letter-spacing: -.02em; background: var(--leather), var(--bg); box-shadow: 10px 4px 16px -4px rgba(0,0,0,.9), inset 0 0 0 7px var(--bg), inset 0 0 0 8px rgba(217,185,114,.45); }
-.facebook .cv.cloth small { font: 500 10px/1.25 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
-.facebook .hinge { position: absolute; left: 0; top: 0; width: 98px; height: 148px; pointer-events: none; border-radius: 2px 5px 5px 2px;
-  background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(255,255,255,.12) 5px, rgba(0,0,0,.3) 8px, transparent 15px, transparent 62%, rgba(0,0,0,.35)); }
-.engraved { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); white-space: nowrap; z-index: 4; font: 600 11px/1 var(--sans); letter-spacing: .05em; color: var(--gold); font-variant-numeric: tabular-nums; }
-
-.engraved.bar { width: 84px; height: 6px; bottom: -28px; border-radius: 3px; background: rgba(0,0,0,.55); overflow: hidden; } .engraved.bar i { display: block; height: 100%; border-radius: 3px; background: var(--gold); transform-origin: left; }
-.spine { position: relative; flex: none; border-radius: 3px 3px 1px 1px; overflow: hidden; color: var(--cream); background: var(--leather), var(--bg); transition: transform .4s var(--ease);
-  box-shadow: inset 4px 0 5px -2px rgba(255,255,255,.10), inset -6px 0 9px -3px rgba(0,0,0,.8), inset 0 -40px 30px -20px rgba(0,0,0,.45), 1px 0 0 #000; }
-.spine::before, .spine::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(217,185,114,.75); }
-.spine::before { top: 15px; } .spine::after { bottom: 15px; }
-.spine:active { transform: translateY(-8px); }
-.spine .ttl { position: absolute; inset: 24px 2px 24px; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; white-space: var(--ws, nowrap);
-  font: 600 var(--fs, 10.5px)/1.15 var(--sans); letter-spacing: .09em; text-transform: uppercase; }
-.spine .ttl span { overflow: hidden; text-overflow: ellipsis; max-height: 100%; max-width: 100%; text-align: center; }
-.spine.lean { transform: rotate(-5deg); transform-origin: bottom right; margin-left: 10px; }
-.pile { display: flex; flex-direction: column-reverse; margin: 0 12px; }
-.flat { position: relative; width: 150px; height: var(--h, 26px); margin-left: var(--dx, 0); border-radius: 3px 1px 1px 3px; overflow: hidden; color: var(--cream); background: var(--leather), var(--bg); text-align: center;
-  box-shadow: inset 0 3px 4px -1px rgba(255,255,255,.10), inset 0 -5px 7px -2px rgba(0,0,0,.8), inset 15px 0 0 -13px rgba(217,185,114,.75), inset -15px 0 0 -13px rgba(217,185,114,.75), 0 1px 0 #000; }
-.flat span { display: block; padding: 0 20px; font: 600 9.5px/var(--h, 26px) var(--sans); letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.empty-note { align-self: center; margin: 0 auto; max-width: 280px; text-align: center; font: 400 15px/1.5 var(--sans); color: var(--cream-2); padding: 0 8px 30px; }
-
-/* ───────── La barre du bas ───────── */
-#dock { position: fixed; z-index: 20; left: 50%; transform: translateX(-50%); bottom: 0; width: min(720px, 100%); height: calc(var(--dock) + env(safe-area-inset-bottom)); padding: 0 16px env(safe-area-inset-bottom);
-  display: flex; align-items: center; gap: 10px; background: var(--grain), linear-gradient(180deg, var(--wood-hi) 0 1px, var(--wood-2) 1px, var(--wood-0)); box-shadow: 0 -15px 26px rgba(0,0,0,.8); transition: transform .5s var(--ease); }
-body.sky-open #dock, #dock:empty { transform: translate(-50%, 110%); }
-.tool { flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; border-radius: 15px; font: 600 15px/1 var(--sans); transition: transform .2s var(--ease); }
-.tool.primary { background: var(--gold); color: #221703; } .tool.ghost { color: var(--cream); background: rgba(255,255,255,.08); }
-.tool svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.tool:active { transform: scale(.97); } .tool:disabled { opacity: .4; }
-
-/* ───────── Le livre ouvert ───────── */
-.overlay { position: fixed; inset: 0; z-index: 40; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-#bookview { background: var(--night-0); perspective: 1600px; padding: calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 24px); }
-.tome { position: relative; max-width: 640px; margin: 0 auto; }
-.page { position: relative; color: var(--ink); border-radius: 4px 15px 15px 4px; padding: 18px 20px 30px 28px; min-height: calc(100dvh - 60px);
-  background: linear-gradient(90deg, rgba(60,40,15,.28), rgba(60,40,15,.06) 14px, transparent 30px), linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 18px 50px rgba(0,0,0,.9); }
-.flap { position: absolute; inset: 0; z-index: 2; border-radius: 4px 15px 15px 4px; transform-origin: left center; backface-visibility: hidden; pointer-events: none; background: var(--leather), var(--bg, #3b1414); background-size: auto, cover; background-position: center; color: var(--cream);
-  display: grid; place-items: center; text-align: center; padding: 40px; font: 700 28px/1.15 var(--sans); letter-spacing: -.02em; animation: openflap .9s var(--ease) .05s both; }
-@keyframes openflap { from { transform: rotateY(0); opacity: 1; } 70% { opacity: 1; } to { transform: rotateY(-118deg); opacity: 0; } }
-.page .close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font: 500 15px var(--sans); color: var(--ink-2); }
-.page .close svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.bookhero { display: flex; gap: 16px; align-items: flex-end; padding: 10px 0 18px; }
-.bigcover { position: relative; flex: none; width: 112px; aspect-ratio: 2 / 3; border-radius: 3px 6px 6px 3px; overflow: hidden; background: var(--leather), var(--bg, #3b1414); display: grid; place-items: center; padding: 12px; text-align: center; font: 700 13px/1.2 var(--sans); color: var(--cream);
-  box-shadow: 0 12px 24px -8px rgba(0,0,0,.45), 0 2px 5px rgba(0,0,0,.3), inset 3px 0 4px -2px rgba(255,255,255,.25); }
-.bigcover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.heroinfo { min-width: 0; flex: 1; }
-.heroinfo .state { font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
-.heroinfo h1 { font: 700 26px/1.1 var(--sans); letter-spacing: -.02em; text-wrap: balance; overflow-wrap: anywhere; }
-.heroinfo .by { font: 400 16px/1.35 var(--sans); color: var(--ink-2); margin-top: 6px; }
-.heroinfo .where { font: 400 15px/1 var(--sans); margin-top: 12px; font-variant-numeric: tabular-nums; } .heroinfo .where b { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
-/* la règle des pages : chaque séance est un segment ; ce qui a été lu avant l'appli est hachuré (pas seulement une autre teinte) */
-.pagemap { position: relative; height: 18px; border-radius: 4px; background: rgba(60,40,15,.12); overflow: hidden; }
-.pagemap .seg, .maplegend i.seg { background: var(--ink); } .pagemap .pre, .maplegend i.pre { background: repeating-linear-gradient(135deg, rgba(34,27,20,.5) 0 2px, transparent 2px 5px); }
-.pagemap .seg, .pagemap .pre { position: absolute; top: 0; bottom: 0; } .pagemap .seg { box-shadow: inset -1.5px 0 0 var(--paper); }
-.maplegend { display: flex; align-items: center; gap: 12px; justify-content: space-between; margin-top: 5px; font: 11.5px/1 var(--sans); color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.maplegend .lg { display: inline-flex; align-items: center; gap: 5px; } .maplegend i { display: inline-block; width: 12px; height: 9px; border-radius: 2px; }
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 18px 0 4px; border-top: 1px solid var(--paper-line); border-bottom: 1px solid var(--paper-line); }
-.stats > div { padding: 10px 6px 10px 0; } .stats > div + div { padding-left: 10px; border-left: 1px solid var(--paper-line); }
-.stats dt { font: 500 11px/1.25 var(--sans); color: var(--ink-2); } .stats dd { margin: 4px 0 0; font: 700 17px/1.1 var(--sans); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
-.filhead { display: flex; align-items: baseline; justify-content: space-between; margin: 30px 0 14px; } .filhead h2 { margin: 0; }
-.sortbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font: 500 13px var(--sans); color: var(--ink-2); } .sortbtn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.fil { list-style: none; margin: 0; padding: 0; }
-.iconbtn { display: grid; place-items: center; width: 36px; height: 36px; margin: -8px -8px -8px 0; border-radius: 18px; color: var(--ink-2); } .iconbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.facts { font: 12.5px/1.5 var(--sans); color: var(--ink-2); margin-top: 14px; font-variant-numeric: tabular-nums; }
-.gauge { height: 4px; margin: 12px 0 0; background: rgba(60,40,15,.16); border-radius: 2px; overflow: hidden; }
-.gauge i { display: block; height: 100%; width: 100%; background: var(--ink); transform-origin: left; }
-.inkrow { display: flex; gap: 10px; margin: 16px 0 6px; } .inkrow > * { flex: 1; }
-.inkbtn { min-height: 48px; padding: 0 15px; border-radius: 12px; font: 600 15px/1 var(--sans); color: var(--paper); background: var(--ink); transition: transform .2s var(--ease); }
-.inkbtn.line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px rgba(34,27,20,.55); }
-.inkbtn:active { transform: scale(.98); } .inkbtn:disabled { opacity: .4; }
-.page h2 { font: 700 20px/1.25 var(--sans); letter-spacing: -.02em; margin: 32px 0 15px; }
-.page h2.manage { margin-top: 36px; }
-.inkrow.wrap { flex-wrap: wrap; } .inkrow.wrap > * { flex: 1 1 46%; }
-.entry { margin: 0 0 28px; padding-left: 40px; position: relative; border-radius: 8px; transition: background .6s var(--ease); }
-.entry.flash { background: rgba(34,27,20,.08); }
-.entry::before { content: ""; position: absolute; left: 13px; top: 30px; bottom: -24px; width: 1px; background: var(--paper-line); } .entry:last-child::before { display: none; }
-.entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.entry .no { position: absolute; left: 0; top: -1px; width: 27px; height: 27px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--sans); color: var(--paper); background: var(--ink); font-variant-numeric: tabular-nums; }
-.entry .rg { font: 700 15px/1.2 var(--sans); letter-spacing: -.01em; font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 400 12px/1.3 var(--sans); color: var(--ink-2); letter-spacing: 0; }
-.entry .fol time { margin-left: auto; font: 400 12px/1.3 var(--sans); color: var(--ink-2); text-align: right; }
-.entry .txt { font: 17px/1.62 var(--sans); white-space: pre-wrap; max-width: 62ch; hyphens: auto; }
-.textlink { min-height: 44px; font: 500 13px var(--sans); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
-.page .quiet { font: 15px/1.5 var(--sans); color: var(--ink-2); padding: 4px 0; }
-
-/* ───────── Fiches ───────── */
-dialog { border: 0; border-radius: 20px; color: var(--ink); width: min(560px, calc(100vw - 20px)); max-height: 90dvh; padding: 22px 18px 18px; overflow-y: auto; background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 30px 70px rgba(0,0,0,.9); }
-dialog::backdrop { background: rgba(5,9,25,.72); }
-dialog[open] { animation: card .45s var(--ease); } @keyframes card { from { transform: translateY(24px); opacity: 0; } }
-dialog h1 { font: 700 26px/1.15 var(--sans); letter-spacing: -.02em; margin-bottom: 6px; }
-dialog label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 15px 0 5px; }
-dialog input, dialog textarea, dialog select { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
-dialog textarea { min-height: 160px; resize: vertical; line-height: 1.5; font-family: var(--sans); font-size: 16px; }
-dialog .count { font: 13px var(--sans); font-variant-numeric: tabular-nums; }
-.hit { display: flex; gap: 12px; width: 100%; text-align: left; padding: 10px 0; border-bottom: 1px solid var(--paper-line); align-items: flex-start; }
-.hit .noc { position: relative; overflow: hidden; width: 46px; height: 69px; flex: none; border-radius: 3px; box-shadow: 2px 2px 6px rgba(0,0,0,.35); background: var(--paper-2); display: grid; place-items: center; font: 700 22px var(--sans); color: var(--ink-2); }
-.hit .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.hit b { display: block; font: 600 15px/1.25 var(--sans); } .hit i { display: block; font: normal 15px/1.3 var(--sans); color: var(--ink-2); }
-.hit small { display: block; font: 13px/1.4 var(--sans); color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
-.login { position: relative; z-index: 2; max-width: 420px; margin: 0 auto; padding: 4vh 18px 0; pointer-events: auto; } .login h1 { font: 700 34px/1.1 var(--sans); letter-spacing: -.02em; margin-bottom: 8px; }
-.login form { margin-top: 22px; color: var(--ink); background: linear-gradient(180deg, var(--paper), var(--paper-2)); padding: 8px 18px 18px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,.7); }
-.login label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 15px 0 5px; }
-.login input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
-.haptic { position: fixed; left: -100px; top: 0; opacity: 0; pointer-events: none; }
-/* ───────── Le cabinet : fiche « nouveau livre » posée sur le bureau ───────── */
-#study { position: fixed; inset: 0; z-index: 30; pointer-events: none; background: var(--night-0); }
-body.has3d #study { background: none; }
-#study > * { pointer-events: auto; }
-.backbtn.studyback { display: inline-flex; }
-.sheet { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: min(560px, calc(100% - 20px)); max-height: calc(100dvh - env(safe-area-inset-top) - 70px); overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 20px 18px calc(env(safe-area-inset-bottom) + 18px); border-radius: 20px 20px 0 0; color: var(--ink); background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: 0 -20px 50px rgba(0,0,0,.7); animation: sheetin .6s var(--ease) both; }
-/* en 3D, la fiche est transparente et calée sur la feuille posée sur le bureau : on écrit vraiment dessus */
-.sheet.onpaper { position: fixed; transform: none; bottom: auto; max-height: none; overflow: visible; padding: 5% 7% 4%; border-radius: 0; background: none; box-shadow: none; animation: none; opacity: 0; transition: opacity .5s var(--ease); display: flex; flex-direction: column; }
-.sheet.onpaper.ready { opacity: 1; }
-.sheet.onpaper h1 { font-size: 21px; padding-bottom: 8px; border-bottom: 1.5px solid var(--ink); }
-.sheet.onpaper label { margin: 10px 0 1px; font-size: 12px; letter-spacing: .02em; }
-.sheet.onpaper input { background: none; border: 0; border-bottom: 1px solid rgba(34,27,20,.45); border-radius: 0; padding: 5px 0 6px; font-size: 16px; }
-.sheet.onpaper input:focus-visible { outline: none; border-bottom: 2px solid var(--ink); }
-.sheet.onpaper .fiche { margin-top: 12px; padding-top: 10px; gap: 12px; } .sheet.onpaper .fiche .noc { width: 54px; height: 81px; }
-.sheet.onpaper .note { font-size: 12px; margin-top: 8px; }
-.sheet.onpaper .inkbtn { margin-top: auto !important; min-height: 46px; }
-.sheet.onpaper .searchwrap { position: relative; }
-/* pièces communes des deux formulaires */
-.searchwrap { position: relative; }
-.searchbox { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0 10px; border-radius: 12px; background: rgba(34,27,20,.07); box-shadow: inset 0 0 0 1px rgba(34,27,20,.14); }
-.searchbox:focus-within { box-shadow: inset 0 0 0 1.5px var(--ink); }
-.searchbox svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; }
-.sheet .searchbox input, .sheet.onpaper .searchbox input { flex: 1; min-width: 0; border: 0; background: none; padding: 11px 0; font-size: 16px; outline: none; -webkit-appearance: none; appearance: none; }
-.searchbox input::-webkit-search-cancel-button { display: none; }
-.searchbox button { display: grid; place-items: center; width: 32px; height: 32px; margin-right: -6px; }
-.textlink { font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; min-height: 0; }
-.noc.big, .fiche .noc.big { width: 66px; height: 99px; }
-.chips { display: flex; flex-wrap: nowrap; gap: 6px; align-items: center; margin: 10px -7% 0; padding: 0 7% 2px; overflow-x: auto; scrollbar-width: none; } .chips::-webkit-scrollbar { display: none; } .chips:empty { display: none; }
-.chips > * { flex: none; } .chips:not(:empty) + .note { display: none; }
-.chiplbl { font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin-right: 2px; }
-.chips button { display: grid; text-align: left; padding: 5px 10px; border-radius: 10px; font: 600 13px/1.2 var(--sans); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(34,27,20,.25); font-variant-numeric: tabular-nums; }
-.chips button small { font: 400 11px/1.2 var(--sans); color: var(--ink-2); max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); box-shadow: none; } .chips button[aria-pressed="true"] small { color: var(--paper-2); }
-.jhead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 6px; border-bottom: 1.5px solid var(--ink); }
-.jhead h1 { font: 700 20px/1.1 var(--sans); letter-spacing: -.02em; margin: 0; border: 0; padding: 0; } .jhead span { font: 500 12px var(--sans); color: var(--ink-2); }
-.sheet.onpaper .jhead h1 { border: 0; padding: 0; }
-.pickwrap { position: relative; margin-top: 10px; }
-.bookpick, .bookopt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; color: var(--ink); }
-.bookpick { padding: 6px 8px 6px 6px; border-radius: 12px; background: rgba(34,27,20,.07); box-shadow: inset 0 0 0 1px rgba(34,27,20,.14); }
-.bookpick:disabled { opacity: 1; cursor: default; }
-.bookpick > svg { width: 18px; height: 18px; flex: none; margin-left: auto; fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s var(--ease); }
-.bookpick[aria-expanded="true"] > svg { transform: rotate(180deg); }
-.bookpick .noc, .bookopt .noc { position: relative; overflow: hidden; width: 30px; height: 45px; flex: none; border-radius: 3px; background: var(--paper-2); display: grid; place-items: center; font: 700 14px var(--sans); color: var(--ink-2); box-shadow: 1px 2px 5px rgba(0,0,0,.3); }
-.bookpick .noc img, .bookopt .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.pk { min-width: 0; } .pk b { display: block; font: 600 14.5px/1.2 var(--sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pk small { display: block; font: 12px/1.3 var(--sans); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
-.droplist { position: absolute; z-index: 4; left: 0; right: 0; top: calc(100% + 4px); max-height: 46dvh; overflow-y: auto; padding: 4px; border-radius: 12px; background: var(--paper); box-shadow: 0 16px 34px rgba(0,0,0,.5), 0 0 0 1px rgba(34,27,20,.15); }
-.bookopt { padding: 6px; border-radius: 9px; } .bookopt[aria-selected="true"] { background: rgba(34,27,20,.09); }
-.pagerow { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; }
-.pagerow label, .sheet.onpaper .pagerow label, dialog .pagerow label { margin: 0; font: 400 14px var(--sans); color: var(--ink); white-space: nowrap; } .pagerow label b { font-variant-numeric: tabular-nums; }
-.pagerow input, .sheet.onpaper .pagerow input, dialog .pagerow input { width: 62px; flex: none; text-align: center; font: 700 18px var(--sans); font-variant-numeric: tabular-nums; padding: 3px 0 4px; border: 0; border-bottom: 1.5px solid var(--ink); border-radius: 0; background: none; }
-.gain { margin-left: auto; font: 700 13px var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; } .gain:empty { display: none; }
-.meter { height: 4px; margin-top: 6px; border-radius: 2px; background: rgba(34,27,20,.15); overflow: hidden; } .meter i { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform .25s var(--ease); }
-.meterlbl { font: 11.5px/1.4 var(--sans); color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
-.journal.indlg { display: flex; flex-direction: column; } .journal.indlg textarea { min-height: 150px; } .journal.indlg label { margin-top: 12px; }
-.sheet.onpaper.journal h1 { font-size: 18px; padding-bottom: 4px; }
-.sheet.onpaper.journal label { margin-top: 6px; }
-.sheet.onpaper.journal .inkbtn { min-height: 40px; font-size: 14px; margin-top: 8px !important; }
-.sheet.onpaper select { width: 100%; font: 16px var(--sans); color: var(--ink); background: none; border: 0; border-bottom: 1px solid rgba(34,27,20,.45); border-radius: 0; padding: 5px 0 6px; -webkit-appearance: none; appearance: none; }
-.sheet.onpaper textarea { flex: 1; min-height: 84px; width: 100%; resize: none; border: 0; border-radius: 0; padding: 4px 0; font: 17px/28px var(--sans); color: var(--ink); background: repeating-linear-gradient(180deg, transparent 0 27px, rgba(34,27,20,.28) 27px 28px); }
-.sheet.onpaper textarea:focus-visible { outline: none; }
-.sheet.onpaper .count { font-size: 11px; }
-.sheet.onpaper #sugg { position: absolute; z-index: 3; left: -4%; right: -4%; top: 100%; max-height: 46dvh; margin: 0; padding: 2px 12px; border-radius: 0 0 10px 10px; background: var(--paper); box-shadow: 0 16px 30px rgba(0,0,0,.5); }
-.sheet.onpaper .hit .noc { width: 38px; height: 57px; font-size: 18px; } .sheet.onpaper .hit b { font-size: 14.5px; } .sheet.onpaper .hit i, .sheet.onpaper .hit small { font-size: 12.5px; }
-body.has3d .studyback { opacity: 0; transition: opacity .5s var(--ease); } body.has3d.study-ready .studyback { opacity: 1; }
-@keyframes sheetin { from { transform: translate(-50%, 105%); } }
-.sheet h1 { font: 700 26px/1.15 var(--sans); letter-spacing: -.02em; margin-bottom: 4px; }
-.sheet label { display: block; font: 500 13px var(--sans); color: var(--ink-2); margin: 14px 0 5px; }
-.sheet input { width: 100%; font: 16px var(--sans); color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid var(--paper-line); border-radius: 10px; padding: 11px; }
-.sheet .note { font: 13px/1.5 var(--sans); color: var(--ink-2); margin: 10px 0 0; }
-.sheet .err { color: #9a2c10; }
-#sugg { max-height: 40dvh; overflow-y: auto; margin-top: 4px; } #sugg:empty { display: none; }
-.fiche { display: flex; gap: 14px; align-items: flex-start; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--paper-line); }
-.fiche .noc { position: relative; overflow: hidden; width: 64px; height: 96px; flex: none; border-radius: 4px; box-shadow: 2px 3px 8px rgba(0,0,0,.35); background: var(--paper-2); display: grid; place-items: center; font: 700 26px var(--sans); color: var(--ink-2); }
-.fiche .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.cvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
-.cvgrid button { border-radius: 4px; overflow: hidden; box-shadow: 2px 3px 8px rgba(0,0,0,.35); aspect-ratio: 2 / 3; background: var(--paper-2); }
-.cvgrid img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cvgrid p { grid-column: 1 / -1; }
-body.study-open #dock, body.study-open .hint { transform: translate(-50%, 110%); opacity: 0; }
-body.has3d[data-view="study"] .skyhead, body.has3d[data-view="journal"] .skyhead { opacity: 0; } body.has3d[data-view="study"] #sky, body.has3d[data-view="journal"] #sky { background: none; }
-
-/* ───────── Mode 3D : la pièce est dessinée dans le canevas, l'interface flotte par-dessus ───────── */
-#scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: none; touch-action: none; outline: none; }
-body.has3d #scene { display: block; animation: scenein 1.6s var(--ease) both; }
-@keyframes scenein { from { opacity: 0; } }
-html:has(body.has3d) { background: var(--wood-0); }
-body.has3d { overflow: hidden; background: var(--wood-0); }
-#dock::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 80px; background: var(--wood-0); }
-body.has3d #scene { height: 100lvh; }
-body.has3d #app { padding-top: 0; transform: none; position: static; will-change: auto; }
-body.has3d #sky { z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(5,9,25,.82), rgba(5,9,25,.35) 130px, transparent 210px); }
-body.has3d #sky::before { opacity: 0; animation: none; transition: opacity .35s var(--ease); }
-body.has3d.sky-ready #sky::before { opacity: .9; transition: opacity .6s var(--ease); }
-body.has3d #sky::after { content: ""; position: fixed; inset: 0; background: linear-gradient(180deg, var(--night-2) -12%, var(--night-1) 30%, var(--night-0) 78%); opacity: 0; transition: opacity .35s var(--ease); pointer-events: none; z-index: -1; }
-body.has3d.sky-open #sky { pointer-events: auto; z-index: 5; }
-body.has3d.sky-ready #sky::after { opacity: 1; transition: opacity .6s var(--ease); }
-body.has3d .skybody { transition: opacity .3s var(--ease); }
-body.has3d.sky-open .skybody { opacity: 0; transition: opacity .5s var(--ease); } body.has3d.sky-ready .skybody { opacity: 1; }
-body.has3d .skyhead { transition: opacity .4s var(--ease); }
-body.has3d[data-view="shelf"] .skyhead { opacity: 0; }
-body.has3d[data-view="shelf"] #sky { background: none; }
-.backbtn { position: fixed; z-index: 8; left: 12px; top: calc(env(safe-area-inset-top) + 10px); display: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px 0 10px; border-radius: 22px; font: 600 15px var(--sans); color: var(--cream); background: rgba(5,9,25,.7); }
-.backbtn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-body.has3d[data-view="shelf"] .backbtn { display: inline-flex; }
-body.has3d #bookview:not([hidden]) { animation: pagein .45s var(--ease); }
-@keyframes pagein { from { opacity: 0; transform: scale(.96); } }
-.hint { display: none; position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 22px); text-align: center; font: 500 13px/1.4 var(--sans); color: var(--cream-2); pointer-events: none; text-shadow: 0 1px 8px #000; transition: opacity .4s var(--ease); padding: 0 24px; }
-body:not([data-view="room"]) .hint, body.sky-open .hint { opacity: 0; }
-.skyclose { position: fixed; z-index: 7; right: 12px; top: calc(env(safe-area-inset-top) + 10px); width: 44px; height: 44px; border-radius: 22px; display: none; place-items: center; color: var(--cream); background: rgba(255,255,255,.1); }
-.skyclose svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-body.has3d.sky-ready .skyclose { display: grid; animation: card .5s var(--ease) both; }
-body:not(.has3d).sky-open .skyclose { display: grid; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.muted { color: var(--muted); } .small { font-size: 13px; } .num { font-variant-numeric: tabular-nums; }
+svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ───── Structure ───── */
+main { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 14px) 16px calc(var(--tab) + env(safe-area-inset-bottom) + 24px); }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.topbar h1 { font-size: 26px; font-weight: 800; }
+.topbar .sub { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 2px; letter-spacing: 0; }
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 2px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+nav.tabs button { display: grid; justify-items: center; gap: 3px; min-height: var(--tab); padding-top: 8px; font: 600 11.5px var(--body); color: var(--muted); border-radius: 0; }
+nav.tabs button[aria-current="page"] { color: var(--accent); }
+nav.tabs button[aria-current="page"] svg.i { background: var(--accent-soft); }
+nav.tabs svg.i { width: 40px; height: 28px; padding: 3px 9px; border-radius: 10px; stroke-width: 2.1; }
+section.view { animation: fadein .25s ease both; }
+@keyframes fadein { from { opacity: 0; transform: translateY(4px); } }
+
+/* ───── Cartes et boutons « pressables » ───── */
+.card { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
+.card.flat { border-width: 1px; }
+.card h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+.card .lead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; } .card .lead h2 { margin: 0; } .card .lead a, .card .lead button.link { font: 600 13px var(--body); color: var(--accent); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 20px; border-radius: 14px; font: 700 15px var(--body); letter-spacing: .01em; text-transform: none;
+  background: var(--accent); color: var(--accent-ink); border-bottom: 4px solid rgba(0,0,0,.28); transition: transform .08s; }
+.btn:active { transform: translateY(3px); border-bottom-width: 1px; }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-bottom-width: 4px; }
+.btn.ok { background: var(--ok); color: #fff; }
+.btn.wide { width: 100%; } .btn.sm { min-height: 40px; padding: 0 14px; font-size: 14px; border-radius: 11px; }
+.btn:disabled { opacity: .5; transform: none; }
+.link { font: 600 14px var(--body); color: var(--accent); min-height: 40px; }
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin: 0 -16px 12px; padding-left: 16px; padding-right: 16px; } .chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: 600 13.5px var(--body); color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font: 600 12px var(--body); background: var(--surface-2); color: var(--ink-2); }
+.tag.ok { background: var(--ok-soft); color: var(--ok); } .tag.warn { background: var(--warn-soft); color: var(--warn); } .tag.bad { background: var(--bad-soft); color: var(--bad); }
+.bar { height: 14px; background: var(--surface-2); border-radius: 999px; overflow: hidden; } .bar i { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px; transform-origin: left; transform: scaleX(0); transition: transform .5s var(--ease); }
+.bar.ok i { background: var(--ok); } .bar.warn i { background: var(--warn); } .bar.thin { height: 8px; }
+.row { display: flex; gap: 10px; align-items: center; } .row > * { flex: 1; }
+.err { color: var(--bad); font: 500 13.5px var(--body); margin-top: 8px; } .err:empty, .okmsg:empty { display: none; } .okmsg { color: var(--ok); font: 500 13.5px var(--body); margin-top: 8px; }
+label { display: block; font: 600 13px var(--body); color: var(--ink-2); margin: 12px 0 5px; }
+input, textarea, select { width: 100%; font: 16px var(--body); color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 11px 12px; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+input[type=number] { font-variant-numeric: tabular-nums; }
+code.copy { display: block; background: var(--surface-2); border-radius: 10px; padding: 9px 11px; font-size: 12.5px; word-break: break-all; color: var(--ink-2); }
+
+/* ───── Accueil ───── */
+.hero { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; margin-bottom: 14px; }
+.hero h1 { font-size: 24px; font-weight: 800; }
+.hero .greet { font: 500 14px var(--body); color: var(--muted); margin-bottom: 4px; }
+.streak { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r); border: 2px solid var(--line); background: var(--surface); margin-bottom: 12px; }
+.streak .flame { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--warn-soft); color: var(--warn); }
+.streak .flame.off { background: var(--surface-2); color: var(--muted); }
+.streak b { display: block; font: 800 22px/1 var(--display); font-variant-numeric: tabular-nums; } .streak span { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 3px; }
+.streak .days { margin-left: auto; display: flex; gap: 5px; }
+.streak .days i { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-2); border: 1.5px solid var(--line-strong); } .streak .days i.on { background: var(--warn); border-color: var(--warn); } .streak .days i.today { outline: 2px solid var(--accent); outline-offset: 1px; }
+.goal { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+.ring { width: 96px; height: 96px; position: relative; } .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); } .ring circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+.ring .track { stroke: var(--surface-2); } .ring .val { stroke: var(--accent); transition: stroke-dashoffset .6s var(--ease); } .ring.done .val { stroke: var(--ok); }
+.ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 800 22px var(--display); font-variant-numeric: tabular-nums; } .ring b small { display: block; font: 500 11px var(--body); color: var(--muted); text-align: center; }
+.goal p { font-size: 14px; color: var(--ink-2); margin: 6px 0 12px; }
+.reserve { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+.reserve b.big { font: 800 34px/1 var(--display); font-variant-numeric: tabular-nums; } .reserve b.big small { font: 600 14px var(--body); color: var(--muted); margin-left: 4px; }
+.reserve.debt b.big { color: var(--bad); }
+.reserve p { font-size: 13.5px; color: var(--ink-2); }
+.covers { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 4px 16px 6px; } .covers::-webkit-scrollbar { display: none; }
+.cov { flex: none; width: 92px; text-align: left; }
+.cov .img { display: block; position: relative; width: 92px; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line); }
+.cov .img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cov .img .ph { position: absolute; inset: 0; display: grid; place-items: center; padding: 8px; text-align: center; font: 700 12px/1.2 var(--display); color: #fff; background: var(--bg-ph, var(--accent)); }
+.cov .t { margin-top: 7px; font: 600 12.5px/1.25 var(--body); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.cov .bar { display: block; margin-top: 5px; }
+.cov.add .img { display: grid; place-items: center; border-style: dashed; box-shadow: none; color: var(--accent); background: var(--surface); }
+
+/* ───── Bibliothèque ───── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 14px 12px; }
+.grid .cov { width: auto; } .grid .cov .img { width: 100%; }
+.grid .cov .st { display: inline-block; margin-top: 4px; font: 600 11px var(--body); color: var(--muted); }
+.empty { text-align: center; padding: 30px 16px; color: var(--muted); font-size: 14px; }
+
+/* ───── Objectifs ───── */
+.level { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: center; }
+.level .badge { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 800 20px var(--display); }
+.level b { font: 700 16px var(--display); } .level span { display: block; font: 500 12.5px var(--body); color: var(--muted); }
+.quest { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); } .quest:first-of-type { border-top: 0; padding-top: 4px; }
+.quest .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); } .quest.done .ic { background: var(--ok-soft); color: var(--ok); }
+.quest b { display: block; font: 600 14.5px var(--body); } .quest .bar { margin-top: 6px; } .quest small { display: block; font: 500 12px var(--body); color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.quest .xp { font: 700 13px var(--display); color: var(--warn); white-space: nowrap; } .quest.done .xp { color: var(--ok); }
+.badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.bdg { display: grid; justify-items: center; gap: 6px; padding: 12px 6px 10px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); text-align: center; }
+.bdg .ic { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.bdg b { font: 600 12.5px/1.2 var(--body); } .bdg small { font: 500 11px var(--body); color: var(--muted); }
+.bdg.locked { opacity: .55; border-style: dashed; } .bdg.locked .ic { background: var(--surface-2); color: var(--muted); }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; } .cal div { aspect-ratio: 1; border-radius: 8px; background: var(--surface-2); display: grid; place-items: center; font: 600 11px var(--body); color: var(--muted); }
+.cal div.on { background: var(--ok); color: #fff; } .cal div.today { outline: 2px solid var(--accent); outline-offset: -2px; } .cal .lbl { aspect-ratio: auto; background: none; font-size: 10.5px; }
+
+/* ───── Profil ───── */
+.figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+.figures div { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; }
+.figures b { display: block; font: 800 22px/1.1 var(--display); font-variant-numeric: tabular-nums; } .figures span { display: block; font: 500 12px/1.3 var(--body); color: var(--muted); margin-top: 3px; }
+.chart { width: 100%; height: auto; display: block; } .chart text { font: 11px var(--body); fill: var(--muted); } .chart .v { fill: var(--ink); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: left; } td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } th { font-size: 12px; color: var(--muted); font-weight: 600; }
+.setrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); } .setrow:first-of-type { border-top: 0; }
+.setrow b { display: block; font: 600 14.5px var(--body); } .setrow span { display: block; font: 500 12.5px var(--body); color: var(--muted); }
+.setrow input { width: 88px; text-align: center; padding: 8px; }
+
+/* ───── Hippo ───── */
+.hp-unit { position: relative; width: 64px; }
+.hp-unit svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; transform-origin: 50% 100%; animation: hp-breathe 2.4s steps(2, end) infinite; }
+@keyframes hp-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.045) scaleX(.985); } }
+.hp-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: hp-blink 4.6s infinite; } @keyframes hp-blink { 0%, 92%, 100% { transform: scaleY(1); } 95%, 97% { transform: scaleY(.12); } }
+.hp-ear { transform-box: fill-box; transform-origin: 50% 100%; animation: hp-ear 6.2s steps(1, end) infinite; } .hp-ear.r { animation-delay: .18s; }
+@keyframes hp-ear { 0%, 84%, 100% { transform: none; } 86%, 90% { transform: rotate(-14deg); } 88%, 92% { transform: rotate(10deg); } }
+.hp-happy-only, .hp-cheeks, .hp-crown, .hp-spark, .hp-lids { opacity: 0; }
+.hp-unit.happy .hp-cheeks, .hp-unit.mood-great .hp-cheeks { opacity: 1; }
+.hp-unit.crowned .hp-crown { opacity: 1; transform-box: fill-box; transform-origin: 50% 100%; animation: hp-crown 3s ease-in-out infinite; } @keyframes hp-crown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.25px); } }
+.hp-unit.mood-great svg { animation: hp-bounce 1.5s steps(3, end) infinite; } @keyframes hp-bounce { 0%, 100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-3px) scaleY(1.04); } }
+.hp-unit.mood-great .hp-spark { animation: hp-spark 1.8s steps(1, end) infinite; } .hp-unit.mood-great .hp-spark.b { animation-delay: .9s; } @keyframes hp-spark { 0%, 100% { opacity: 0; } 20%, 60% { opacity: 1; } }
+.hp-unit.mood-down svg { animation-duration: 4.2s; filter: saturate(.45); } .hp-unit.mood-down .hp-ear { animation: none; } .hp-unit.mood-down .hp-ear.l { transform: rotate(-32deg) translateY(.5px); } .hp-unit.mood-down .hp-ear.r { transform: rotate(32deg) translateY(.5px); } .hp-unit.mood-down .hp-lids { opacity: 1; }
+.hp-unit.happy .hp-happy-only { opacity: 1; } .hp-unit.happy svg { animation: hp-jump .55s cubic-bezier(.3, 1.6, .5, 1) 2; } @keyframes hp-jump { 0%, 100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-14px) scale(.96, 1.06); } 60% { transform: translateY(0) scale(1.08, .9); } }
+.hp-unit.happy .hp-eyes { animation: none; opacity: 0; } .hp-unit.sleepy .hp-eyes { animation: none; transform: scaleY(.12); } .hp-unit.sleepy svg { animation-duration: 4s; }
+.hp-unit.mood-down.happy .hp-lids, .hp-unit.sleepy .hp-lids { opacity: 0; }
+.hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
+.hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
+.hp-home { display: grid; grid-template-columns: 1fr 72px; gap: 14px; align-items: end; margin-bottom: 14px; }
+.hp-home .hp-unit { width: 72px; justify-self: end; }
+.hp-fx { position: absolute; inset: 0; pointer-events: none; } .hp-fx i { position: absolute; bottom: 60%; left: 50%; width: 6px; height: 6px; background: var(--hpp); animation: hp-pop .9s ease-out forwards; }
+@keyframes hp-pop { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+
+/* ───── Fiche livre (plein écran) ───── */
+#bookview { position: fixed; inset: 0; z-index: 40; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 30px); animation: slidein .28s var(--ease) both; }
+@keyframes slidein { from { transform: translateX(40px); opacity: 0; } }
+#bookview .inner { max-width: 620px; margin: 0 auto; }
+.back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font: 600 14px var(--body); color: var(--accent); margin-left: -6px; }
+.bookhero { display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: end; margin: 6px 0 16px; }
+.bigcover { display: block; position: relative; aspect-ratio: 2 / 3; border-radius: 10px; overflow: hidden; border: 2px solid var(--line); box-shadow: 0 4px 0 var(--line); background: var(--surface-2); }
+.bigcover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; } .bigcover .ph { position: absolute; inset: 0; display: grid; place-items: center; padding: 10px; text-align: center; font: 700 14px/1.2 var(--display); color: #fff; background: var(--bg-ph, var(--accent)); }
+.bookhero h1 { font-size: 24px; font-weight: 800; overflow-wrap: anywhere; } .bookhero .by { font: 500 15px var(--body); color: var(--ink-2); margin-top: 4px; } .bookhero .where { font: 500 14px var(--body); margin-top: 10px; font-variant-numeric: tabular-nums; } .bookhero .where b { font: 800 22px var(--display); }
+.pagemap { position: relative; height: 16px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.pagemap .seg, .pagemap .pre { position: absolute; top: 0; bottom: 0; } .pagemap .seg { background: var(--accent); box-shadow: inset -1.5px 0 0 var(--surface); } .pagemap .pre, .maplegend i.pre { background: repeating-linear-gradient(135deg, var(--line-strong) 0 2px, transparent 2px 5px); }
+.maplegend { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 5px; font: 500 11.5px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; } .maplegend .lg { display: inline-flex; align-items: center; gap: 5px; } .maplegend i { display: inline-block; width: 12px; height: 9px; border-radius: 2px; } .maplegend i.seg { background: var(--accent); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 14px 0 4px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats > div { padding: 10px 6px 10px 0; } .stats > div + div { padding-left: 10px; border-left: 1px solid var(--line); } .stats dt { font: 500 11px/1.25 var(--body); color: var(--muted); } .stats dd { margin: 4px 0 0; font: 800 17px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.filhead { display: flex; align-items: baseline; justify-content: space-between; margin: 26px 0 12px; } .filhead h2 { font-size: 18px; }
+.sortbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font: 600 13px var(--body); color: var(--accent); } .sortbtn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.fil { list-style: none; margin: 0; padding: 0; }
+.entry { position: relative; margin: 0 0 12px; padding: 14px 14px 12px 50px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); transition: background .5s; } .entry.flash { background: var(--accent-soft); }
+.entry .no { position: absolute; left: 12px; top: 14px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 12px var(--display); color: var(--accent-ink); background: var(--accent); font-variant-numeric: tabular-nums; }
+.entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .entry .rg { font: 700 14.5px var(--body); font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 500 12px var(--body); color: var(--muted); } .entry .fol time { margin-left: auto; font: 500 12px var(--body); color: var(--muted); text-align: right; }
+.entry .txt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; hyphens: auto; }
+.iconbtn { display: grid; place-items: center; width: 36px; height: 36px; margin: -8px -8px -8px 0; border-radius: 18px; color: var(--muted); } .iconbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.inkrow { display: flex; gap: 10px; margin: 12px 0 6px; flex-wrap: wrap; } .inkrow > * { flex: 1 1 46%; }
+.quiet { font: 500 14px/1.5 var(--body); color: var(--muted); padding: 6px 0; }
+.facts { font: 500 12.5px/1.5 var(--body); color: var(--muted); margin-top: 14px; font-variant-numeric: tabular-nums; }
+
+/* ───── Feuilles (dialog en bas d'écran) ───── */
+dialog { border: 0; margin: auto 0 0; width: 100%; max-width: none; max-height: 92dvh; padding: 0; background: transparent; }
+dialog::backdrop { background: rgba(20, 18, 30, .45); }
+dialog .sheet { max-width: 620px; margin: 0 auto; background: var(--surface); border-radius: 22px 22px 0 0; padding: 12px 18px calc(env(safe-area-inset-bottom) + 18px); border-top: 2px solid var(--line); max-height: 92dvh; overflow-y: auto; }
+dialog .sheet::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--line-strong); margin: 0 auto 12px; }
+dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin { from { transform: translateY(40px); opacity: 0; } }
+.sheet h1 { font-size: 22px; font-weight: 800; }
+.jhead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; } .jhead span { font: 500 13px var(--body); color: var(--muted); }
+.pickwrap { position: relative; margin-top: 12px; }
+.bookpick, .bookopt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; color: var(--ink); }
+.bookpick { padding: 8px 10px 8px 8px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); } .bookpick:disabled { opacity: 1; cursor: default; }
+.bookpick > svg { width: 18px; height: 18px; flex: none; margin-left: auto; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; } .bookpick[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.noc { position: relative; overflow: hidden; width: 34px; height: 51px; flex: none; border-radius: 4px; background: var(--surface-2); display: grid; place-items: center; font: 700 13px var(--display); color: var(--muted); border: 1px solid var(--line); } .noc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.noc.big { width: 66px; height: 99px; }
+.pk { min-width: 0; } .pk b { display: block; font: 600 14.5px/1.2 var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pk small { display: block; font: 500 12px/1.3 var(--body); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.droplist { position: absolute; z-index: 4; left: 0; right: 0; top: calc(100% + 6px); max-height: 46dvh; overflow-y: auto; padding: 6px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 12px 30px rgba(20,18,30,.25); }
+.bookopt { padding: 8px; border-radius: 10px; } .bookopt[aria-selected="true"] { background: var(--accent-soft); }
+.pagerow { display: flex; align-items: baseline; gap: 8px; margin-top: 14px; } .pagerow label { margin: 0; font: 500 14.5px var(--body); color: var(--ink); white-space: nowrap; } .pagerow label b { font-variant-numeric: tabular-nums; }
+.pagerow input { width: 84px; flex: none; text-align: center; font: 700 18px var(--body); font-variant-numeric: tabular-nums; padding: 6px; }
+.gain { margin-left: auto; font: 700 13px var(--display); color: var(--ok); white-space: nowrap; } .gain:empty { display: none; }
+.meter { height: 8px; margin-top: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; } .meter i { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform .25s; }
+.meterlbl { font: 500 12px/1.4 var(--body); color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.searchbox { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 0 12px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); } .searchbox:focus-within { border-color: var(--accent); }
+.searchbox svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.searchbox input { flex: 1; min-width: 0; border: 0; background: none; padding: 12px 0; font-size: 16px; outline: none; -webkit-appearance: none; appearance: none; } .searchbox input::-webkit-search-cancel-button { display: none; }
+.searchbox button { display: grid; place-items: center; width: 32px; height: 32px; margin-right: -6px; color: var(--muted); }
+#sugg { margin-top: 6px; } #sugg:empty { display: none; }
+.hit { display: flex; gap: 12px; width: 100%; text-align: left; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: flex-start; }
+.hit .noc { width: 46px; height: 69px; font-size: 18px; } .hit b { display: block; font: 600 15px/1.25 var(--body); } .hit i { display: block; font: normal 13.5px/1.3 var(--body); color: var(--ink-2); } .hit small { display: block; font: 12.5px/1.4 var(--body); color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.note { font: 500 13px/1.5 var(--body); color: var(--muted); margin-top: 8px; }
+.textlink { font: inherit; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.fiche { display: flex; gap: 14px; align-items: flex-start; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.edchips { display: flex; flex-wrap: nowrap; gap: 6px; align-items: center; margin: 10px -18px 0; padding: 0 18px 2px; overflow-x: auto; scrollbar-width: none; } .edchips::-webkit-scrollbar { display: none; } .edchips:empty { display: none; } .edchips > * { flex: none; }
+.chiplbl { font: 600 11px var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.edchips button { display: grid; text-align: left; padding: 6px 10px; border-radius: 10px; font: 600 13px/1.2 var(--body); color: var(--ink); border: 2px solid var(--line); font-variant-numeric: tabular-nums; } .edchips button small { font: 400 11px/1.2 var(--body); color: var(--muted); max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.edchips button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); } .edchips button[aria-pressed="true"] small { color: var(--accent-ink); opacity: .8; }
+.cvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; } .cvgrid button { border-radius: 8px; overflow: hidden; border: 2px solid var(--line); aspect-ratio: 2 / 3; background: var(--surface-2); } .cvgrid img { width: 100%; height: 100%; object-fit: cover; display: block; } .cvgrid p { grid-column: 1 / -1; }
+.login { max-width: 420px; margin: 0 auto; padding: 14vh 18px 0; } .login h1 { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
+.toast { position: fixed; left: 50%; bottom: calc(var(--tab) + env(safe-area-inset-bottom) + 14px); transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font: 600 14px var(--body); animation: fadein .25s ease both; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
-<!-- DIRECTION — Monde : sa bibliothèque la nuit. Un ciel étoilé occupe tout le haut de l'écran, jusqu'au bord du téléphone, et porte le solde de minutes ;
-la bibliothèque en noyer sombre est une feuille posée dessus : livres en cours de face, livres finis sur la tranche, abandonnés couchés en pile.
-Parcours : toucher un livre l'ouvre sur une page de papier où se lit le fil des résumés. Geste signature : tirer la bibliothèque vers le bas agrandit le ciel,
-un cran haptique marque le seuil, et l'on arrive dans les comptes et les réglages. Typographie : une seule police, celle du système, du titre au résumé.
-Rien ne passe par la couleur seule. -->
-<canvas id="scene" aria-hidden="true"></canvas>
-<div id="sky"></div>
-<div id="app"><p style="padding:40px 20px;color:#bdb094">Chargement…</p></div>
-<nav id="dock" aria-label="Actions"></nav>
-<label class="haptic" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
-<div id="bookview" class="overlay" hidden></div>
-<div id="study" hidden></div>
+<main id="app"><p class="muted" style="padding:40px 0">Chargement…</p></main>
+<nav class="tabs" id="tabs" aria-label="Sections" hidden><div>
+  <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Aujourd'hui</button>
+  <button data-tab="books"><svg class="i" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>Livres</button>
+  <button data-tab="goals"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12h.01"/></svg>Objectifs</button>
+  <button data-tab="me"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil</button>
+</div></nav>
+<div id="bookview" hidden></div>
 <dialog id="dlg"></dialog>
+<label class="sr-only" aria-hidden="true"><input type="checkbox" switch tabindex="-1" id="haptic"></label>
 
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -442,8 +350,6 @@ function demoApi() {
   };
 }
 
-// ───────────── État et calculs ─────────────
-let S = null, openBook = null, skyTab = "stats", skyOpen = false, tick = null, scene3d = null;
 const bookLabel = b => `${b.title} — p. ${b.current_page}`;
 const balance = () => S.ledger.reduce((a, l) => a + l.delta, 0);
 const lastMonday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7); return d; };
@@ -469,234 +375,9 @@ function streak() {
 const LEATHERS = ["#3b1414", "#14281f", "#111c33", "#2c1a0f", "#19181a", "#2b1730", "#10292b", "#3a2710", "#31101c", "#1c2a18"];
 const cloth = b => `--bg:${LEATHERS[hash(b.title) % LEATHERS.length]}`;
 
-// ───────────── La bibliothèque ─────────────
-const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), sky = $("#sky"), dock = $("#dock");
-
-function render() {
-  clearInterval(tick);
-  const bal = balance(), reading = S.books.filter(b => b.status === "en_cours");
-  const done = S.books.filter(b => b.status === "fini").sort((a, c) => new Date(a.finished_at || a.started_at) - new Date(c.finished_at || c.started_at));
-  const dropped = S.books.filter(b => b.status === "abandonne");
-  const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), today = byDay(1)[0], st = streak();
-  if (scene3d) {
-    const label = b => `${b.title}, ${b.author || "auteur inconnu"}, ${b.status === "en_cours" ? `page ${b.current_page}${b.total_pages ? " sur " + b.total_pages : ""}` : b.status === "fini" ? "fini" : "abandonné"}`;
-    app.innerHTML = `<button class="backbtn" data-act="back-room"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reculer</button>
-
-      <ul class="sr-only"><li><button data-act="add-book">Ajouter un livre</button></li><li><button data-act="log" ${reading.length ? "" : "disabled"}>J'ai lu</button></li></ul>
-      <ul class="sr-only" aria-label="Tes livres">${S.books.map(b => `<li><button data-book="${esc(b.id)}">${esc(label(b))}</button></li>`).join("")}</ul>`;
-    scene3d.setBooks(S.books);
-  } else app.innerHTML = `<div id="case">
-    <button class="grab" data-act="toggle-sky" aria-expanded="${skyOpen}" aria-controls="sky"><span class="grablabel">${skyOpen ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"}</span></button>
-    <main class="alcove">
-      <section class="shelf front" aria-label="En cours de lecture">
-        <span class="shelf-label">En cours de lecture</span>
-        <div class="fronts">${reading.map(faceBook).join("")}
-        ${reading.length ? "" : `<p class="empty-note" style="padding:0 0 60px">Aucun livre en cours. Pose celui que tu lis avec « Ajouter », en bas.</p>`}</div>
-      </section>
-      <section class="stacks" aria-label="Livres finis et abandonnés">
-        ${done.map((b, i) => spine(b, i === done.length - 1 && done.length > 3)).join("")}
-        ${dropped.length ? `<div class="slot"><div class="pile" aria-label="Abandonnés">${dropped.map(flatBook).join("")}</div></div>` : ""}
-        ${done.length + dropped.length ? "" : `<p class="empty-note">${S.books.length ? "Les livres que tu termines viendront se ranger ici, sur la tranche." : "Tes étagères sont vides. Pose ton premier livre là-haut : une page lue et résumée vaut une minute."}</p>`}
-      </section>
-    </main>
-    </div>`;
-  dock.innerHTML = scene3d ? "" : `<button class="tool primary" data-act="log" ${reading.length ? "" : "disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3c-7 1-12 6-14 14l-2 4 4-2c8-2 13-7 12-16z"/><path d="M6 17c3-4 6-7 10-10"/></svg>J'ai lu</button>
-    <button class="tool ghost" data-act="add-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter un livre</button>`;
-  renderSky();
-  tick = setInterval(updateCountdowns, 1000); updateCountdowns();
-}
-function updateCountdowns() {
-  document.querySelectorAll("[data-exp]").forEach(el => {
-    const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000));
-    el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "terminé";
-  });
-}
-function faceBook(b) {
-  const cv = b.cover_url ? `<img class="cv" src="${esc(b.cover_url)}" alt="" loading="lazy" data-fallback="${esc(b.id)}">` : clothCover(b);
-  return `<button class="facebook" data-book="${esc(b.id)}" aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}, page ${b.current_page}${b.total_pages ? " sur " + b.total_pages : ""}">
-    ${cv}<span class="hinge"></span>${b.total_pages ? `<span class="engraved bar" role="img" aria-label="${Math.round(100 * b.current_page / b.total_pages)} % lu"><i style="transform:scaleX(${Math.min(1, b.current_page / b.total_pages)})"></i></span>` : `<span class="engraved">p. ${b.current_page}</span>`}</button>`;
-}
-const clothCover = b => `<span class="cv cloth" style="${cloth(b)}"><span>${esc(b.title)}</span><small>${esc(b.author || "")}</small></span>`;
-function spine(b, lean) {
-  const h = hash(b.title), w = Math.max(28, Math.min(58, Math.round((b.total_pages || 260) / 9))), ht = 148 + h % 32, two = w >= 40 && b.title.length > 11;
-  return `<div class="slot"><button class="spine${lean ? " lean" : ""}" data-book="${esc(b.id)}" style="${cloth(b)};width:${w}px;height:${ht}px;--fs:${two ? 9.5 : w < 34 ? 9.5 : 10.5}px;--ws:${two ? "normal" : "nowrap"}"
-    aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}, fini"><span class="ttl"><span>${esc(b.title)}</span></span></button></div>`;
-}
-const flatBook = (b, i) => `<button class="flat" data-book="${esc(b.id)}" style="${cloth(b)};--h:${Math.max(22, Math.min(34, Math.round((b.total_pages || 260) / 14)))}px;--dx:${(hash(b.title) % 14) - 4}px" aria-label="${esc(b.title)}, abandonné"><span>${esc(b.title)}</span></button>`;
-
-// ───────────── Le livre ouvert ─────────────
-// Couvertures en meilleure définition : grande taille chez Open Library, zoom 3 chez Google Books ; retour à l'image d'origine si elle manque.
 const hiRes = u => !u ? u : u.replace(/(covers\.openlibrary\.org\/b\/(?:id|isbn)\/[^-/]+)-M\.jpg/, (m, a) => a + "-L.jpg").replace(/([?&]zoom=)1(?!\d)/, (m, a) => a + "3");
 const coverImg = (b, cls = "") => { if (!b.cover_url) return ""; const chain = [...new Set([b.cover_url, ...(b.covers || [])].flatMap(u => [hiRes(u), u]))];
   return `<img class="${cls}" src="${esc(chain[0])}" data-alts="${esc(chain.slice(1).join("|"))}" alt="" onload="if(this.naturalWidth<60)nextCover(this)" onerror="nextCover(this)">`; };
-let bookSort = "pages";
-function showBook(animate = true) {
-  const b = S.books.find(x => x.id === openBook); if (!b) return closeBook();
-  const rs = S.readings.filter(r => r.book_id === b.id).sort((a, c) => a.page_start - c.page_start);
-  const pct = b.total_pages ? Math.min(100, Math.round(100 * b.current_page / b.total_pages)) : null;
-  const status = { en_cours: "En cours", fini: "Lu jusqu'au bout", abandonne: "Abandonné" }[b.status];
-  const summed = rs.reduce((a, r) => a + r.pages, 0), avg = rs.length ? Math.round(summed / rs.length) : 0, left = b.total_pages ? Math.max(0, b.total_pages - b.current_page) : null;
-  const pre = rs.length ? rs[0].page_start : b.current_page, days = new Set(rs.map(r => dayKey(r.created_at))).size, order = bookSort === "recent" ? [...rs].reverse() : rs, T = b.total_pages || Math.max(b.current_page, 1);
-  bookview.innerHTML = `<div class="tome">
-    ${animate ? `<div class="flap" style="${cloth(b)}${b.cover_url ? `;background-image:url('${esc(b.cover_url)}')` : ""}">${b.cover_url ? "" : esc(b.title)}</div>` : ""}
-    <article class="page">
-      <button class="close" data-act="close-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Reposer sur l'étagère</button>
-      <header class="bookhero">
-        <div class="bigcover" style="${cloth(b)}">${coverImg(b)}<span>${esc(b.title)}</span></div>
-        <div class="heroinfo"><p class="state">${status}</p><h1>${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p>
-          <p class="where">p. <b>${b.current_page}</b>${b.total_pages ? ` / ${b.total_pages}` : ""}${pct !== null ? ` · ${pct} %` : ""}</p></div>
-      </header>
-      ${rs.length || b.current_page ? `<div class="pagemap" role="img" aria-label="Pages résumées : ${rs.map(r => `${r.page_start} à ${r.page_end}`).join(", ") || "aucune"}">
-        ${pre > 0 ? `<i class="pre" style="left:0;width:${100 * pre / T}%"></i>` : ""}
-        ${rs.map((r, i) => `<button class="seg" data-act="goto-entry" data-id="${esc(r.id)}" style="left:${100 * r.page_start / T}%;width:${Math.max(.8, 100 * r.pages / T)}%" aria-label="Séance ${i + 1}, pages ${r.page_start} à ${r.page_end}"></button>`).join("")}</div>
-        <div class="maplegend"><span>0</span>${pre > 0 ? `<span class="lg"><i class="pre"></i>lu avant l'appli</span>` : ""}<span class="lg"><i class="seg"></i>résumé</span><span>${b.total_pages || b.current_page}</span></div>` : ""}
-      <dl class="stats"><div><dt>Séances</dt><dd>${rs.length}</dd></div><div><dt>Pages résumées</dt><dd>${summed}</dd></div><div><dt>Par séance</dt><dd>${avg || "—"}</dd></div>
-        <div><dt>${left !== null && b.status === "en_cours" ? "Pour finir" : "Jours de lecture"}</dt><dd>${left !== null && b.status === "en_cours" ? (avg ? `≈ ${Math.ceil(left / avg)} séance${Math.ceil(left / avg) > 1 ? "s" : ""}` : `${left} p.`) : days}</dd></div></dl>
-      <div class="inkrow">${b.status === "en_cours" ? `<button class="inkbtn" data-act="log" data-id="${esc(b.id)}">J'ai lu</button>` : `<button class="inkbtn" data-act="status" data-v="en_cours">Reprendre</button>`}
-        <button class="inkbtn line" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
-      <div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries" aria-label="Changer l'ordre du fil">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
-      ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><div class="fol"><span class="no">${n}</span><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time>
-          <button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div>
-        <div class="txt">${esc(r.summary)}</div></li>`; }).join("")}</ol>`
-        : `<p class="quiet">Les pages sont encore blanches. Ton premier résumé s'écrira ici après ta prochaine lecture.</p>`}
-      <h2 class="manage">Ranger</h2>
-      <div class="inkrow wrap"><button class="inkbtn line" data-act="cover">Couverture</button>
-        ${b.status === "en_cours" ? `<button class="inkbtn line" data-act="status" data-v="fini">Marquer fini</button><button class="inkbtn line" data-act="status" data-v="abandonne">Abandonner</button>` : ""}
-        ${rs.length ? "" : `<button class="inkbtn line" data-act="del-book">Retirer</button>`}</div>
-      <p class="facts">Commencé le ${fmtDate(b.started_at)}${b.finished_at ? ` · fini le ${fmtDate(b.finished_at)}` : ""}</p>
-    </article></div>`;
-  bookview.hidden = false; if (animate) bookview.scrollTop = 0;
-}
-function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; scene3d?.releaseBook(); }
-
-// ───────────── Le ciel : solde, puis comptes et réglages quand on le tire ─────────────
-function renderSky() {
-  const bal = balance(), today = byDay(1)[0], st = streak(), active = S.sessions.filter(s => new Date(s.expires_at) > new Date());
-  const keep = sky.scrollTop;
-  sky.innerHTML = `<header class="skyhead" role="status" aria-label="${bal < 0 ? `Dette de ${-bal} minutes` : `Solde de ${bal} minutes`}">
-      <div class="reserve">${bal < 0 ? "−" + -bal : bal}<small>${bal < 0 ? `min de dette · ${plural(-bal, "page")} à lire` : Math.abs(bal) > 1 ? "minutes en réserve" : "minute en réserve"}</small></div>
-      <div class="hud">${active.length ? active.map(s => `<b>${esc(s.app)}</b> ouvert encore <b data-exp="${esc(s.expires_at)}">…</b>`).join("<br>") : `<b>${today.pages}</b> ${today.pages > 1 ? "pages lues" : "page lue"} aujourd'hui · <b>${st}</b> ${st > 1 ? "jours" : "jour"} d'affilée`}${auditDue() ? `<br><span class="due">Contrôle hebdo à faire</span>` : ""}${DEMO ? " · démonstration" : ""}</div>
-    </header>
-    <div class="skybody" ${skyOpen ? "" : "inert"}><div class="tabs" role="tablist">
-      <button role="tab" aria-selected="${skyTab === "stats"}" data-ctab="stats">Comptes</button>
-      <button role="tab" aria-selected="${skyTab === "settings"}" data-ctab="settings">Réglages</button></div>
-    ${skyTab === "stats" ? viewStats() : viewSettings()}</div>
-    <button class="skyclose" data-act="toggle-sky" aria-label="Redescendre dans la bibliothèque"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
-  sky.scrollTop = keep; updateCountdowns();
-}
-// Retour haptique : iOS n'expose pas navigator.vibrate ; basculer un interrupteur natif (Safari 17.4+) déclenche le même petit cran.
-function haptic() { try { if (navigator.vibrate) navigator.vibrate(12); else document.querySelector(".haptic").click(); } catch {} }
-function setSky(open) {
-  skyOpen = open; document.body.classList.toggle("sky-open", open); if (!open || !scene3d) document.body.classList.toggle("sky-ready", open); document.documentElement.style.removeProperty("--pull"); document.documentElement.style.removeProperty("--reveal");
-  if (open) window.scrollTo(0, 0); else sky.scrollTop = 0;
-  scene3d?.setState(open ? "ceiling" : "room");
-  const g = document.querySelector(".grab"); if (g) { g.setAttribute("aria-expanded", open); g.querySelector(".grablabel").textContent = open ? "Revenir à la bibliothèque" : "Tirer pour les comptes et réglages"; }
-  sky.querySelector(".skybody")?.toggleAttribute("inert", !open);
-}
-// Le geste : depuis le haut de la page, tirer vers le bas agrandit le ciel ; au-delà du seuil, on y entre. Depuis le ciel, remonter la poignée ramène la bibliothèque.
-(() => {
-  const THRESHOLD = 96; let y0 = null, armed = false, mode = null;
-  const root = document.documentElement;
-  document.addEventListener("touchstart", e => {
-    if (scene3d || !S || dlg.open || !bookview.hidden || e.touches.length > 1) return;
-    const onGrab = e.target.closest(".grab");
-    if (skyOpen ? onGrab : (window.scrollY <= 0 && !e.target.closest(".fronts"))) { y0 = e.touches[0].clientY; mode = skyOpen ? "close" : "open"; armed = false; }
-  }, { passive: true });
-  document.addEventListener("touchmove", e => {
-    if (y0 === null) return;
-    const dy = e.touches[0].clientY - y0;
-    if (mode === "open") {
-      if (dy <= 0) { if (!document.body.classList.contains("dragging")) y0 = null; else { root.style.setProperty("--pull", "0px"); } return; }
-      if (e.cancelable) e.preventDefault();
-      document.body.classList.add("dragging");
-      const pull = dy < 220 ? dy * .75 : 165 + (dy - 220) * .25;
-      root.style.setProperty("--pull", pull + "px"); root.style.setProperty("--reveal", Math.min(1, pull / 140).toFixed(2));
-      if (pull > THRESHOLD !== armed) { armed = pull > THRESHOLD; haptic(); }
-    } else {
-      if (dy >= 0) return;
-      if (e.cancelable) e.preventDefault();
-      document.body.classList.add("dragging");
-      root.style.setProperty("--pull", dy + "px");
-      if (-dy > THRESHOLD !== armed) { armed = -dy > THRESHOLD; haptic(); }
-    }
-  }, { passive: false });
-  const end = () => {
-    if (y0 === null) return; y0 = null;
-    if (!document.body.classList.contains("dragging")) return;
-    document.body.classList.remove("dragging");
-    if (mode === "close") { root.style.removeProperty("--pull"); if (armed) { suppressClick = true; setSky(false); } }
-    else if (armed) setSky(true); else { root.style.removeProperty("--pull"); root.style.removeProperty("--reveal"); }
-  };
-  document.addEventListener("touchend", end); document.addEventListener("touchcancel", end);
-})();
-let suppressClick = false;
-function barChart(data, key, unit) {
-  const W = 340, H = 150, pad = 18, bw = (W - 8) / data.length, max = Math.max(1, ...data.map(d => d[key]));
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${unit} par jour sur ${data.length} jours">
-  <line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="rgba(255,255,255,.14)"/>
-  ${data.map((d, i) => { const h = Math.round((H - pad - 22) * d[key] / max), x = 4 + i * bw, y = H - pad - h;
-    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="2" fill="var(--gold)"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}
-    <text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle">${i % 2 === (data.length - 1) % 2 ? d.date.getDate() : ""}</text>`; }).join("")}</svg>`;
-}
-function viewStats() {
-  const d14 = byDay(14), d7 = d14.slice(7), today = d14[13], sum = (a, k) => a.reduce((x, y) => x + y[k], 0), st = streak();
-  const p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0);
-  const over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
-  const perApp = {}; S.sessions.forEach(s => { const o = perApp[s.app] ??= { n: 0, m: 0, o: 0 }; o.n++; o.m += s.minutes_granted; o.o += s.overtime_min || 0; });
-  return `${auditDue() ? `<div class="panel flag"><p><b>Contrôle de la semaine passée à faire.</b></p><p class="muted small">Reporte ton temps d'écran réel pour vérifier qu'aucune minute n'a échappé au compteur.</p><button class="chalkbtn" data-ctab="settings">Aller au contrôle</button></div>` : ""}
-  <div class="figures"><div><b>${today.pages}</b><span>pages lues aujourd'hui</span></div><div><b>${today.minutes}</b><span>min d'écran aujourd'hui</span></div><div><b>${st}</b><span>${st > 1 ? "jours" : "jour"} de lecture d'affilée</span></div></div>
-  <h2>Pages lues par jour, sur 14 jours</h2><div class="panel">${barChart(d14, "pages", "Pages")}</div>
-  <h2>Minutes d'écran par jour, sur 14 jours</h2><div class="panel">${barChart(d14, "minutes", "Minutes")}</div>
-  <h2>Sur 7 jours</h2>
-  <div class="figures"><div><b>${p7}</b><span>pages lues</span></div><div><b>${m7}</b><span>min d'écran</span></div><div><b>${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
-  <h2>Par appli, depuis le début</h2><div class="panel">${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépassement</th></tr>
-    ${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="muted" style="margin:0">Aucune session pour l'instant.</p>`}</div>
-  <h2>Depuis le début</h2>
-  <div class="figures"><div><b>${totalP}</b><span>pages résumées</span></div><div><b>${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div><b>${over}</b><span>min de dépassement</span></div></div>
-  ${S.audits.length ? `<h2>Contrôles hebdomadaires</h2><div class="panel"><table><tr><th>Semaine du</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>
-    ${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></div>` : ""}`;
-}
-function viewSettings() {
-  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config;
-  const todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a));
-  return `<h2 id="audit" style="margin-top:0">Contrôle de la semaine du ${fmtDate(wk)}</h2>
-  <div class="panel">${todo.length ? `<p class="small muted">Dans Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière, relève le temps de chaque appli. Tout écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
-    ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="chalkbtn" style="flex:0 0 110px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}
-    <div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p style="margin:0">Contrôle fait pour toutes les applis.</p>`}</div>
-  <h2>Applis bloquées</h2>
-  <div class="panel"><label for="apps" style="margin-top:0">Une par ligne, avec le nom exact utilisé dans les automatisations</label>
-    <textarea id="apps">${esc(c.apps.join("\n"))}</textarea>
-    <div class="row"><div><label for="cap-s">Max par session (min)</label><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
-    <div><label for="cap-d">Max par jour (min)</label><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div></div>
-    <div style="height:14px"></div><button class="chalkbtn solid" data-act="save-config">Enregistrer</button><div class="okmsg" id="cfg-ok"></div><div class="err" id="cfg-err"></div></div>
-  <h2>Pour le raccourci iPhone</h2>
-  <div class="panel small"><p class="muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
-    <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
-    <div style="height:12px"></div><button class="chalkbtn" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
-  ${DEMO ? "" : `<div style="height:8px"></div><button class="chalkbtn" data-act="signout">Se déconnecter</button>`}`;
-}
-
-function viewLogin(msg = "") {
-  app.innerHTML = `<div class="login"><h1>Ma bibliothèque</h1><p style="color:var(--chalk-2)">Connecte-toi avec le compte créé dans Supabase.</p>
-  <form id="login"><label for="em">Email</label><input id="em" type="email" autocomplete="username" required>
-  <label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required>
-  <div style="height:18px"></div><button class="inkbtn" style="width:100%">Entrer</button><div class="err">${esc(msg)}</div></form></div>`;
-  $("#login").onsubmit = async e => { e.preventDefault(); const btn = $("#login button"); btn.disabled = true;
-    try { await api.signIn($("#em").value.trim(), $("#pw").value); await start(); }
-    catch (err) { viewLogin(/invalid/i.test(err.message) ? "Email ou mot de passe incorrect." : err.message); } };
-}
-
-// ───────────── Fiches ─────────────
-function openDlg(html) { dlg.innerHTML = html; dlg.showModal(); dlg.scrollTop = 0; }
-dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); });
-
-function dlgLog(bookId) {
-  const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
-  openDlg(`<form id="flog" class="journal indlg">${readingForm(list, sel, "Valider")}<button type="button" class="inkbtn line" style="width:100%;margin-top:8px" data-close>Annuler</button></form>`);
-  wireReadingForm($("#flog"), list, sel, async () => { dlg.close(); await reload(); });
-}
-
-// Recherche : catalogue général de la BnF (éditions françaises, exhaustif) + Open Library (couvertures, étranger). Gratuit, sans clé.
 const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const prefixed = q => { const w = q.trim().replace(/["*]/g, " ").split(/\s+/).filter(Boolean); if (w.length && w[w.length - 1].length >= 3) w[w.length - 1] += "*"; return w.join(" "); };
 const isbnOf = q => { const d = q.replace(/[-\s]/g, ""); return /^(97[89])?\d{9}[\dXx]$/.test(d) ? d : null; };
@@ -785,8 +466,6 @@ function rankBooks(q, list) {
     return b;
   }).sort((a, b) => b.score - a.score).slice(0, 20);
 }
-// ───────────── Le cabinet : ajouter un livre ─────────────
-// Couvertures : vérifier qu'une image existe vraiment, et en chercher une sur Open Library à partir du titre et de l'auteur.
 const imgOk = url => new Promise(res => { const i = new Image(); i.onload = () => res(i.naturalWidth > 20); i.onerror = () => res(false); i.src = url; });
 async function coverCandidates(title, author, signal) {
   const t = String(title).split(" : ")[0], last = String(author || "").split(",")[0].trim().split(" ").pop();
@@ -806,12 +485,12 @@ async function backfillCovers() {
     const url = await resolveCover({ title: b.title, author: b.author }); if (url) { try { await api.updateBook(b.id, { cover_url: url }); changed = true; } catch {} }
   }
   try { localStorage.setItem("coverTried", JSON.stringify(tried)); } catch {}
-  if (changed && !dlg.open && study.hidden) await reload();
+  if (changed && !dlg.open) await reload();
 }
 async function dlgCover(bookId) {
   const b = S.books.find(x => x.id === bookId);
   openDlg(`<h1>Choisir une couverture</h1><p style="font:13px/1.5 var(--sans);color:var(--ink-2)">${esc(b.title)}</p><div id="cvs" class="cvgrid"><p class="quiet" style="font:15px var(--sans);color:var(--ink-2)">Recherche…</p></div>
-    <div class="inkrow" style="margin-top:16px"><button class="inkbtn line" data-close>Fermer</button>${b.cover_url ? `<button class="inkbtn line" id="cvnone">Reliure en cuir</button>` : ""}</div>`);
+    <div class="inkrow" style="margin-top:16px"><button class="btn ghost" data-close>Fermer</button>${b.cover_url ? `<button class="btn ghost" id="cvnone">Reliure en cuir</button>` : ""}</div>`);
   const set = async url => { try { localStorage.removeItem("coverTried"); } catch {} await api.updateBook(b.id, { cover_url: url }); dlg.close(); await reload(); };
   if ($("#cvnone")) $("#cvnone").onclick = () => set(null);
   try { const list = await coverCandidates(b.title, b.author); $("#cvs").innerHTML = list.length ? "" : `<p class="err">Aucune couverture trouvée pour ce titre.</p>`;
@@ -819,8 +498,6 @@ async function dlgCover(bookId) {
   } catch { $("#cvs").innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion.</p>`; }
 }
 
-const study = $("#study"); let addPick = null, addCtl = null, addTimer = 0;
-window.nextCover = img => { const rest = (img.dataset.alts || "").split("|").filter(Boolean); if (rest.length) { img.dataset.alts = rest.slice(1).join("|"); img.src = rest[0]; } else img.remove(); };
 const altsOf = (b, first) => esc([...(b.covers || []), b.cover_url].filter((u, i, a) => u && u !== first && a.indexOf(u) === i).join("|"));
 const coverThumb = b => `<span class="noc">${esc((b.title || "?")[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" data-alts="${altsOf(b, b.cover_url)}" alt="" loading="lazy" onerror="nextCover(this)">` : ""}</span>`;
 const pickCard = (b, compact) => `${coverThumb(b)}<span class="pk"><b>${esc(b.title)}</b><small>${compact ? "" : esc(b.author || "Auteur inconnu") + " · "}p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}</small></span>`;
@@ -842,62 +519,18 @@ function readingForm(list, sel, submitLabel) {
     <div class="pagerow"><label for="lp">De la p. <b id="pfrom">${sel.current_page}</b> à la p.</label><input id="lp" type="number" inputmode="numeric" required min="1" aria-describedby="lgain"><span class="gain" id="lgain"></span></div>
     <label for="ls">Ce que je retiens</label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
     <div class="meter" aria-hidden="true"><i id="lbar"></i></div><div class="meterlbl" id="lcount" role="status"></div>
-    <div class="err" id="lerr"></div><button class="inkbtn" style="width:100%">${submitLabel}</button>`;
+    <div class="err" id="lerr"></div><button class="btn wide">${submitLabel}</button>`;
 }
 function wireReadingForm(form, list, sel, done) {
   let cur = sel; const upd = () => { const n = Math.max(0, (+$("#lp", form).value || 0) - cur.current_page), need = Math.min(150 + 20 * n, 800), len = $("#ls", form).value.trim().length;
     $("#pfrom", form).textContent = cur.current_page; $("#lgain", form).textContent = n ? `+${n} min` : "";
     $("#lbar", form).style.transform = `scaleX(${Math.min(1, len / need)})`; $("#lcount", form).textContent = len >= need ? `${len} caractères, c'est assez` : `${len} / ${need} caractères${n ? ` pour ${plural(n, "page")}` : ""}`; };
   wirePicker(form, list, b => { cur = b; upd(); }); ["input", "change"].forEach(ev => form.addEventListener(ev, upd)); upd();
-  form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector("button.inkbtn"); btn.disabled = true;
+  form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector("button.btn:not(.ghost)"); btn.disabled = true;
     try { const r = await api.logReading(S.config.secret, bookLabel(cur), +$("#lp", form).value, $("#ls", form).value);
       if (!r.ok) { $("#lerr", form).textContent = r.error; btn.disabled = false; return; } haptic(); await done(); } catch (err) { $("#lerr", form).textContent = err.message; btn.disabled = false; } };
 }
 
-function openStudy() {
-  addPick = null;
-  study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-  <form class="sheet${scene3d ? " onpaper" : ""}" id="fadd" autocomplete="off"><h1>Nouveau livre</h1>
-    <div class="searchwrap"><label for="aq" class="sr-only">Chercher un titre, un auteur ou un ISBN</label>
-      <div class="searchbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="aq" type="search" enterkeyhint="search" placeholder="Titre, auteur ou ISBN">
-        <button type="button" id="aqx" aria-label="Effacer la recherche" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
-      <div id="sugg" aria-live="polite"></div></div>
-    <p class="note" id="ahint">Les suggestions arrivent pendant que tu tapes. Tu peux aussi <button type="button" class="textlink" id="amanual">remplir la fiche à la main</button>.</p>
-    <div id="afields" hidden>
-      <div class="fiche"><span class="noc big" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0">
-        <label for="at" style="margin-top:0">Titre</label><input id="at" required>
-        <label for="aa">Auteur</label><input id="aa"></div></div>
-      <div class="row"><div><label for="ap">Pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div>
-      <div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
-      <div id="aeds" class="chips" aria-label="Autres éditions"></div>
-      <p class="note">Vérifie le nombre de pages sur ton exemplaire. Les pages déjà lues ne rapportent pas de minutes.</p></div>
-    <div class="err" id="aerr"></div><button class="inkbtn" id="asubmit" style="width:100%" hidden>Poser sur l'étagère</button></form>`;
-  study.hidden = false; document.body.classList.add("study-open"); scene3d?.setState("study");
-  const q = $("#aq"), sugg = $("#sugg"), showFields = () => { $("#afields").hidden = false; $("#asubmit").hidden = false; $("#ahint").hidden = true; };
-  const run = async () => {
-    const text = q.value.trim(); addCtl?.abort(); $("#aqx").hidden = !text; if (text.length < 3) { sugg.innerHTML = ""; return; }
-    addCtl = new AbortController(); const ctl = addCtl; if (!sugg.children.length) sugg.innerHTML = `<p class="note">Recherche…</p>`;
-    const show = (list, final) => { if (ctl !== addCtl) return; if (!list.length && !final) return;
-      sugg.innerHTML = list.length ? "" : `<p class="note">Rien trouvé. Essaie l'ISBN au dos du livre, ou remplis la fiche à la main.</p>`;
-      list.slice(0, 12).forEach(b => { const el = document.createElement("button"); el.className = "hit"; el.type = "button";
-        el.innerHTML = `${coverThumb(b)}<span><b>${esc(b.title)}</b><i>${esc(b.author || "Auteur inconnu")}</i>
-          <small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " p." : null, b.editions.length > 1 ? b.editions.length + " éditions" : null].filter(Boolean).map(esc).join(" · ")}</small></span>`;
-        el.onclick = () => pickSuggestion(b, showFields); sugg.append(el); });
-      if (!final && list.length) sugg.insertAdjacentHTML("beforeend", `<p class="note" style="margin:6px 0">D'autres catalogues répondent encore…</p>`); };
-    try { show(await searchBooks(text, ctl.signal, l => show(l, false)), true);
-    } catch (err) { if (err.name !== "AbortError" && ctl === addCtl) sugg.innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion, ou remplis la fiche à la main.</p>`; }
-  };
-  q.addEventListener("input", () => { clearTimeout(addTimer); addTimer = setTimeout(run, 320); });
-  q.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); clearTimeout(addTimer); run(); q.blur(); } });
-  $("#aqx").onclick = () => { q.value = ""; addCtl?.abort(); sugg.innerHTML = ""; $("#aqx").hidden = true; q.focus(); };
-  $("#amanual").onclick = () => { showFields(); $("#athumb").textContent = "?"; $("#at").focus(); };
-  $("#aeds").onclick = e => { const c = e.target.closest("[data-pages]"); if (!c) return; $("#ap").value = c.dataset.pages; $("#aeds").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === c)); haptic(); };
-  $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#asubmit"); btn.disabled = true;
-    try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0,
-        cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
-      bk.cover_url = await resolveCover({ ...bk, covers: addPick?.covers }); await api.addBook(bk); closeStudy(); await reload();
-    } catch (err) { $("#aerr").textContent = err.message; btn.disabled = false; } };
-}
 function pickSuggestion(b, showFields) {
   addPick = b; addCtl?.abort(); $("#sugg").innerHTML = ""; $("#aq").value = ""; $("#aqx").hidden = true; showFields();
   $("#at").value = b.title; $("#aa").value = b.author || ""; $("#ap").value = b.total_pages || "";
@@ -905,25 +538,11 @@ function pickSuggestion(b, showFields) {
   $("#aeds").innerHTML = b.editions.length > 1 ? `<span class="chiplbl">Éditions</span>` + b.editions.map(e => `<button type="button" data-pages="${e.pages}" aria-pressed="${e.pages === b.total_pages}">${e.pages} p.<small>${esc([e.publisher, e.year].filter(Boolean).join(" ") || "sans date")}</small></button>`).join("") : "";
   haptic(); ($("#ap").value ? $("#ac") : $("#ap")).focus();
 }
-function placeSheet(room = scene3d?.state) {
-  const f = $(room === "journal" ? "#flog" : "#fadd"); if (!f || !scene3d || scene3d.state !== room) return; const r = scene3d.paperRect(room); if (!r) return;
-  Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" }); f.classList.add("ready"); document.body.classList.add("study-ready");
-}
-addEventListener("resize", () => setTimeout(placeSheet, 60));
-function closeStudy() { addCtl?.abort(); clearTimeout(addTimer); study.hidden = true; study.innerHTML = ""; document.body.classList.remove("study-open", "study-ready"); if (scene3d?.state === "study" || scene3d?.state === "journal") scene3d.setState("room"); }
-// Le coin lecture : le journal ouvert sur la table basse, où l'on note ce qu'on vient de lire.
-function openJournal(bookId) {
-  const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0];
-  study.innerHTML = `<button class="backbtn studyback" data-act="close-study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-  <form class="sheet onpaper journal" id="flog" autocomplete="off">${readingForm(list, sel, "Noter dans le journal")}</form>`;
-  study.hidden = false; document.body.classList.add("study-open"); scene3d.setState("journal");
-  wireReadingForm($("#flog"), list, sel, async () => { closeStudy(); await reload(); });
-}
 function dlgEdit(rid) {
   const r = S.readings.find(x => x.id === rid);
   openDlg(`<h1>Corriger le résumé</h1><p style="font:13px var(--sans);color:var(--ink-2)">p. ${r.page_start} → ${r.page_end}</p><form id="fedit">
     <textarea id="et" required style="min-height:240px">${esc(r.summary)}</textarea><div class="err" id="eerr"></div>
-    <div class="inkrow"><button type="button" class="inkbtn line" data-close>Annuler</button><button class="inkbtn">Enregistrer</button></div></form>`);
+    <div class="inkrow"><button class="btn">Enregistrer</button><button type="button" class="btn ghost" data-close>Annuler</button></div></form>`);
   $("#fedit").onsubmit = async e => { e.preventDefault(); try { await api.editSummary(rid, $("#et").value); dlg.close(); await reload(); } catch (err) { $("#eerr").textContent = err.message; } };
 }
 function exportBook() {
@@ -933,59 +552,323 @@ function exportBook() {
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([md], { type: "text/markdown" })); a.download = `${b.title}.md`; a.click();
 }
 
+// ───────────── État ─────────────
+let S = null, tab = "home", openBook = null, tick = null, libFilter = "en_cours", bookSort = "pages";
+const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs");
+const pref = (k, d) => { try { const v = localStorage.getItem("pcm:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+const setPref = (k, v) => { try { localStorage.setItem("pcm:" + k, JSON.stringify(v)); } catch {} };
+const todayKey = () => dayKey(new Date());
+const addDays = (key, n) => { const d = new Date(key + "T12:00:00"); d.setDate(d.getDate() + n); return dayKey(d); };
+const mondayOf = key => { const d = new Date(key + "T12:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return dayKey(d); };
+function haptic() { try { if (navigator.vibrate) navigator.vibrate(12); else $("#haptic").click(); } catch {} }
+function toast(msg, ms = 2200) { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.append(t); setTimeout(() => t.remove(), ms); }
+
+// ───────────── Progression : objectif du jour, série, XP, niveaux, quêtes, succès ─────────────
+// Tout est recalculé à partir des lectures enregistrées : rien à stocker, rien à tricher côté téléphone.
+const goalPages = () => Math.max(1, pref("goal", 15));
+const pagesOn = key => S.readings.filter(r => dayKey(r.created_at) === key).reduce((a, r) => a + r.pages, 0);
+const readingDays = () => new Set(S.readings.map(r => dayKey(r.created_at)));
+function streakInfo() {
+  const days = readingDays(), today = todayKey(); let cur = 0, k = days.has(today) ? today : addDays(today, -1);
+  while (days.has(k)) { cur++; k = addDays(k, -1); }
+  let best = 0, run = 0, prev = null;
+  for (const d of [...days].sort()) { run = prev && addDays(prev, 1) === d ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+  return { cur, best, today: days.has(today), atRisk: cur > 0 && !days.has(today) };
+}
+const LEVELS = ["Feuilleteur", "Lecteur du soir", "Page-tourneur", "Habitué", "Dévoreur", "Rat de bibliothèque", "Érudit", "Bibliophile", "Maître des rayons", "Légende"];
+const xpForLevel = n => 40 * n * (n + 1) / 2;   // XP cumulés pour atteindre le niveau n+1
+function xpTotal() {
+  let xp = 0; const byDayXp = {};
+  for (const r of S.readings) { xp += r.pages + 5; const k = dayKey(r.created_at); byDayXp[k] = (byDayXp[k] || 0) + r.pages; }
+  for (const k in byDayXp) if (byDayXp[k] >= goalPages()) xp += 10;   // objectif du jour atteint
+  for (const q of allWeeklyQuests()) if (q.done) xp += q.xp;
+  return xp;
+}
+function levelInfo() { const xp = xpTotal(); let n = 0; while (xp >= xpForLevel(n + 1)) n++; const lo = xpForLevel(n), hi = xpForLevel(n + 1); return { n: n + 1, name: LEVELS[Math.min(n, LEVELS.length - 1)], xp, lo, hi, pct: (xp - lo) / (hi - lo) }; }
+function questsFor(weekKey) {
+  const end = addDays(weekKey, 7), inWeek = d => { const k = dayKey(d); return k >= weekKey && k < end; };
+  const rs = S.readings.filter(r => inWeek(r.created_at)), days = new Set(rs.map(r => dayKey(r.created_at))).size, pages = rs.reduce((a, r) => a + r.pages, 0);
+  const finished = S.books.filter(b => b.finished_at && inWeek(b.finished_at)).length, long = rs.filter(r => r.summary.trim().length >= 400).length;
+  const goalDays = [...new Set(rs.map(r => dayKey(r.created_at)))].filter(k => pagesOn(k) >= goalPages()).length;
+  return [
+    { id: "days", label: "Lire 5 jours cette semaine", cur: days, max: 5, xp: 30, icon: "cal" },
+    { id: "pages", label: "Lire 120 pages", cur: pages, max: 120, xp: 40, icon: "book" },
+    { id: "goal", label: "Atteindre l'objectif du jour 3 fois", cur: goalDays, max: 3, xp: 30, icon: "target" },
+    { id: "long", label: "Écrire 2 résumés de plus de 400 caractères", cur: long, max: 2, xp: 20, icon: "pen" },
+    { id: "finish", label: "Finir un livre", cur: finished, max: 1, xp: 60, icon: "flag" },
+  ].map(q => ({ ...q, cur: Math.min(q.cur, q.max), done: q.cur >= q.max }));
+}
+function allWeeklyQuests() {
+  const weeks = new Set(S.readings.map(r => mondayOf(dayKey(r.created_at)))); S.books.forEach(b => { if (b.finished_at) weeks.add(mondayOf(dayKey(b.finished_at))); });
+  return [...weeks].flatMap(questsFor);
+}
+const BADGES = [
+  { id: "first", name: "Première page", desc: "Un premier résumé", icon: "pen", when: () => S.readings[0] && earliest(S.readings) },
+  { id: "s7", name: "Une semaine", desc: "7 jours d'affilée", icon: "flame", when: () => streakDate(7) },
+  { id: "s30", name: "Un mois", desc: "30 jours d'affilée", icon: "flame", when: () => streakDate(30) },
+  { id: "s100", name: "Cent jours", desc: "100 jours d'affilée", icon: "flame", when: () => streakDate(100) },
+  { id: "p100", name: "Cent pages", desc: "100 pages résumées", icon: "book", when: () => pagesDate(100) },
+  { id: "p1000", name: "Mille pages", desc: "1 000 pages résumées", icon: "book", when: () => pagesDate(1000) },
+  { id: "p5000", name: "Cinq mille", desc: "5 000 pages résumées", icon: "book", when: () => pagesDate(5000) },
+  { id: "b1", name: "Fini !", desc: "Un livre lu jusqu'au bout", icon: "flag", when: () => nthFinished(1) },
+  { id: "b5", name: "Cinq livres", desc: "Cinq livres finis", icon: "flag", when: () => nthFinished(5) },
+  { id: "b20", name: "Vingt livres", desc: "Vingt livres finis", icon: "flag", when: () => nthFinished(20) },
+  { id: "marathon", name: "Marathon", desc: "50 pages en un jour", icon: "target", when: () => { const by = {}; for (const r of S.readings) { const k = dayKey(r.created_at); by[k] = (by[k] || 0) + r.pages; if (by[k] >= 50) return r.created_at; } return null; } },
+  { id: "owl", name: "Oiseau de nuit", desc: "Un résumé après 23 h", icon: "moon", when: () => S.readings.find(r => new Date(r.created_at).getHours() >= 23)?.created_at },
+  { id: "lark", name: "Lève-tôt", desc: "Un résumé avant 8 h", icon: "sun", when: () => S.readings.find(r => new Date(r.created_at).getHours() < 8)?.created_at },
+  { id: "clean", name: "Bon élève", desc: "4 contrôles hebdo faits", icon: "check", when: () => { const w = [...new Set(S.audits.map(a => a.week_start))].sort(); return w.length >= 4 ? S.audits.filter(a => a.week_start === w[3])[0]?.created_at : null; } },
+  { id: "essay", name: "Plume", desc: "Un résumé de 800 caractères", icon: "pen", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at },
+];
+const earliest = rs => rs.reduce((a, r) => !a || r.created_at < a ? r.created_at : a, null);
+function streakDate(n) { const days = [...readingDays()].sort(); let run = 0, prev = null; for (const d of days) { run = prev && addDays(prev, 1) === d ? run + 1 : 1; prev = d; if (run >= n) return d + "T12:00:00"; } return null; }
+function pagesDate(n) { let t = 0; for (const r of [...S.readings].sort((a, b) => a.created_at < b.created_at ? -1 : 1)) { t += r.pages; if (t >= n) return r.created_at; } return null; }
+function nthFinished(n) { const f = S.books.filter(b => b.finished_at).map(b => b.finished_at).sort(); return f[n - 1] || null; }
+const badges = () => BADGES.map(b => ({ ...b, at: b.when() || null }));
+const ICONS = {
+  cal: '<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  book: '<svg class="i" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>',
+  target: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12h.01"/></svg>',
+  pen: '<svg class="i" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg>',
+  flag: '<svg class="i" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></svg>',
+  flame: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg>',
+  moon: '<svg class="i" viewBox="0 0 24 24"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"/></svg>',
+  sun: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>',
+  check: '<svg class="i" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>',
+  lock: '<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  clock: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+};
+
+// ───────────── L'hippo (le même que le Cockpit D2) ─────────────
+const HIPPO_ROWS = [".BB........BB.", ".BPB......BPB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", "BSSSSSSSSSSSSB", "BSSNSSSSSSNSSB", "BSSSSSSSSSSSSB", ".BSSSSSSSSSSB.", "..BBBBBBBBBB..", ".FF.FF..FF.FF."];
+function hippoSVG() { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--hp3)", P: "var(--hpp)", N: "var(--hp3)" }; const px = (x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`; let body = "", earL = "", earR = "";
+  HIPPO_ROWS.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === ".") return; const r = px(x, y, col[ch]); if (y < 2) { if (x < 7) earL += r; else earR += r; } else body += r; }));
+  const eyes = px(3, 4, "var(--hpk)", 1, 2) + px(10, 4, "var(--hpk)", 1, 2), cheeks = px(1, 6, "var(--hpp)", 2, 1) + px(11, 6, "var(--hpp)", 2, 1);
+  const crown = px(4, -1, "var(--hpg)") + px(6, -1, "var(--hpg)", 2, 1) + px(9, -1, "var(--hpg)") + px(4, 0, "var(--hpg)", 6, 1) + px(4, 1, "var(--hpg2)", 6, 1) + px(6, 1, "var(--hpp)", 2, 1);
+  const spark = `<g class="hp-spark">${px(0, 1, "var(--hpg)") + px(13, 3, "var(--hpg)")}</g><g class="hp-spark b">${px(13, 0, "var(--hpg)") + px(0, 4, "var(--hpg)")}</g>`;
+  const lids = px(3, 4, "var(--hp)", 1, 1) + px(10, 4, "var(--hp)", 1, 1);
+  const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
+  return `<svg viewBox="0 -1 14 13" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}</svg>`; }
+function hippoMood() {
+  const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance();
+  if (todayP >= goalPages()) return { cls: "mood-great crowned", say: `Objectif du jour atteint, ${todayP} pages. Tu peux souffler.` };
+  if (h >= 23 || h < 6) return { cls: "sleepy", say: "Il est tard. Quelques pages et au lit ?" };
+  if (st.cur === 0 && S.readings.length) return { cls: "mood-down", say: "La série s'est arrêtée. On en recommence une ce soir ?" };
+  if (st.atRisk) return { cls: "", say: `${st.cur} jour${st.cur > 1 ? "s" : ""} d'affilée. Une lecture aujourd'hui pour garder la série.` };
+  if (bal < 0) return { cls: "", say: `Il reste ${plural(-bal, "page")} à lire pour rembourser la dette.` };
+  if (!S.books.some(b => b.status === "en_cours")) return { cls: "", say: "Pas de livre en cours. Lequel on commence ?" };
+  return { cls: st.cur >= 7 ? "crowned" : "", say: todayP ? `${todayP} pages aujourd'hui, encore ${goalPages() - todayP} pour l'objectif.` : "Une page lue et résumée, c'est une minute gagnée." };
+}
+function hippoCheer() { const h = $(".hp-unit"); if (!h) return; h.classList.remove("happy"); void h.offsetWidth; h.classList.add("happy"); const fx = document.createElement("div"); fx.className = "hp-fx";
+  fx.innerHTML = Array.from({ length: 8 }, (_, i) => `<i style="--dx:${Math.round(Math.cos(i / 8 * 6.28) * 34)}px;--dy:${Math.round(Math.sin(i / 8 * 6.28) * 34 - 20)}px"></i>`).join(""); h.append(fx); setTimeout(() => fx.remove(), 1000); }
+
+// ───────────── Vues ─────────────
+function render() {
+  clearInterval(tick); tabs.hidden = false;
+  tabs.querySelectorAll("button").forEach(b => b.toggleAttribute("aria-current", false)); tabs.querySelector(`[data-tab="${tab}"]`)?.setAttribute("aria-current", "page");
+  app.innerHTML = { home: viewHome, books: viewBooks, goals: viewGoals, me: viewMe }[tab]();
+  app.querySelectorAll(".bar i[data-p], .ring .val[data-off]").forEach(el => requestAnimationFrame(() => requestAnimationFrame(() => { if (el.dataset.p) el.style.transform = `scaleX(${el.dataset.p})`; else el.style.strokeDashoffset = el.dataset.off; })));
+  if (tab === "home") { tick = setInterval(updateCountdowns, 1000); updateCountdowns(); }
+  window.scrollTo(0, 0);
+}
+const coverBox = (b, cls = "img") => `<span class="${cls}" style="${cloth(b)}">${b.cover_url ? coverImg(b) : ""}<span class="ph" style="background:var(--bg)" ${b.cover_url ? "hidden" : ""}>${esc(b.title)}</span></span>`;
+function covCard(b) {
+  const pct = b.total_pages ? Math.min(1, b.current_page / b.total_pages) : null, st = { en_cours: "", fini: "Fini", abandonne: "Abandonné" }[b.status];
+  return `<button class="cov" data-book="${esc(b.id)}" aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}${pct !== null ? `, ${Math.round(pct * 100)} % lu` : ""}">${coverBox(b)}<span class="t">${esc(b.title)}</span>
+    ${b.status === "en_cours" && pct !== null ? `<span class="bar thin"><i data-p="${pct}"></i></span>` : st ? `<span class="st">${st}</span>` : ""}</button>`;
+}
+function viewHome() {
+  const st = streakInfo(), goal = goalPages(), tp = pagesOn(todayKey()), pct = Math.min(1, tp / goal), bal = balance(), mood = hippoMood();
+  const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
+  const week = Array.from({ length: 7 }, (_, i) => addDays(todayKey(), i - 6)), days = readingDays(), circ = 2 * Math.PI * 42;
+  return `<section class="view">
+  <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo · " : ""}Pages contre minutes</h1></div></div>
+  <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><div class="hp-unit ${mood.cls}">${hippoSVG()}</div></div>
+  <div class="streak"><div class="flame ${st.cur ? "" : "off"}">${ICONS.flame}</div><div><b class="num">${st.cur}</b><span>${st.cur > 1 ? "jours d'affilée" : st.cur === 1 ? "jour d'affilée" : "pas de série en cours"}${st.best > st.cur ? ` · record ${st.best}` : ""}</span></div>
+    <div class="days" aria-label="Sept derniers jours">${week.map(k => `<i class="${days.has(k) ? "on" : ""} ${k === todayKey() ? "today" : ""}" title="${k}"></i>`).join("")}</div></div>
+  <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num">${tp}<small>/ ${goal} p.</small></b></div>
+    <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
+    <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
+  <div class="card"><div class="reserve ${bal < 0 ? "debt" : ""}"><b class="big num">${bal < 0 ? "−" + -bal : bal}<small>min</small></b>
+    <p>${bal < 0 ? `<b>Dette d'écran.</b> Lis ${plural(-bal, "page")} pour repartir de zéro.` : bal === 0 ? "<b>Réserve vide.</b> Une page résumée vaut une minute sur TikTok & co." : `<b>Réserve d'écran.</b> Jusqu'à ${Math.min(bal, S.config.session_cap_min)} min d'affilée sur une appli bloquée.`}
+    ${active.map(s => `<br><span class="tag warn">${ICONS.clock}${esc(s.app)} ouvert · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}${auditDue() ? `<br><button class="link" data-act="goto-audit">Contrôle de la semaine à faire ›</button>` : ""}</p></div></div>
+  <div class="card"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
+    ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours. Ajoute celui que tu lis : c'est lui que le raccourci te proposera.</p>`}</div>
+  ${next ? `<div class="card"><div class="lead"><h2>Quête de la semaine</h2><button class="link" data-act="tab" data-tab="goals">Toutes ›</button></div>${questRow(next)}</div>` : ""}
+  </section>`;
+}
+function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : ""}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
+function viewBooks() {
+  const lists = { en_cours: "En cours", fini: "Finis", abandonne: "Abandonnés" }, list = S.books.filter(b => b.status === libFilter);
+  return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><button class="btn sm" data-act="add-book">${ICONS.plus}Ajouter</button></div>
+  <div class="chips">${Object.entries(lists).map(([k, v]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${k === libFilter}">${v} · ${S.books.filter(b => b.status === k).length}</button>`).join("")}</div>
+  ${list.length ? `<div class="grid">${list.map(covCard).join("")}</div>` : `<p class="empty">${libFilter === "en_cours" ? "Rien en cours. Ajoute un livre pour commencer à gagner des minutes." : "Rien ici pour l'instant."}</p>`}</section>`;
+}
+function viewGoals() {
+  const st = streakInfo(), lv = levelInfo(), quests = questsFor(mondayOf(todayKey())), bd = badges(), days = readingDays();
+  const start = addDays(mondayOf(todayKey()), -21), cells = Array.from({ length: 28 }, (_, i) => addDays(start, i));
+  return `<section class="view"><div class="topbar"><h1>Objectifs<span class="sub">Niveau ${lv.n} · ${esc(lv.name)}</span></h1></div>
+  <div class="card"><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
+  <div class="card"><div class="lead"><h2>Série</h2><span class="tag ${st.cur ? "warn" : ""}">${ICONS.flame}${st.cur} j.</span></div>
+    <p class="small muted">${st.today ? "Lecture du jour faite : la série tient." : st.cur ? "Pas encore lu aujourd'hui : la série tombe à minuit." : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.</p>
+    <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}">${+k.slice(8)}</div>`).join("")}</div></div>
+  <div class="card"><div class="lead"><h2>Quêtes de la semaine</h2><span class="small muted">${quests.filter(q => q.done).length} / ${quests.length}</span></div>${quests.map(questRow).join("")}</div>
+  <div class="card"><div class="lead"><h2>Succès</h2><span class="small muted">${bd.filter(b => b.at).length} / ${bd.length}</span></div>
+    <div class="badges">${bd.sort((a, b) => (b.at ? 1 : 0) - (a.at ? 1 : 0)).map(b => `<div class="bdg ${b.at ? "" : "locked"}" role="img" aria-label="${esc(b.name)}, ${b.at ? "obtenu le " + fmtDate(b.at) : "à débloquer : " + esc(b.desc)}"><div class="ic">${b.at ? ICONS[b.icon] : ICONS.lock}</div><b>${esc(b.name)}</b><small>${b.at ? fmtDate(b.at) : esc(b.desc)}</small></div>`).join("")}</div></div>
+  </section>`;
+}
+function barChart(data, key, unit) {
+  const W = 340, H = 140, pad = 18, bw = (W - 8) / data.length, max = Math.max(1, ...data.map(d => d[key]));
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${unit} par jour sur ${data.length} jours"><line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="var(--line)"/>
+  ${data.map((d, i) => { const h = Math.round((H - pad - 22) * d[key] / max), x = 4 + i * bw, y = H - pad - h;
+    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="4" fill="var(--accent)"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}<text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle">${i % 2 === (data.length - 1) % 2 ? d.date.getDate() : ""}</text>`; }).join("")}</svg>`;
+}
+function viewMe() {
+  const d14 = byDay(14), d7 = d14.slice(7), sum = (a, k) => a.reduce((x, y) => x + y[k], 0), p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0), over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
+  const perApp = {}; S.sessions.forEach(s => { const o = perApp[s.app] ??= { n: 0, m: 0, o: 0 }; o.n++; o.m += s.minutes_granted; o.o += s.overtime_min || 0; });
+  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a));
+  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">${DEMO ? "démonstration" : "tes chiffres et tes réglages"}</span></h1></div>
+  <div class="figures"><div><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
+  <div class="card"><h2>Pages lues par jour</h2>${barChart(d14, "pages", "Pages")}</div>
+  <div class="card"><h2>Minutes d'écran par jour</h2>${barChart(d14, "minutes", "Minutes")}</div>
+  <div class="card"><h2>Par appli</h2>${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépass.</th></tr>${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="quiet">Aucune session pour l'instant.</p>`}</div>
+  <div class="figures"><div><b class="num">${totalP}</b><span>pages résumées</span></div><div><b class="num">${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div><b class="num">${over}</b><span>min de dépassement</span></div></div>
+  <div class="card" id="audit"><div class="lead"><h2>Contrôle de la semaine du ${fmtDate(wk)}</h2>${todo.length ? "" : `<span class="tag ok">${ICONS.check}fait</span>`}</div>
+    ${todo.length ? `<p class="small muted">Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière : relève le temps de chaque appli. Un écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
+    ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="btn sm ghost" style="flex:0 0 100px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}<div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p class="small muted">Toutes les applis sont contrôlées pour cette semaine.</p>`}
+    ${S.audits.length ? `<details style="margin-top:10px"><summary class="small muted">Historique</summary><table style="margin-top:8px"><tr><th>Semaine</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></details>` : ""}</div>
+  <div class="card"><h2>Réglages</h2>
+    <div class="setrow"><div><b>Objectif du jour</b><span>pages à lire et résumer</span></div><input id="goal" type="number" inputmode="numeric" min="1" max="200" value="${goalPages()}"></div>
+    <div class="setrow"><div><b>Max par session</b><span>minutes d'affilée sur une appli</span></div><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
+    <div class="setrow"><div><b>Max par jour</b><span>minutes d'écran accordées</span></div><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div>
+    <label for="apps">Applis bloquées, une par ligne (nom exact des automatisations)</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea>
+    <button class="btn wide" style="margin-top:12px" data-act="save-config">Enregistrer</button><div class="okmsg" id="cfg-ok"></div><div class="err" id="cfg-err"></div></div>
+  <div class="card"><h2>Raccourci iPhone</h2><p class="small muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
+    <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
+    <button class="btn sm ghost" style="margin-top:12px" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
+  ${DEMO ? "" : `<button class="btn ghost wide" data-act="signout">Se déconnecter</button>`}
+  </section>`;
+}
+function updateCountdowns() { document.querySelectorAll("[data-exp]").forEach(el => { const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000)); el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "terminé"; }); }
+function viewLogin(msg = "") {
+  tabs.hidden = true; app.innerHTML = `<div class="login"><div class="hp-unit" style="margin-bottom:14px">${hippoSVG()}</div><h1>Pages contre minutes</h1><p class="muted">Connecte-toi avec le compte créé dans Supabase.</p>
+  <form id="login" class="card" style="margin-top:18px"><label for="em" style="margin-top:0">Email</label><input id="em" type="email" autocomplete="username" required><label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required>
+  <button class="btn wide" style="margin-top:16px">Entrer</button><div class="err">${esc(msg)}</div></form></div>`;
+  $("#login").onsubmit = async e => { e.preventDefault(); const btn = $("#login button"); btn.disabled = true; try { await api.signIn($("#em").value.trim(), $("#pw").value); await start(); } catch (err) { viewLogin(/invalid/i.test(err.message) ? "Email ou mot de passe incorrect." : err.message); } };
+}
+
+// ───────────── Fiche d'un livre ─────────────
+function showBook() {
+  const b = S.books.find(x => x.id === openBook); if (!b) return closeBook();
+  const rs = S.readings.filter(r => r.book_id === b.id).sort((a, c) => a.page_start - c.page_start), pct = b.total_pages ? Math.min(100, Math.round(100 * b.current_page / b.total_pages)) : null;
+  const status = { en_cours: "En cours", fini: "Lu jusqu'au bout", abandonne: "Abandonné" }[b.status], summed = rs.reduce((a, r) => a + r.pages, 0), avg = rs.length ? Math.round(summed / rs.length) : 0, left = b.total_pages ? Math.max(0, b.total_pages - b.current_page) : null;
+  const pre = rs.length ? rs[0].page_start : b.current_page, days = new Set(rs.map(r => dayKey(r.created_at))).size, order = bookSort === "recent" ? [...rs].reverse() : rs, T = b.total_pages || Math.max(b.current_page, 1);
+  bookview.innerHTML = `<div class="inner"><button class="back" data-act="close-book"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Bibliothèque</button>
+    <header class="bookhero">${coverBox(b, "bigcover")}<div><span class="tag ${b.status === "fini" ? "ok" : ""}">${status}</span><h1 style="margin-top:8px">${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p><p class="where">p. <b class="num">${b.current_page}</b>${b.total_pages ? ` / ${b.total_pages}` : ""}${pct !== null ? ` · ${pct} %` : ""}</p></div></header>
+    ${rs.length || b.current_page ? `<div class="pagemap" role="img" aria-label="Pages résumées : ${rs.map(r => `${r.page_start} à ${r.page_end}`).join(", ") || "aucune"}">${pre > 0 ? `<i class="pre" style="left:0;width:${100 * pre / T}%"></i>` : ""}${rs.map((r, i) => `<button class="seg" data-act="goto-entry" data-id="${esc(r.id)}" style="left:${100 * r.page_start / T}%;width:${Math.max(.8, 100 * r.pages / T)}%" aria-label="Séance ${i + 1}, pages ${r.page_start} à ${r.page_end}"></button>`).join("")}</div>
+      <div class="maplegend"><span>0</span>${pre > 0 ? `<span class="lg"><i class="pre"></i>lu avant l'appli</span>` : ""}<span class="lg"><i class="seg"></i>résumé</span><span>${b.total_pages || b.current_page}</span></div>` : ""}
+    <dl class="stats"><div><dt>Séances</dt><dd class="num">${rs.length}</dd></div><div><dt>Pages résumées</dt><dd class="num">${summed}</dd></div><div><dt>Par séance</dt><dd class="num">${avg || "—"}</dd></div><div><dt>${left !== null && b.status === "en_cours" ? "Pour finir" : "Jours de lecture"}</dt><dd class="num">${left !== null && b.status === "en_cours" ? (avg ? `≈ ${Math.ceil(left / avg)} séance${Math.ceil(left / avg) > 1 ? "s" : ""}` : `${left} p.`) : days}</dd></div></dl>
+    <div class="inkrow">${b.status === "en_cours" ? `<button class="btn" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
+    <div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
+    ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${esc(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé. Le premier s'écrira ici après ta prochaine lecture.</p>`}
+    <h2 style="margin-top:26px;font-size:18px">Ranger</h2>
+    <div class="inkrow"><button class="btn ghost sm" data-act="cover">Couverture</button>${b.status === "en_cours" ? `<button class="btn ghost sm" data-act="status" data-v="fini">Marquer fini</button><button class="btn ghost sm" data-act="status" data-v="abandonne">Abandonner</button>` : ""}${rs.length ? "" : `<button class="btn ghost sm" data-act="del-book">Retirer</button>`}</div>
+    <p class="facts">Commencé le ${fmtDate(b.started_at)}${b.finished_at ? ` · fini le ${fmtDate(b.finished_at)}` : ""}</p></div>`;
+  bookview.hidden = false; bookview.scrollTop = 0;
+}
+function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; }
+
+// ───────────── Feuilles ─────────────
+function openDlg(html) { dlg.innerHTML = `<div class="sheet">${html}</div>`; dlg.showModal(); dlg.querySelector(".sheet").scrollTop = 0; }
+dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); });
+function dlgLog(bookId) {
+  const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0]; if (!sel) return toast("Ajoute d'abord un livre en cours.");
+  openDlg(`<form id="flog" autocomplete="off">${readingForm(list, sel, "Valider la lecture")}<button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Annuler</button></form>`);
+  wireReadingForm($("#flog"), list, sel, async () => { const before = { p: pagesOn(todayKey()), st: streakInfo().cur, lv: levelInfo().n, bd: badges().filter(b => b.at).length }; dlg.close(); await reload(); celebrate(before); });
+}
+function celebrate(before) {
+  const tp = pagesOn(todayKey()), st = streakInfo(), lv = levelInfo(), nb = badges().filter(b => b.at).length; if (tab !== "home") { tab = "home"; render(); }
+  hippoCheer(); const msgs = [];
+  if (before.p < goalPages() && tp >= goalPages()) msgs.push("Objectif du jour atteint");
+  if (st.cur > before.st) msgs.push(`Série : ${st.cur} jour${st.cur > 1 ? "s" : ""}`);
+  if (lv.n > before.lv) msgs.push(`Niveau ${lv.n} · ${lv.name}`);
+  if (nb > before.bd) msgs.push("Nouveau succès débloqué");
+  if (msgs.length) setTimeout(() => toast(msgs.join(" · "), 3200), 400);
+}
+let addPick = null, addCtl = null, addTimer = 0;
+function openStudy() {
+  addPick = null;
+  openDlg(`<form id="fadd" autocomplete="off"><h1>Nouveau livre</h1>
+    <div class="searchwrap"><label for="aq" class="sr-only">Chercher un titre, un auteur ou un ISBN</label>
+      <div class="searchbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="aq" type="search" enterkeyhint="search" placeholder="Titre, auteur ou ISBN"><button type="button" id="aqx" aria-label="Effacer la recherche" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+      <div id="sugg" aria-live="polite"></div></div>
+    <p class="note" id="ahint">Les suggestions arrivent pendant que tu tapes. Tu peux aussi <button type="button" class="textlink" id="amanual">remplir la fiche à la main</button>.</p>
+    <div id="afields" hidden><div class="fiche"><span class="noc big" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0"><label for="at" style="margin-top:0">Titre</label><input id="at" required><label for="aa">Auteur</label><input id="aa"></div></div>
+      <div class="row"><div><label for="ap">Pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div><div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
+      <div id="aeds" class="edchips" aria-label="Autres éditions"></div><p class="note">Vérifie le nombre de pages sur ton exemplaire. Les pages déjà lues ne rapportent pas de minutes.</p></div>
+    <div class="err" id="aerr"></div><button class="btn wide" id="asubmit" style="margin-top:12px" hidden>Ajouter à la bibliothèque</button><button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Annuler</button></form>`);
+  const q = $("#aq"), sugg = $("#sugg"), showFields = () => { $("#afields").hidden = false; $("#asubmit").hidden = false; $("#ahint").hidden = true; };
+  const run = async () => {
+    const text = q.value.trim(); addCtl?.abort(); $("#aqx").hidden = !text; if (text.length < 3) { sugg.innerHTML = ""; return; }
+    addCtl = new AbortController(); const ctl = addCtl; if (!sugg.children.length) sugg.innerHTML = `<p class="note">Recherche…</p>`;
+    const show = (list, final) => { if (ctl !== addCtl) return; if (!list.length && !final) return;
+      sugg.innerHTML = list.length ? "" : `<p class="note">Rien trouvé. Essaie l'ISBN au dos du livre, ou remplis la fiche à la main.</p>`;
+      list.slice(0, 12).forEach(b => { const el = document.createElement("button"); el.className = "hit"; el.type = "button";
+        el.innerHTML = `${coverThumb(b)}<span><b>${esc(b.title)}</b><i>${esc(b.author || "Auteur inconnu")}</i><small>${[b.publisher, b.year, b.total_pages ? b.total_pages + " p." : null, b.editions.length > 1 ? b.editions.length + " éditions" : null].filter(Boolean).map(esc).join(" · ")}</small></span>`;
+        el.onclick = () => pickSuggestion(b, showFields); sugg.append(el); });
+      if (!final && list.length) sugg.insertAdjacentHTML("beforeend", `<p class="note" style="margin:6px 0">D'autres catalogues répondent encore…</p>`); };
+    try { show(await searchBooks(text, ctl.signal, l => show(l, false)), true); } catch (err) { if (err.name !== "AbortError" && ctl === addCtl) sugg.innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion, ou remplis la fiche à la main.</p>`; }
+  };
+  q.addEventListener("input", () => { clearTimeout(addTimer); addTimer = setTimeout(run, 320); });
+  q.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); clearTimeout(addTimer); run(); q.blur(); } });
+  $("#aqx").onclick = () => { q.value = ""; addCtl?.abort(); sugg.innerHTML = ""; $("#aqx").hidden = true; q.focus(); };
+  $("#amanual").onclick = () => { showFields(); $("#athumb").textContent = "?"; $("#at").focus(); };
+  $("#aeds").onclick = e => { const c = e.target.closest("[data-pages]"); if (!c) return; $("#ap").value = c.dataset.pages; $("#aeds").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === c)); haptic(); };
+  $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#asubmit"); btn.disabled = true;
+    try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0, cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
+      bk.cover_url = await resolveCover({ ...bk, covers: addPick?.covers }); await api.addBook(bk); dlg.close(); libFilter = "en_cours"; if (tab !== "books") tab = "books"; await reload(); toast("Livre ajouté à la bibliothèque"); hippoCheer();
+    } catch (err) { $("#aerr").textContent = err.message; btn.disabled = false; } };
+  setTimeout(() => q.focus(), 80);
+}
+
 // ───────────── Actions ─────────────
-document.addEventListener("error", e => { const img = e.target; if (img.tagName === "IMG" && img.dataset.fallback) { const b = S.books.find(x => x.id === img.dataset.fallback); if (b) img.outerHTML = clothCover(b); } }, true);
+tabs.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) { tab = b.dataset.tab; render(); } });
 document.addEventListener("click", async e => {
-  const ct = e.target.closest("[data-ctab]"); if (ct) { skyTab = ct.dataset.ctab; if (!skyOpen) setSky(true); renderSky(); return; }
   const bk = e.target.closest("[data-book]"); if (bk && !dlg.open) { openBook = bk.dataset.book; return showBook(); }
   const el = e.target.closest("[data-act]"); if (!el) return; const act = el.dataset.act;
   try {
-    if (act === "close-book") closeBook();
-    else if (act === "back-room") scene3d?.setState("room");
-    else if (act === "toggle-sky") { if (suppressClick) { suppressClick = false; return; } haptic(); setSky(!skyOpen); }
-    else if (act === "log") { if (scene3d && bookview.hidden && !el.dataset.id) openJournal(); else dlgLog(el.dataset.id || openBook); }
+    if (act === "tab") { tab = el.dataset.tab; render(); }
+    else if (act === "close-book") closeBook();
+    else if (act === "log") dlgLog(el.dataset.id || openBook);
     else if (act === "add-book") openStudy();
-    else if (act === "close-study") closeStudy();
+    else if (act === "filter") { libFilter = el.dataset.v; render(); }
     else if (act === "cover") dlgCover(openBook);
     else if (act === "edit") dlgEdit(el.dataset.id);
-    else if (act === "sort-entries") { bookSort = bookSort === "recent" ? "pages" : "recent"; const y = bookview.scrollTop; showBook(false); bookview.scrollTop = y; }
+    else if (act === "sort-entries") { bookSort = bookSort === "recent" ? "pages" : "recent"; const y = bookview.scrollTop; showBook(); bookview.scrollTop = y; }
     else if (act === "goto-entry") { const t = document.getElementById("e-" + el.dataset.id); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1400); } }
     else if (act === "export") exportBook();
-    else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); }
+    else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); if (v === "fini") { toast("Livre terminé, bravo."); } }
     else if (act === "del-book") { if (confirm("Retirer ce livre de la bibliothèque ?")) { await api.deleteBook(openBook); closeBook(); await reload(); } }
+    else if (act === "goto-audit") { tab = "me"; render(); $("#audit")?.scrollIntoView({ behavior: "smooth" }); }
     else if (act === "audit") { const v = $(`#au-${CSS.escape(el.dataset.app)}`).value; $("#audit-err").textContent = "";
       if (v === "") return void ($("#audit-err").textContent = "Indique un nombre de minutes.");
-      const r = await api.submitAudit(dayKey(lastMonday()), el.dataset.app, +v);
-      if (!r.ok) return void ($("#audit-err").textContent = r.error);
-      await reload(); $("#audit-ok").textContent = r.undeclared ? `${r.undeclared} min non déclarées : dette ajoutée.` : `Rien à signaler pour ${el.dataset.app}.`; }
-    else if (act === "save-config") { const apps = $("#apps").value.split("\n").map(s => s.trim()).filter(Boolean);
-      if (!apps.length) return void ($("#cfg-err").textContent = "Garde au moins une appli.");
-      await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) });
-      await reload(); $("#cfg-ok").textContent = "Enregistré."; }
+      const r = await api.submitAudit(dayKey(lastMonday()), el.dataset.app, +v); if (!r.ok) return void ($("#audit-err").textContent = r.error);
+      await reload(); toast(r.undeclared ? `${r.undeclared} min non déclarées : dette ajoutée.` : `Rien à signaler pour ${el.dataset.app}.`); }
+    else if (act === "save-config") { const apps = $("#apps").value.split("\n").map(s => s.trim()).filter(Boolean); if (!apps.length) return void ($("#cfg-err").textContent = "Garde au moins une appli.");
+      setPref("goal", Math.max(1, Math.min(200, +$("#goal").value || 15)));
+      await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) }); await reload(); toast("Réglages enregistrés"); }
     else if (act === "copy-secret") { await navigator.clipboard.writeText(S.config.secret); $("#copy-ok").textContent = "Copié."; }
-    else if (act === "signout") { await api.signOut(); setSky(false); sky.innerHTML = ""; dock.innerHTML = ""; viewLogin(); }
-  } catch (err) { alert(err.message || err); }
+    else if (act === "signout") { await api.signOut(); viewLogin(); }
+  } catch (err) { toast(err.message || String(err), 4000); }
 });
-document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!study.hidden) closeStudy(); else if (!bookview.hidden) closeBook(); else if (skyOpen) setSky(false); else if (scene3d?.state === "shelf") scene3d.setState("room"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !dlg.open && !bookview.hidden) closeBook(); });
 
-async function reload() { S = await api.load(); render(); if (openBook) showBook(false); }
-// La pièce en 3D. Sans WebGL (ou si le module ne se charge pas), on garde la bibliothèque dessinée en 2D.
-async function initScene() {
-  if (scene3d || new URLSearchParams(location.search).has("2d")) return;
-  try {
-    const { createScene } = await import("./scene.js");
-    scene3d = createScene($("#scene"), { haptic, onOpenBook: id => { openBook = id; showBook(false); bookview.scrollTop = 0; }, onCeiling: () => setSky(true),
-      onState: v => { document.body.dataset.view = v; }, onArrive: v => { if (v === "ceiling") document.body.classList.add("sky-ready"); else placeSheet(v); }, onDoor: () => openStudy(), onJournal: () => { if (S.books.some(b => b.status === "en_cours")) openJournal(); else openStudy(); } });
-    document.body.classList.add("has3d"); document.body.dataset.view = "room";
-  } catch (err) { console.warn("3D indisponible, bibliothèque 2D :", err); scene3d = null; }
-}
+async function reload() { S = await api.load(); render(); if (openBook) showBook(); }
 async function start() {
-  await initScene();
-  if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Ma bibliothèque</h1><p style="color:var(--chalk-2)">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--brass)">voir la démonstration</a>.</p></div>`; return; }
+  if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Pages contre minutes</h1><p class="muted">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--accent)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
   if (!(await api.claimOwner())) { await api.signOut(); return viewLogin("Ce compte n'est pas le propriétaire de cette base."); }
-  await reload();
-  backfillCovers().catch(() => {});
+  await reload(); backfillCovers().catch(() => {});
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && S && !dlg.open) reload().catch(() => {}); });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
