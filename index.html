@@ -186,8 +186,25 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
-.hp-home { display: grid; grid-template-columns: 1fr 72px; gap: 14px; align-items: end; margin-bottom: 14px; }
-.hp-home .hp-unit { width: 72px; justify-self: end; }
+.hp-home { display: grid; grid-template-columns: 1fr 84px; gap: 12px; align-items: end; margin-bottom: 14px; }
+.hp-home .hp-unit { width: 64px; }
+.plumes { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
+/* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
+.stage { display: grid; place-items: end center; width: 84px; height: 84px; border-radius: 16px; background: var(--surface-2); padding: 4px 0 0; overflow: hidden; }
+.stage.stage-etagere { background: repeating-linear-gradient(180deg, #8C6A48 0 4px, #5E4630 4px 6px, transparent 6px 22px), linear-gradient(#C9A97A, #C9A97A); background-color: #C9A97A; }
+.stage.stage-etagere::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, #4A4670 0 5px, #B9503F 5px 9px, #3E7C5C 9px 15px, #E3B341 15px 18px, #6B6880 18px 22px, transparent 22px 24px); mask: repeating-linear-gradient(180deg, transparent 0 8px, #000 8px 22px); -webkit-mask: repeating-linear-gradient(180deg, transparent 0 8px, #000 8px 22px); opacity: .85; }
+.stage.stage-nuit { background: radial-gradient(circle at 70% 25%, #EDE6C8 0 7px, transparent 8px), radial-gradient(circle at 20% 40%, #fff 0 1px, transparent 2px), radial-gradient(circle at 45% 15%, #fff 0 1px, transparent 2px), radial-gradient(circle at 85% 60%, #fff 0 1px, transparent 2px), linear-gradient(#1B2447, #2E2B4F); }
+.stage.stage-jardin { background: linear-gradient(180deg, #BFD9EA 0 55%, #7FB39C 55% 70%, #5E8B78 70%); }
+.stage.stage-jardin::after { content: ""; position: absolute; left: 8px; bottom: 26px; width: 10px; height: 10px; background: #E79AA8; border-radius: 50%; box-shadow: 40px 4px 0 #E3B341, 24px -6px 0 #EDECF3; }
+.stage { position: relative; } .stage > * { position: relative; }
+.stage.big, .stage:has(.hp-unit.big) { width: 100%; height: 190px; border-radius: var(--r); margin: 10px 0 14px; border: 2px solid var(--line); } .hp-unit.big { width: 120px; }
+.stage.mini { width: 100%; height: 88px; border-radius: 12px; } .stage.mini .hp-unit { width: 56px; }
+#wardrobe { position: fixed; inset: 0; z-index: 40; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 30px); animation: slidein .28s var(--ease) both; } #wardrobe .inner { max-width: 620px; margin: 0 auto; }
+.ward { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.witem { display: grid; gap: 8px; padding: 10px; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); text-align: center; } .witem.on { border-color: var(--plum); }
+.witem b { font: 600 13.5px var(--body); } .witem .btn.sm { min-height: 36px; } .witem small { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font: 500 12px var(--body); color: var(--muted); min-height: 36px; } .witem small svg.i { width: 15px; height: 15px; }
+.witem.locked .stage .hp-unit { opacity: .6; }
+.cal div.frz { background: var(--teal-soft); color: var(--teal); box-shadow: inset 0 0 0 2px var(--teal); }
 .hp-fx { position: absolute; inset: 0; pointer-events: none; } .hp-fx i { position: absolute; bottom: 60%; left: 50%; width: 6px; height: 6px; background: var(--hpp); animation: hp-pop .9s ease-out forwards; }
 @keyframes hp-pop { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
 
@@ -269,6 +286,7 @@ dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin 
 </div></nav>
 <div id="bookview" hidden></div>
 <div id="settings" hidden></div>
+<div id="wardrobe" hidden></div>
 <dialog id="dlg"></dialog>
 <label class="sr-only" aria-hidden="true"><input type="checkbox" switch tabindex="-1" id="haptic"></label>
 
@@ -318,7 +336,7 @@ function supabaseApi() {
 
 function demoApi() {
   const now = Date.now(), H = 3600e3, D = 24 * H; let n = 0; const id = () => "demo-" + (++n);
-  const db = { config: { secret: "secret-de-demonstration", apps: ["TikTok", "Instagram", "YouTube"], session_cap_min: 30, daily_cap_min: 120 },
+  const db = { config: { secret: "secret-de-demonstration", apps: ["TikTok", "Instagram", "YouTube"], session_cap_min: 30, daily_cap_min: 120, player: { spent: 130, owned: ["hat-beret", "acc-echarpe"], equipped: { hat: "hat-beret", acc: "acc-echarpe" }, freezesBought: 1, freezesUsed: [], gifts: 40, lastGift: null } },
     books: [], readings: [], sessions: [], ledger: [], audits: [] };
   const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", current_page: 0, started_at: new Date(now - 13 * D).toISOString() };
   const b2 = { id: id(), title: "La Grande Transformation", author: "Karl Polanyi", cover_url: null, total_pages: 420, status: "en_cours", current_page: 0, started_at: new Date(now - 6 * D).toISOString() };
@@ -573,7 +591,7 @@ function exportBook() {
 
 // ───────────── État ─────────────
 let S = null, tab = "home", openBook = null, tick = null, libFilter = "en_cours", bookSort = "pages";
-const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs"), settingsEl = $("#settings");
+const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs"), settingsEl = $("#settings"), wardrobeEl = $("#wardrobe");
 const GEAR = `<button class="gear" data-act="settings" aria-label="Réglages"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>`;
 const pref = (k, d) => { try { const v = localStorage.getItem("pcm:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
 const setPref = (k, v) => { try { localStorage.setItem("pcm:" + k, JSON.stringify(v)); } catch {} };
@@ -589,8 +607,8 @@ const goalPages = () => Math.max(1, pref("goal", 15));
 const pagesOn = key => S.readings.filter(r => dayKey(r.created_at) === key).reduce((a, r) => a + r.pages, 0);
 const readingDays = () => new Set(S.readings.map(r => dayKey(r.created_at)));
 function streakInfo() {
-  const days = readingDays(), today = todayKey(); let cur = 0, k = days.has(today) ? today : addDays(today, -1);
-  while (days.has(k)) { cur++; k = addDays(k, -1); }
+  const days = readingDays(), frz = new Set((S.config.player || {}).freezesUsed || []), has = k => days.has(k) || frz.has(k), today = todayKey(); let cur = 0, k = days.has(today) ? today : addDays(today, -1);
+  while (has(k)) { if (days.has(k)) cur++; else cur += 1; k = addDays(k, -1); }
   let best = 0, run = 0, prev = null;
   for (const d of [...days].sort()) { run = prev && addDays(prev, 1) === d ? run + 1 : 1; best = Math.max(best, run); prev = d; }
   return { cur, best, today: days.has(today), atRisk: cur > 0 && !days.has(today) };
@@ -672,7 +690,7 @@ const ICONS = {
 
 // ───────────── L'hippo (le même que le Cockpit D2) ─────────────
 const HIPPO_ROWS = [".BB........BB.", ".BPB......BPB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", "BSSSSSSSSSSSSB", "BSSNSSSSSSNSSB", "BSSSSSSSSSSSSB", ".BSSSSSSSSSSB.", "..BBBBBBBBBB..", ".FF.FF..FF.FF."];
-function hippoSVG() { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--hp3)", P: "var(--hpp)", N: "var(--hp3)" }; const px = (x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`; let body = "", earL = "", earR = "";
+function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--hp3)", P: "var(--hpp)", N: "var(--hp3)" }; const px = (x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`; let body = "", earL = "", earR = "";
   HIPPO_ROWS.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === ".") return; const r = px(x, y, col[ch]); if (y < 2) { if (x < 7) earL += r; else earR += r; } else body += r; }));
   const eyes = px(3, 4, "var(--hpk)", 1, 2) + px(10, 4, "var(--hpk)", 1, 2), cheeks = px(1, 6, "var(--hpp)", 2, 1) + px(11, 6, "var(--hpp)", 2, 1);
   const crown = px(4, -1, "var(--hpg)") + px(6, -1, "var(--hpg)", 2, 1) + px(9, -1, "var(--hpg)") + px(4, 0, "var(--hpg)", 6, 1) + px(4, 1, "var(--hpg2)", 6, 1) + px(6, 1, "var(--hpp)", 2, 1);
@@ -681,7 +699,8 @@ function hippoSVG() { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--h
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
   const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
   const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
-  return `<svg viewBox="0 -1 14 13" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}</svg>`; }
+  const wear = opt.only ? (opt.only.px ? opt.only.px(px) : "") : (S ? outfitLayers(px).above : "");
+  return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
 // Humeurs, du plus urgent au plus calme. Chaque humeur a sa posture ; l'hippo réagit aussi quand on le touche.
 function hippoMood() {
   const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance(), lost = pref("lastStreak", 0);
@@ -698,6 +717,85 @@ const POKES = ["Hé ! Je lisais, moi.", "Tu comptes lire ou me chatouiller ?", "
 function hippoPoke() { const h = $(".hp-unit"), b = $(".hp-bubble"); if (!h) return; haptic(); h.classList.remove("happy", "spin"); void h.offsetWidth; h.classList.add(Math.random() < .3 ? "spin" : "happy"); if (b) { b.textContent = POKES[Math.floor(Math.random() * POKES.length)]; clearTimeout(hippoPoke.t); hippoPoke.t = setTimeout(() => { b.textContent = hippoMood().say; }, 2600); } }
 function hippoCheer() { const h = $(".hp-unit"); if (!h) return; h.classList.remove("happy"); void h.offsetWidth; h.classList.add("happy"); const fx = document.createElement("div"); fx.className = "hp-fx";
   fx.innerHTML = Array.from({ length: 8 }, (_, i) => `<i style="--dx:${Math.round(Math.cos(i / 8 * 6.28) * 34)}px;--dy:${Math.round(Math.sin(i / 8 * 6.28) * 34 - 20)}px"></i>`).join(""); h.append(fx); setTimeout(() => fx.remove(), 1000); }
+
+// ───────────── Plumes, placard et gel de série ─────────────
+// Les plumes gagnées se recalculent depuis les lectures ; seuls les achats, l'équipement, les gels et les cadeaux sont enregistrés (app_config.player).
+const player = () => Object.assign({ spent: 0, owned: [], equipped: {}, freezesBought: 0, freezesUsed: [], gifts: 0, lastGift: null }, S.config.player || {});
+async function savePlayer(patch) { const p = { ...player(), ...patch }; S.config.player = p; await api.updateConfig({ player: p }); }
+const plumesEarned = () => S.readings.reduce((a, r) => a + r.pages, 0) + Object.keys(byDayPages()).filter(k => byDayPages()[k] >= goalPages()).length * 10 + allWeeklyQuests().filter(q => q.done).reduce((a, q) => a + q.xp, 0) + badges().filter(b => b.at).length * 25 + player().gifts;
+function byDayPages() { if (byDayPages.k === S) return byDayPages.v; const v = {}; for (const r of S.readings) { const k = dayKey(r.created_at); v[k] = (v[k] || 0) + r.pages; } byDayPages.k = S; byDayPages.v = v; return v; }
+const plumes = () => plumesEarned() - player().spent;
+const freezesLeft = () => player().freezesBought - player().freezesUsed.length;
+// Cosmétiques en pixel art, dessinés par-dessus l'hippo (x de 0 à 13, y de −4 à 11). Les pièces « unlock » ne s'achètent pas.
+const K = "var(--hpk)";
+const ITEMS = [
+  { id: "skin-lavande", cat: "skin", name: "Lavande", price: 0, colors: null },
+  { id: "skin-menthe", cat: "skin", name: "Menthe", price: 90, colors: ["#7FB39C", "#A9D3C0", "#5E8B78"] },
+  { id: "skin-peche", cat: "skin", name: "Pêche", price: 90, colors: ["#D9A08C", "#F0C7B8", "#B27A68"] },
+  { id: "skin-nuit", cat: "skin", name: "Nuit", price: 150, colors: ["#5C5A85", "#8482AB", "#41405F"] },
+  { id: "skin-sable", cat: "skin", name: "Sable", price: 120, colors: ["#C9A97A", "#E4CDA6", "#9E8259"] },
+  { id: "hat-beret", cat: "hat", name: "Béret", price: 60, px: p => p(3, -1, "#B9503F", 8, 1) + p(4, -2, "#B9503F", 7, 1) + p(7, -3, "#7A2F22") },
+  { id: "hat-bonnet", cat: "hat", name: "Bonnet", price: 60, px: p => p(2, -1, "#3E7C5C", 10, 1) + p(3, -2, "#3E7C5C", 8, 1) + p(4, -3, "#3E7C5C", 6, 1) + p(6, -4, "#EDECF3", 2, 1) + p(2, -1, "#EDECF3", 10, 1) },
+  { id: "hat-sorcier", cat: "hat", name: "Sorcier", price: 140, px: p => p(1, -1, "#4A4670", 12, 1) + p(4, -2, "#4A4670", 6, 1) + p(5, -3, "#4A4670", 4, 1) + p(6, -4, "#4A4670", 2, 1) + p(4, -2, "#E3B341", 6, 1) },
+  { id: "hat-haut", cat: "hat", name: "Haut-de-forme", price: 200, px: p => p(3, -1, "#1D1B26", 8, 1) + p(4, -4, "#1D1B26", 6, 3) + p(4, -2, "#B9503F", 6, 1) },
+  { id: "hat-casque", cat: "hat", name: "Casque audio", price: 120, px: p => p(1, -1, "#1D1B26", 12, 1) + p(1, 0, "#1D1B26", 1, 3) + p(12, 0, "#1D1B26", 1, 3) + p(0, 2, "#6B6880", 2, 2) + p(12, 2, "#6B6880", 2, 2) },
+  { id: "hat-couronne", cat: "hat", name: "Couronne d'or", unlock: "30 jours d'affilée", when: () => streakDate(30), px: p => p(4, -2, "#E3B341") + p(6, -2, "#E3B341", 2, 1) + p(9, -2, "#E3B341") + p(4, -1, "#E3B341", 6, 1) + p(4, 0, "#B5862A", 6, 1) + p(6, 0, "#E79AA8", 2, 1) },
+  { id: "glass-rondes", cat: "glass", name: "Lunettes rondes", price: 70, px: p => p(2, 4, K, 1, 2) + p(4, 4, K, 1, 2) + p(3, 3, K) + p(3, 6, K) + p(9, 4, K, 1, 2) + p(11, 4, K, 1, 2) + p(10, 3, K) + p(10, 6, K) + p(5, 4, K, 4, 1) },
+  { id: "glass-soleil", cat: "glass", name: "Lunettes de soleil", price: 90, px: p => p(2, 4, "#1D1B26", 3, 2) + p(9, 4, "#1D1B26", 3, 2) + p(5, 4, "#1D1B26", 4, 1) + p(2, 4, "#6B6880") + p(9, 4, "#6B6880") },
+  { id: "glass-monocle", cat: "glass", name: "Monocle", price: 110, px: p => p(9, 4, "#E3B341", 1, 2) + p(11, 4, "#E3B341", 1, 2) + p(10, 3, "#E3B341") + p(10, 6, "#E3B341") + p(12, 6, "#B5862A", 1, 3) },
+  { id: "acc-echarpe", cat: "acc", name: "Écharpe", price: 50, px: p => p(1, 9, "#B9503F", 12, 1) + p(2, 10, "#B9503F", 3, 1) + p(2, 11, "#7A2F22", 2, 1) },
+  { id: "acc-livre", cat: "acc", name: "Livre sous le bras", price: 80, px: p => p(11, 8, "#3E7C5C", 3, 3) + p(12, 9, "#EDECF3", 2, 1) },
+  { id: "acc-tasse", cat: "acc", name: "Tasse de thé", price: 80, px: p => p(0, 8, "#EDECF3", 2, 3) + p(2, 9, "#EDECF3") + p(1, 7, "#B4B0CC") + p(0, 9, "#7A3D12", 2, 1) },
+  { id: "acc-plume", cat: "acc", name: "Plume d'or", unlock: "succès « Plume »", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at, px: p => p(11, -2, "#E3B341") + p(12, -3, "#E3B341") + p(11, -1, "#B5862A") + p(12, -2, "#B5862A") + p(13, -4, "#E3B341") },
+  { id: "acc-toge", cat: "acc", name: "Toge", unlock: "20 livres finis", when: () => nthFinished(20), px: p => p(1, 6, "#EDECF3", 1, 4) + p(2, 8, "#EDECF3", 3, 2) + p(1, 6, "#B9503F", 1, 1) },
+  { id: "scene-etagere", cat: "scene", name: "Étagère", price: 100 },
+  { id: "scene-nuit", cat: "scene", name: "Fenêtre de nuit", price: 130 },
+  { id: "scene-jardin", cat: "scene", name: "Jardin", price: 130 },
+];
+const CATS = { hat: "Chapeaux", glass: "Lunettes", skin: "Pelage", acc: "Accessoires", scene: "Décor", util: "Utile" };
+const item = id => ITEMS.find(i => i.id === id);
+const owns = id => { const it = item(id); return !it || it.price === 0 || player().owned.includes(id) || (it.when && !!it.when()); };
+// Ce que porte l'hippo : ses pixels s'ajoutent au dessin, son pelage remplace les couleurs.
+function outfitLayers(px) { const eq = player().equipped, out = { above: "", below: "" }; for (const cat of ["acc", "glass", "hat"]) { const it = eq[cat] && item(eq[cat]); if (it && it.px && owns(it.id)) out.above += it.px(px); } return out; }
+function skinStyle() { const it = player().equipped.skin && item(player().equipped.skin); return it && it.colors && owns(it.id) ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""; }
+const sceneClass = () => { const s = player().equipped.scene; return s && owns(s) ? "stage-" + s.replace("scene-", "") : ""; };
+// Le gel de série : un jour manqué compte comme lu s'il a été gelé. Appliqué tout seul, au plus un par semaine.
+async function applyFreeze() {
+  const p = player(), days = readingDays(), y = addDays(todayKey(), -1); if (days.has(y) || days.has(todayKey()) || freezesLeft() <= 0 || p.freezesUsed.includes(y)) return;
+  let run = 0, k = addDays(y, -1); while (days.has(k) || p.freezesUsed.includes(k)) { run++; k = addDays(k, -1); } if (!run) return;
+  if (p.freezesUsed.some(d => d > addDays(y, -7))) return;
+  await savePlayer({ freezesUsed: [...p.freezesUsed, y] }); toast(`Gel de série utilisé pour ${fmtDate(y + "T12:00:00")} : la série tient.`, 3200);
+}
+async function dailyGift() {
+  const p = player(), t = todayKey(); if (p.lastGift === t) return; const g = 5 + Math.min(10, streakInfo().cur);
+  await savePlayer({ gifts: p.gifts + g, lastGift: t }); if (tab === "home") render(); hippoCheer(); setTimeout(() => toast(`L'hippo te donne ${g} plumes pour aujourd'hui.`, 2600), 300);
+}
+
+// ───────────── Le placard ─────────────
+let wardCat = "hat";
+function showWardrobe() {
+  const bal = plumes(), eq = player().equipped, list = ITEMS.filter(i => i.cat === wardCat);
+  wardrobeEl.innerHTML = `<div class="inner"><button class="back" data-act="close-wardrobe"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
+    <div class="topbar"><h1>Le placard<span class="sub">ce que porte ton hippo</span></h1><span class="plumes num">${ICONS.feather}${bal}</span></div>
+    <div class="stage ${sceneClass()}"><div class="hp-unit big ${hippoMood().cls}" style="${skinStyle()}">${hippoSVG()}</div></div>
+    <div class="chips">${Object.entries(CATS).map(([k, v]) => `<button class="chip" data-act="ward-cat" data-v="${k}" aria-pressed="${k === wardCat}">${v}</button>`).join("")}</div>
+    ${wardCat === "util" ? `<div class="card"><div class="lead"><h2>Gel de série</h2><span class="tag ${freezesLeft() ? "teal" : ""}">${freezesLeft()} en réserve</span></div><p class="small muted">Un jour sans lecture ne casse pas la série. Il s'applique tout seul au premier jour manqué, au plus un par semaine.</p>
+        <button class="btn wide" style="margin-top:12px" data-act="buy" data-id="freeze" ${bal < 100 ? "disabled" : ""}>${ICONS.feather}Acheter un gel · 100</button></div>
+      <div class="card"><h2>Comment gagner des plumes</h2><p class="small muted">1 page résumée = 1 plume. Objectif du jour : +10. Quête finie : sa valeur en XP. Succès : +25. Et un petit cadeau à la première ouverture chaque jour.</p></div>`
+    : `<div class="ward">${list.map(it => { const own = owns(it.id), on = eq[it.cat] === it.id || (it.cat === "skin" && !eq.skin && it.price === 0);
+        return `<div class="witem ${on ? "on" : ""} ${own ? "" : "locked"}"><div class="stage mini ${it.cat === "scene" ? "stage-" + it.id.replace("scene-", "") : ""}"><div class="hp-unit" style="${it.colors ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""}">${hippoSVG(it.px ? { only: it } : {})}</div></div>
+          <b>${esc(it.name)}</b>${own ? `<button class="btn sm ${on ? "ghost" : ""}" data-act="equip" data-id="${it.id}">${on ? (it.cat === "skin" || it.price === 0 ? "Porté" : "Retirer") : "Porter"}</button>`
+          : it.unlock ? `<small>${ICONS.lock}${esc(it.unlock)}</small>` : `<button class="btn sm ${bal >= it.price ? "" : "ghost"}" data-act="buy" data-id="${it.id}" ${bal >= it.price ? "" : "disabled"}>${ICONS.feather}${it.price}</button>`}</div>`; }).join("")}</div>`}</div>`;
+  wardrobeEl.hidden = false;
+}
+function closeWardrobe() { wardrobeEl.hidden = true; wardrobeEl.innerHTML = ""; }
+async function buyItem(id) {
+  const bal = plumes(), it = id === "freeze" ? { name: "un gel de série", price: 100 } : item(id); if (!it || bal < it.price) return toast("Pas assez de plumes.");
+  if (!confirm(`Acheter ${it.name} pour ${it.price} plumes ?`)) return;
+  const p = player(); await savePlayer(id === "freeze" ? { spent: p.spent + 100, freezesBought: p.freezesBought + 1 } : { spent: p.spent + it.price, owned: [...p.owned, id], equipped: { ...p.equipped, [it.cat]: id } });
+  haptic(); toast(id === "freeze" ? "Gel de série ajouté à ta réserve." : `${it.name} : c'est à toi.`); showWardrobe();
+}
+async function equipItem(id) { const it = item(id), eq = { ...player().equipped }; if (eq[it.cat] === id && it.cat !== "skin") delete eq[it.cat]; else eq[it.cat] = id; await savePlayer({ equipped: eq }); haptic(); showWardrobe(); }
 
 // ───────────── Vues ─────────────
 function render() {
@@ -720,8 +818,8 @@ function viewHome() {
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
   <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
-    <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}${GEAR}</div></div>
-  <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
+    <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${ICONS.feather}${plumes()}</button>${GEAR}</div></div>
+  <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><div class="stage ${sceneClass()}"><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div></div>
   <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
@@ -743,10 +841,10 @@ function viewGoals() {
   const st = streakInfo(), lv = levelInfo(), quests = questsFor(mondayOf(todayKey())), bd = badges(), days = readingDays();
   const start = addDays(mondayOf(todayKey()), -21), cells = Array.from({ length: 28 }, (_, i) => addDays(start, i));
   return `<section class="view"><div class="topbar"><h1>Objectifs<span class="sub">Niveau ${lv.n} · ${esc(lv.name)}</span></h1>${GEAR}</div>
-  <div class="section" style="margin-top:4px"><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin plum" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
+  <div class="section" style="margin-top:4px"><div class="lead"><h2 style="font-size:15px">Niveau</h2><button class="plumes num" data-act="wardrobe">${ICONS.feather}${plumes()} · placard</button></div><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin plum" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
   <div class="card"><div class="lead"><h2>Série</h2><span class="tag ${st.cur ? "warn" : ""}">${ICONS.flame}${st.cur} j.</span></div>
-    <p class="small muted">${st.today ? "Lecture du jour faite : la série tient." : st.cur ? "Pas encore lu aujourd'hui : la série tombe à minuit." : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.</p>
-    <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}">${+k.slice(8)}</div>`).join("")}</div></div>
+    <p class="small muted">${st.today ? "Lecture du jour faite : la série tient." : st.cur ? (freezesLeft() ? "Pas encore lu aujourd'hui : un gel de série te couvrirait." : "Pas encore lu aujourd'hui : la série tombe à minuit.") : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.${freezesLeft() ? ` ${freezesLeft()} gel${freezesLeft() > 1 ? "s" : ""} en réserve.` : ""}</p>
+    <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : (S.config.player?.freezesUsed || []).includes(k) ? "frz" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}${(S.config.player?.freezesUsed || []).includes(k) ? " (gel de série)" : ""}">${+k.slice(8)}</div>`).join("")}</div></div>
   <div class="card"><div class="lead"><h2>Quêtes de la semaine</h2><span class="small muted">${quests.filter(q => q.done).length} / ${quests.length}</span></div>${quests.map(questRow).join("")}</div>
   <div class="section"><div class="lead"><h2>Succès</h2><span class="small muted">${bd.filter(b => b.at).length} / ${bd.length}</span></div>
     <div class="badges">${bd.sort((a, b) => (b.at ? 1 : 0) - (a.at ? 1 : 0)).map(b => `<div class="bdg ${b.at ? "" : "locked"}" role="img" aria-label="${esc(b.name)}, ${b.at ? "obtenu le " + fmtDate(b.at) : "à débloquer : " + esc(b.desc)}"><div class="ic ${b.at ? "tint-" + b.tint : ""}">${ICONS[b.icon]}</div><b>${esc(b.name)}</b><small>${b.at ? fmtDate(b.at) : esc(b.desc)}</small></div>`).join("")}</div></div>
@@ -787,7 +885,7 @@ function showSettings() {
     <div class="list"><h2 style="font-size:15px;margin:12px 0 6px">Raccourci iPhone</h2><p class="small muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
       <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
       <button class="btn sm ghost" style="margin-top:12px" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
-    <div class="section"><h2>Les humeurs de l'hippo</h2><div class="hp-gallery">${HP_MOODS.map(([cls, name, when]) => `<figure><div class="hp-unit ${cls}">${hippoSVG()}</div><figcaption><b>${name}</b>${when}</figcaption></figure>`).join("")}</div></div>
+    <div class="section"><h2>Les humeurs de l'hippo</h2><div class="hp-gallery">${HP_MOODS.map(([cls, name, when]) => `<figure><div class="hp-unit ${cls}">${hippoSVG({ only: {} })}</div><figcaption><b>${name}</b>${when}</figcaption></figure>`).join("")}</div></div>
     ${DEMO ? "" : `<button class="btn ghost wide" style="margin-top:14px" data-act="signout">Se déconnecter</button>`}
     <p class="facts">Pages contre minutes · même monde que le Cockpit D2.</p></div>`;
   settingsEl.hidden = false; settingsEl.scrollTop = 0;
@@ -795,7 +893,7 @@ function showSettings() {
 function closeSettings() { settingsEl.hidden = true; settingsEl.innerHTML = ""; }
 function updateCountdowns() { document.querySelectorAll("[data-exp]").forEach(el => { const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000)); el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "terminé"; }); }
 function viewLogin(msg = "") {
-  tabs.hidden = true; app.innerHTML = `<div class="login"><div class="hp-unit" style="margin-bottom:14px">${hippoSVG()}</div><h1>Pages contre minutes</h1><p class="muted">Connecte-toi avec le compte créé dans Supabase.</p>
+  tabs.hidden = true; app.innerHTML = `<div class="login"><div class="hp-unit" style="margin-bottom:14px">${hippoSVG({ only: {} })}</div><h1>Pages contre minutes</h1><p class="muted">Connecte-toi avec le compte créé dans Supabase.</p>
   <form id="login" class="card" style="margin-top:18px"><label for="em" style="margin-top:0">Email</label><input id="em" type="email" autocomplete="username" required><label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required>
   <button class="btn wide" style="margin-top:16px">Entrer</button><div class="err">${esc(msg)}</div></form></div>`;
   $("#login").onsubmit = async e => { e.preventDefault(); const btn = $("#login button"); btn.disabled = true; try { await api.signIn($("#em").value.trim(), $("#pw").value); await start(); } catch (err) { viewLogin(/invalid/i.test(err.message) ? "Email ou mot de passe incorrect." : err.message); } };
@@ -885,6 +983,11 @@ document.addEventListener("click", async e => {
     else if (act === "close-book") closeBook();
     else if (act === "poke") hippoPoke();
     else if (act === "settings") showSettings();
+    else if (act === "wardrobe") showWardrobe();
+    else if (act === "close-wardrobe") closeWardrobe();
+    else if (act === "ward-cat") { wardCat = el.dataset.v; showWardrobe(); }
+    else if (act === "buy") await buyItem(el.dataset.id);
+    else if (act === "equip") await equipItem(el.dataset.id);
     else if (act === "close-settings") closeSettings();
     else if (act === "log") dlgLog(el.dataset.id || openBook);
     else if (act === "add-book") openStudy();
@@ -908,14 +1011,14 @@ document.addEventListener("click", async e => {
     else if (act === "signout") { await api.signOut(); closeSettings(); viewLogin(); }
   } catch (err) { toast(err.message || String(err), 4000); }
 });
-document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!settingsEl.hidden) closeSettings(); else if (!bookview.hidden) closeBook(); });
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!wardrobeEl.hidden) closeWardrobe(); else if (!settingsEl.hidden) closeSettings(); else if (!bookview.hidden) closeBook(); });
 
 async function reload() { S = await api.load(); const st = streakInfo(); if (st.cur > 0) setPref("lastStreak", st.cur); render(); if (openBook) showBook(); }
 async function start() {
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Pages contre minutes</h1><p class="muted">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--accent)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
   if (!(await api.claimOwner())) { await api.signOut(); return viewLogin("Ce compte n'est pas le propriétaire de cette base."); }
-  await reload(); backfillCovers().catch(() => {});
+  await reload(); try { await applyFreeze(); await dailyGift(); } catch (err) { console.warn(err); } backfillCovers().catch(() => {});
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && S && !dlg.open) reload().catch(() => {}); });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});

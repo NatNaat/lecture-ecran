@@ -19,8 +19,10 @@ create table if not exists app_config (
   max_pages_per_log int not null default 100,
   overtime_factor int  not null default 2,
   tz              text not null default 'Europe/Paris',
-  app_urls        jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}'
+  app_urls        jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}',
+  player          jsonb not null default '{}'::jsonb          -- placard de l'hippo : achats, équipement, gels, cadeaux
 );
+alter table app_config add column if not exists player jsonb not null default '{}'::jsonb;
 alter table app_config add column if not exists app_urls jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}';
 insert into app_config (id) values (1) on conflict do nothing;
 
@@ -121,7 +123,7 @@ grant select on app_config, books, readings, sessions, ledger, audits to authent
 grant insert, delete on books to authenticated;
 -- current_page n'est pas modifiable à la main : sinon on pourrait « relire » les mêmes pages.
 grant update (title, author, cover_url, total_pages, status, finished_at) on books to authenticated;
-grant update (apps, session_cap_min, daily_cap_min) on app_config to authenticated;
+grant update (apps, session_cap_min, daily_cap_min, player) on app_config to authenticated;
 
 -- ───────────────────────────── Outils internes ─────────────────────────────
 
