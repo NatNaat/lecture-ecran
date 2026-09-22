@@ -20,9 +20,12 @@ create table if not exists app_config (
   overtime_factor int  not null default 2,
   tz              text not null default 'Europe/Paris',
   app_urls        jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}',
-  player          jsonb not null default '{}'::jsonb          -- placard de l'hippo : achats, équipement, gels, cadeaux
+  player          jsonb not null default '{}'::jsonb,         -- placard de l'hippo : achats, équipement, gels, cadeaux
+  goal_pages      int  not null default 15 check (goal_pages > 0) -- objectif du jour (le rappel du soir le lit ici)
 );
 alter table app_config add column if not exists player jsonb not null default '{}'::jsonb;
+alter table app_config add column if not exists goal_pages int not null default 15 check (goal_pages > 0);
+alter table books add column if not exists target_date date;
 alter table app_config add column if not exists app_urls jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}';
 insert into app_config (id) values (1) on conflict do nothing;
 
@@ -36,7 +39,8 @@ create table if not exists books (
   status          text not null default 'en_cours' check (status in ('en_cours','fini','abandonne')),
   current_page    int  not null default 0 check (current_page >= 0),
   started_at      timestamptz not null default now(),
-  finished_at     timestamptz
+  finished_at     timestamptz,
+  target_date     date                                    -- « finir avant le », facultatif
 );
 
 create table if not exists readings (
@@ -122,8 +126,8 @@ revoke all on app_config, books, readings, sessions, ledger, audits from anon, a
 grant select on app_config, books, readings, sessions, ledger, audits to authenticated;
 grant insert, delete on books to authenticated;
 -- current_page n'est pas modifiable à la main : sinon on pourrait « relire » les mêmes pages.
-grant update (title, author, cover_url, total_pages, status, finished_at) on books to authenticated;
-grant update (apps, session_cap_min, daily_cap_min, player) on app_config to authenticated;
+grant update (title, author, cover_url, total_pages, status, finished_at, target_date) on books to authenticated;
+grant update (apps, session_cap_min, daily_cap_min, player, goal_pages) on app_config to authenticated;
 
 -- ───────────────────────────── Outils internes ─────────────────────────────
 
@@ -340,11 +344,28 @@ begin
   return json_build_object('ok', true, 'logged', logged, 'undeclared', und);
 end $$;
 
+-- Rappel du soir (raccourci « Rappel », automatisation à heure fixe) : un message tant que l'objectif du jour n'est pas atteint, sinon rien.
+create or replace function evening_status(p_secret text) returns json
+language plpgsql security definer set search_path = public as $$
+declare c app_config; today int; yday int; msg text;
+begin
+  perform _check_secret(p_secret);
+  select * into c from app_config where id = 1;
+  select coalesce(sum(pages), 0) into today from readings where created_at >= _today_start();
+  select coalesce(sum(pages), 0) into yday from readings where created_at >= _today_start() - interval '1 day' and created_at < _today_start();
+  if today >= c.goal_pages then msg := null;
+  elsif today = 0 and yday > 0 then msg := format('Ta série est en jeu : %s pages à lire et résumer avant minuit.', c.goal_pages);
+  elsif today = 0 then msg := format('Pas encore lu aujourd''hui : %s pages pour l''objectif.', c.goal_pages);
+  else msg := format('Encore %s pages pour l''objectif du jour (%s lues).', c.goal_pages - today, today);
+  end if;
+  return json_strip_nulls(json_build_object('pages_today', today, 'goal', c.goal_pages, 'message', msg));
+end $$;
+
 -- ───────────────────────────── Droits d'exécution ─────────────────────────────
 
-revoke all on function gate_status(text, text), log_reading(text, text, int, text),
+revoke all on function gate_status(text, text), log_reading(text, text, int, text), evening_status(text),
   start_session(text, text, int), close_session(text, text),
   claim_owner(), edit_summary(uuid, text), submit_audit(date, text, int), is_owner() from public;
-grant execute on function gate_status(text, text), log_reading(text, text, int, text),
+grant execute on function gate_status(text, text), log_reading(text, text, int, text), evening_status(text),
   start_session(text, text, int), close_session(text, text) to anon, authenticated;
 grant execute on function claim_owner(), edit_summary(uuid, text), submit_audit(date, text, int), is_owner() to authenticated;

@@ -138,17 +138,34 @@ def portier():
     g, cond = if_(out(u_url, "Texte"), HAS_VALUE)
     a += [cond, action("openurl", WFInput=text(var("Session", "open_url"))), end_if(g)]
 
+    return workflow(a)
+
+
+def workflow(a, glyph=59771):
     return {"WFWorkflowClientVersion": "2302.0.4", "WFWorkflowMinimumClientVersion": 900, "WFWorkflowMinimumClientVersionString": "900",
-            "WFWorkflowIcon": {"WFWorkflowIconStartColor": 4274264319, "WFWorkflowIconGlyphNumber": 59771},
+            "WFWorkflowIcon": {"WFWorkflowIconStartColor": 4274264319, "WFWorkflowIconGlyphNumber": glyph},
             "WFWorkflowTypes": [], "WFWorkflowInputContentItemClasses": ["WFStringContentItem"],
             "WFWorkflowHasShortcutInputVariables": True, "WFWorkflowImportQuestions": [], "WFWorkflowActions": a}
 
 
+def rappel():
+    """Rappel du soir : à lancer par une automatisation « Heure de la journée ». Une notification si l'objectif n'est pas atteint, sinon rien."""
+    cfg = uid()
+    a = [action("comment", WFCommentActionText="RÉGLAGES — colle ton secret (web app › Réglages) à la place de COLLE_ICI_LE_SECRET."),
+         action("dictionary", UUID=cfg, WFItems=dico({"url": URL, "cle": KEY, "secret": "COLLE_ICI_LE_SECRET"})),
+         set_var("Cfg", out(cfg, "Dictionnaire"))]
+    a += rpc("evening_status", {}, "Etat")
+    g, cond = if_text(var("Etat", "message"), HAS_VALUE, None)
+    a += [*cond, action("notification", WFNotificationActionTitle="Pages contre minutes", WFNotificationActionBody=text(var("Etat", "message")), WFNotificationActionSound=True), end_if(g)]
+    return workflow(a, glyph=59511)
+
+
 if __name__ == "__main__":
-    raw, signed = HERE / "Portier.unsigned.shortcut", HERE / "Portier.shortcut"
-    raw.write_bytes(plistlib.dumps(portier(), fmt=plistlib.FMT_BINARY))
-    r = subprocess.run(["shortcuts", "sign", "--mode", "anyone", "--input", str(raw), "--output", str(signed)], capture_output=True, text=True)
-    if r.returncode or not signed.exists():
-        sys.exit("Signature impossible : " + (r.stderr.strip() or "erreur inconnue") + "\nSuis la construction manuelle décrite dans SETUP.md.")
-    raw.unlink()
-    print("OK →", signed)
+    for name, build in (("Portier", portier), ("Rappel", rappel)):
+        raw, signed = HERE / f"{name}.unsigned.shortcut", HERE / f"{name}.shortcut"
+        raw.write_bytes(plistlib.dumps(build(), fmt=plistlib.FMT_BINARY))
+        r = subprocess.run(["shortcuts", "sign", "--mode", "anyone", "--input", str(raw), "--output", str(signed)], capture_output=True, text=True)
+        if r.returncode or not signed.exists():
+            sys.exit("Signature impossible : " + (r.stderr.strip() or "erreur inconnue") + "\nSuis la construction manuelle décrite dans SETUP.md.")
+        raw.unlink()
+        print("OK →", signed)

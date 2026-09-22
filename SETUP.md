@@ -53,6 +53,14 @@ Demande à quelqu'un de définir le **code Temps d'écran** (Réglages › Temps
 - **Contenu web › Limiter les sites pour adultes › Ne jamais autoriser** : ajoute `tiktok.com`, `instagram.com`, `youtube.com`… pour fermer la porte Safari.
 - Dans la web app (Profil), fais chaque lundi le **contrôle de la semaine** : tu reportes le temps réel lu dans Réglages › Temps d'écran ; tout écart de plus de 10 min devient une dette doublée. C'est la parade à « je désactive l'automatisation cinq minutes » — iOS ne permet pas de verrouiller l'app Raccourcis elle-même.
 
+## 6. Le rappel du soir — 2 min
+
+1. Exécute `supabase/migration-2026-09-23-rappel-cible.sql` dans Supabase › SQL Editor (une fois).
+2. Importe `shortcuts/Rappel.shortcut` sur l'iPhone et colle ton secret dans le premier bloc, comme pour Portier.
+3. Raccourcis › **Automatisation › +** › **Heure de la journée** › 20 h 00, tous les jours › **Exécuter immédiatement** › *Exécuter le raccourci* › Rappel.
+
+Tant que l'objectif du jour n'est pas atteint, une notification te dit combien de pages il reste (et si ta série est en jeu). Objectif atteint : rien, pas de bruit.
+
 ## Limites connues
 
 - Le blocage vit dans Raccourcis : il ne peut pas être aussi étanche que l'API Temps d'écran (réservée aux comptes développeur payants).

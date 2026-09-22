@@ -234,6 +234,11 @@ button.hp-unit { display: block; cursor: pointer; }
 .entry { position: relative; margin: 0 0 12px; padding: 14px 14px 12px 50px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); transition: background .5s; } .entry.flash { background: var(--accent-soft); }
 .entry .no { position: absolute; left: 12px; top: 14px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 12px var(--display); color: var(--accent-ink); background: var(--accent); font-variant-numeric: tabular-nums; }
 .entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .entry .rg { font: 700 14.5px var(--body); font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 500 12px var(--body); color: var(--muted); } .entry .fol time { margin-left: auto; font: 500 12px var(--body); color: var(--muted); text-align: right; }
+.target { display: flex; align-items: center; gap: 10px; margin: 2px 0 12px; } .target label { margin: 0; white-space: nowrap; } .target input { flex: 1; min-width: 0; width: auto; } .target .bad { color: var(--bad); }
+.cov .pace { display: block; font: 600 11px/1.3 var(--body); color: var(--muted); margin-top: 3px; } .cov .pace.late { color: var(--bad); }
+.remember .btn, .bilan .figures { margin-top: 10px; }
+.entry blockquote, .rtxt blockquote, .quotes blockquote { margin: 8px 0 0; padding: 6px 12px; background: var(--plum-soft); color: var(--plum); border-radius: 10px; font-style: italic; quotes: "« " " »"; } .entry blockquote::before, .rtxt blockquote::before, .quotes blockquote::before { content: open-quote; } .entry blockquote::after, .rtxt blockquote::after, .quotes blockquote::after { content: close-quote; }
+.rtxt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; margin: 12px 0 16px; } .quotes { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 8px; } .quotes blockquote { margin: 0; } .quotes small { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; } textarea.short { min-height: 56px; }
 .entry .txt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; hyphens: auto; }
 .iconbtn { display: grid; place-items: center; width: 36px; height: 36px; margin: -8px -8px -8px 0; border-radius: 18px; color: var(--muted); } .iconbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .inkrow { display: flex; gap: 10px; margin: 12px 0 6px; flex-wrap: wrap; } .inkrow > * { flex: 1 1 46%; }
@@ -344,7 +349,7 @@ function demoApi() {
   const now = Date.now(), H = 3600e3, D = 24 * H; let n = 0; const id = () => "demo-" + (++n);
   const db = { config: { secret: "secret-de-demonstration", apps: ["TikTok", "Instagram", "YouTube"], session_cap_min: 30, daily_cap_min: 120, player: { spent: 130, owned: ["hat-beret", "acc-echarpe"], equipped: { hat: "hat-beret", acc: "acc-echarpe" }, freezesBought: 1, freezesUsed: [], gifts: 40, lastGift: null } },
     books: [], readings: [], sessions: [], ledger: [], audits: [] };
-  const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", current_page: 0, started_at: new Date(now - 13 * D).toISOString() };
+  const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", current_page: 0, started_at: new Date(now - 13 * D).toISOString(), target_date: new Date(now + 40 * D).toISOString().slice(0, 10) };
   const b2 = { id: id(), title: "La Grande Transformation", author: "Karl Polanyi", cover_url: null, total_pages: 420, status: "en_cours", current_page: 0, started_at: new Date(now - 6 * D).toISOString() };
   const b3 = { id: id(), title: "L'Étranger", author: "Albert Camus", cover_url: null, total_pages: 120, status: "fini", current_page: 120, started_at: new Date(now - 30 * D).toISOString(), finished_at: new Date(now - 20 * D).toISOString() };
   const b4 = { id: id(), title: "Le Petit Prince", author: "Antoine de Saint-Exupéry", cover_url: "https://covers.openlibrary.org/b/isbn/9782070612758-M.jpg", total_pages: 97, status: "en_cours", current_page: 40, started_at: new Date(now - 2 * D).toISOString() };
@@ -562,6 +567,7 @@ function readingForm(list, sel, submitLabel) {
     <div class="pagerow"><label for="lp">De la p. <b id="pfrom">${sel.current_page}</b> à la p.</label><input id="lp" type="number" inputmode="numeric" required min="1" aria-describedby="lgain"><span class="gain" id="lgain"></span></div>
     <label for="ls">Ce que je retiens</label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
     <div class="meter" aria-hidden="true"><i id="lbar"></i></div><div class="meterlbl" id="lcount" role="status"></div>
+    <label for="lq">Une citation à garder <small>(facultatif)</small></label><textarea id="lq" class="short" placeholder="Une phrase du texte, mot pour mot"></textarea>
     <div class="err" id="lerr"></div><button class="btn wide">${submitLabel}</button>`;
 }
 function wireReadingForm(form, list, sel, done) {
@@ -570,7 +576,7 @@ function wireReadingForm(form, list, sel, done) {
     $("#lbar", form).style.transform = `scaleX(${Math.min(1, len / need)})`; $("#lcount", form).textContent = len >= need ? `${len} caractères, c'est assez` : `${len} / ${need} caractères${n ? ` pour ${plural(n, "page")}` : ""}`; };
   wirePicker(form, list, b => { cur = b; upd(); }); ["input", "change"].forEach(ev => form.addEventListener(ev, upd)); upd();
   form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector("button.btn:not(.ghost)"); btn.disabled = true;
-    try { const r = await api.logReading(S.config.secret, bookLabel(cur), +$("#lp", form).value, $("#ls", form).value);
+    try { const r = await api.logReading(S.config.secret, bookLabel(cur), +$("#lp", form).value, withQuote(form));
       if (!r.ok) { $("#lerr", form).textContent = r.error; btn.disabled = false; return; } haptic(); await done(); } catch (err) { $("#lerr", form).textContent = err.message; btn.disabled = false; } };
 }
 
@@ -609,7 +615,7 @@ function toast(msg, ms = 2200) { const t = document.createElement("div"); t.clas
 
 // ───────────── Progression : objectif du jour, série, XP, niveaux, quêtes, succès ─────────────
 // Tout est recalculé à partir des lectures enregistrées : rien à stocker, rien à tricher côté téléphone.
-const goalPages = () => Math.max(1, pref("goal", 15));
+const goalPages = () => Math.max(1, (S && S.config.goal_pages) || pref("goal", 15));
 const pagesOn = key => S.readings.filter(r => dayKey(r.created_at) === key).reduce((a, r) => a + r.pages, 0);
 const readingDays = () => new Set(S.readings.map(r => dayKey(r.created_at)));
 function streakInfo() {
@@ -726,9 +732,9 @@ function hippoCheer() { const h = $(".hp-unit"); if (!h) return; h.classList.rem
 
 // ───────────── Plumes, placard et gel de série ─────────────
 // Les plumes gagnées se recalculent depuis les lectures ; seuls les achats, l'équipement, les gels et les cadeaux sont enregistrés (app_config.player).
-const player = () => Object.assign({ spent: 0, owned: [], equipped: {}, freezesBought: 0, freezesUsed: [], gifts: 0, lastGift: null }, S.config.player || {});
+const player = () => Object.assign({ spent: 0, owned: [], equipped: {}, freezesBought: 0, freezesUsed: [], gifts: 0, lastGift: null, reviews: {} }, S.config.player || {});
 async function savePlayer(patch) { const p = { ...player(), ...patch }; S.config.player = p; await api.updateConfig({ player: p }); }
-const plumesEarned = () => S.readings.reduce((a, r) => a + r.pages, 0) + Object.keys(byDayPages()).filter(k => byDayPages()[k] >= goalPages()).length * 10 + allWeeklyQuests().filter(q => q.done).reduce((a, q) => a + q.xp, 0) + badges().filter(b => b.at).length * 25 + player().gifts;
+const plumesEarned = () => S.readings.reduce((a, r) => a + r.pages, 0) + Object.keys(byDayPages()).filter(k => byDayPages()[k] >= goalPages()).length * 10 + allWeeklyQuests().filter(q => q.done).reduce((a, q) => a + q.xp, 0) + badges().filter(b => b.at).length * 25 + player().gifts + Object.values(player().reviews).reduce((a, l) => a + l.length, 0) * 5;
 function byDayPages() { if (byDayPages.k === S) return byDayPages.v; const v = {}; for (const r of S.readings) { const k = dayKey(r.created_at); v[k] = (v[k] || 0) + r.pages; } byDayPages.k = S; byDayPages.v = v; return v; }
 const plumes = () => plumesEarned() - player().spent;
 const freezesLeft = () => player().freezesBought - player().freezesUsed.length;
@@ -819,6 +825,64 @@ async function buyItem(id) {
 }
 async function equipItem(id) { const it = item(id), eq = { ...player().equipped }; if (eq[it.cat] === id && it.cat !== "skin") delete eq[it.cat]; else eq[it.cat] = id; await savePlayer({ equipped: eq }); haptic(); showWardrobe(); }
 
+
+// ───────────── Date cible, bilan du dimanche, relecture, citations ─────────────
+function pace(b) {
+  if (!b.target_date || b.status !== "en_cours" || !b.total_pages) return null;
+  const left = b.total_pages - b.current_page, days = Math.round((new Date(b.target_date + "T12:00:00") - new Date(todayKey() + "T12:00:00")) / 864e5);
+  if (left <= 0) return null; if (days < 0) return { late: true, txt: "en retard" };
+  const perDay = Math.ceil(left / (days + 1)); return { perDay, days, txt: `${perDay} p./jour` };
+}
+function weekReview() {
+  const mon = mondayOf(todayKey()), inW = (d, start) => { const k = dayKey(d); return k >= start && k < addDays(start, 7); };
+  const rs = S.readings.filter(r => inW(r.created_at, mon)), pages = rs.reduce((a, r) => a + r.pages, 0), prev = S.readings.filter(r => inW(r.created_at, addDays(mon, -7))).reduce((a, r) => a + r.pages, 0);
+  const by = {}; rs.forEach(r => { const k = dayKey(r.created_at); by[k] = (by[k] || 0) + r.pages; }); const best = Object.entries(by).sort((a, b) => b[1] - a[1])[0];
+  return { pages, prev, days: Object.keys(by).length, minutes: S.sessions.filter(x => inW(x.started_at, mon)).reduce((a, x) => a + x.minutes_granted, 0),
+    best: best && { day: new Date(best[0] + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long" }), pages: best[1] }, finished: S.books.filter(b => b.finished_at && inW(b.finished_at, mon)).length };
+}
+function bilanCard() {   // visible le dimanche seulement (en démo : ?bilan)
+  if (!(new Date().getDay() === 0 || (DEMO && location.search.includes("bilan")))) return "";
+  const w = weekReview(), say = [];
+  if (!w.pages) say.push("Semaine blanche : lundi, on repart de la première page.");
+  else { say.push(w.pages > w.prev ? `Mieux que la semaine dernière, +${w.pages - w.prev} pages.` : w.prev ? `${w.prev - w.pages} pages de moins que la semaine dernière.` : "Une semaine de plus dans les livres.");
+    if (w.best) say.push(`Meilleur jour : ${w.best.day}, ${w.best.pages} pages.`); if (w.finished) say.push(`${plural(w.finished, "livre")} fini${w.finished > 1 ? "s" : ""}.`); }
+  return `<div class="card bilan"><div class="lead"><h2>Bilan de la semaine</h2><span class="small muted">dimanche</span></div>
+    <div class="figures"><div><b class="num">${w.pages}</b><span>pages</span></div><div><b class="num">${w.minutes}</b><span>min gagnées</span></div><div><b class="num">${w.days} / 7</b><span>jours lus</span></div></div><p class="small" style="margin-top:10px">${say.join(" ")}</p></div>`;
+}
+// Répétition espacée : un résumé vieux de 7 puis de 30 jours revient sur l'accueil pour être relu.
+const REVIEW_STAGES = [30, 7];
+function reviewDue() {
+  const rv = player().reviews, now = Date.now(), age = r => (now - new Date(r.created_at)) / 864e5;
+  for (const st of REVIEW_STAGES) { const c = S.readings.filter(r => age(r) >= st && age(r) < st * 2 && !(rv[r.id] || []).includes(st) && r.summary.trim().length >= 80).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0]; if (c) return { r: c, stage: st, age: Math.round(age(c)) }; }
+  return null;
+}
+function rememberCard() {
+  const d = reviewDue(); if (!d) return ""; const b = S.books.find(x => x.id === d.r.book_id);
+  return `<div class="card remember"><div class="lead"><h2>Tu te souviens ?</h2><span class="small muted">il y a ${d.age} jours</span></div><p class="small"><b>${esc(b ? b.title : "")}</b> · p. ${d.r.page_start} → ${d.r.page_end}</p>
+    <p class="small muted">Relis ton résumé avant qu'il s'efface : c'est là que la lecture devient mémoire.</p><button class="btn sm" data-act="review" data-id="${esc(d.r.id)}">Relire · +5 ${PLUME}</button></div>`;
+}
+function dlgReview(id) {
+  const r = S.readings.find(x => x.id === id); if (!r) return; const b = S.books.find(x => x.id === r.book_id), d = reviewDue(), stage = d && d.r.id === id ? d.stage : 0;
+  openDlg(`<h1>Tu te souviens ?</h1><p class="small muted">${esc(b ? b.title : "")} · p. ${r.page_start} → ${r.page_end} · ${fmtDate(r.created_at)}</p><div class="rtxt">${fmtSummary(r.summary)}</div>
+    <button class="btn wide" id="reviewed">J'ai relu · +5 plumes</button><button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Plus tard</button>`);
+  $("#reviewed").onclick = async () => { if (!stage) return dlg.close(); const rv = { ...player().reviews }; rv[id] = [...(rv[id] || []), stage]; await savePlayer({ reviews: rv }); dlg.close(); render(); hippoCheer(); toast("+5 plumes : la mémoire, ça se cultive."); };
+}
+// Une ligne qui commence par « > » dans un résumé est une citation (convention Markdown, conservée à l'export).
+const isQuote = l => /^>\s?/.test(l), unquote = l => l.replace(/^>\s?/, "");
+function fmtSummary(s) {
+  const out = []; let buf = []; const flush = () => { if (buf.length) { out.push(`<blockquote>${esc(buf.join(" "))}</blockquote>`); buf = []; } };
+  for (const line of s.split("\n")) { if (isQuote(line)) buf.push(unquote(line)); else { flush(); out.push(esc(line) + "\n"); } } flush();
+  return out.join("").replace(/\n+(<blockquote>)/g, "$1").replace(/\n+$/, "");
+}
+const quotesOf = rs => rs.flatMap(r => r.summary.split("\n").filter(isQuote).map(l => ({ q: unquote(l).trim(), r }))).filter(x => x.q);
+function quotesBlock(rs) { const qs = quotesOf(rs); return qs.length ? `<h2 style="margin-top:22px;font-size:18px">Citations</h2><ul class="quotes">${qs.map(x => `<li><blockquote>${esc(x.q)}</blockquote><small>p. ${x.r.page_start} → ${x.r.page_end}</small></li>`).join("")}</ul><button class="btn ghost sm" data-act="copy-quotes" style="margin-bottom:6px">Copier les citations</button>` : ""; }
+async function copyQuotes() {
+  const b = S.books.find(x => x.id === openBook), qs = quotesOf(S.readings.filter(r => r.book_id === b.id).sort((a, c) => a.page_start - c.page_start));
+  const md = qs.map(x => `> ${x.q}\n> — *${b.title}*${b.author ? `, ${b.author}` : ""}, p. ${x.r.page_start}-${x.r.page_end}`).join("\n\n");
+  try { await navigator.clipboard.writeText(md); toast(`${plural(qs.length, "citation")} copiée${qs.length > 1 ? "s" : ""}`); } catch { if (navigator.share) navigator.share({ text: md }).catch(() => {}); }
+}
+const withQuote = form => { const q = ($("#lq", form)?.value || "").trim().replace(/\s*\n+\s*/g, " "); return $("#ls", form).value + (q ? "\n\n> " + q : ""); };
+
 // ───────────── Vues ─────────────
 function render() {
   clearInterval(tick); tabs.hidden = false;
@@ -832,7 +896,7 @@ const coverBox = (b, cls = "img") => `<span class="${cls}" style="${cloth(b)}">$
 function covCard(b) {
   const pct = b.total_pages ? Math.min(1, b.current_page / b.total_pages) : null, st = { en_cours: "", fini: "Fini", abandonne: "Abandonné" }[b.status];
   return `<button class="cov" data-book="${esc(b.id)}" aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}${pct !== null ? `, ${Math.round(pct * 100)} % lu` : ""}">${coverBox(b)}<span class="t">${esc(b.title)}</span>
-    ${b.status === "en_cours" && pct !== null ? `<span class="bar thin"><i data-p="${pct}"></i></span>` : st ? `<span class="st">${st}</span>` : ""}</button>`;
+    ${b.status === "en_cours" && pct !== null ? `<span class="bar thin"><i data-p="${pct}"></i></span>` : st ? `<span class="st">${st}</span>` : ""}${pace(b) ? `<span class="pace ${pace(b).late ? "late" : ""}">${pace(b).txt}</span>` : ""}</button>`;
 }
 function viewHome() {
   const st = streakInfo(), goal = goalPages(), tp = pagesOn(todayKey()), pct = Math.min(1, tp / goal), bal = balance(), mood = hippoMood();
@@ -845,6 +909,7 @@ function viewHome() {
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
+  ${bilanCard()}${rememberCard()}
   <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link" style="min-height:0;font-size:13px" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
     ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
   <div class="section"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
@@ -932,12 +997,13 @@ function showBook() {
     ${rs.length || b.current_page ? `<div class="pagemap" role="img" aria-label="Pages résumées : ${rs.map(r => `${r.page_start} à ${r.page_end}`).join(", ") || "aucune"}">${pre > 0 ? `<i class="pre" style="left:0;width:${100 * pre / T}%"></i>` : ""}${rs.map((r, i) => `<button class="seg" data-act="goto-entry" data-id="${esc(r.id)}" style="left:${100 * r.page_start / T}%;width:${Math.max(.8, 100 * r.pages / T)}%" aria-label="Séance ${i + 1}, pages ${r.page_start} à ${r.page_end}"></button>`).join("")}</div>
       <div class="maplegend"><span>0</span>${pre > 0 ? `<span class="lg"><i class="pre"></i>lu avant l'appli</span>` : ""}<span class="lg"><i class="seg"></i>résumé</span><span>${b.total_pages || b.current_page}</span></div>` : ""}
     <dl class="stats"><div><dt>Séances</dt><dd class="num">${rs.length}</dd></div><div><dt>Pages résumées</dt><dd class="num">${summed}</dd></div><div><dt>Par séance</dt><dd class="num">${avg || "—"}</dd></div><div><dt>${left !== null && b.status === "en_cours" ? "Pour finir" : "Jours de lecture"}</dt><dd class="num">${left !== null && b.status === "en_cours" ? (avg ? `≈ ${Math.ceil(left / avg)} séance${Math.ceil(left / avg) > 1 ? "s" : ""}` : `${left} p.`) : days}</dd></div></dl>
-    <div class="inkrow">${b.status === "en_cours" ? `<button class="btn" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
-    <div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
-    ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${esc(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé. Le premier s'écrira ici après ta prochaine lecture.</p>`}
+    ${b.status === "en_cours" && b.total_pages ? `<div class="target"><label for="tgt">Finir avant le</label><input id="tgt" type="date" value="${b.target_date || ""}" min="${todayKey()}"><span class="small ${pace(b)?.late ? "bad" : "muted"}">${pace(b) ? (pace(b).late ? "date dépassée" : `≈ ${pace(b).txt}`) : ""}</span></div>` : ""}<div class="inkrow">${b.status === "en_cours" ? `<button class="btn" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
+    ${quotesBlock(rs)}<div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
+    ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${fmtSummary(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé. Le premier s'écrira ici après ta prochaine lecture.</p>`}
     <h2 style="margin-top:26px;font-size:18px">Ranger</h2>
     <div class="inkrow"><button class="btn ghost sm" data-act="cover">Couverture</button>${b.status === "en_cours" ? `<button class="btn ghost sm" data-act="status" data-v="fini">Marquer fini</button><button class="btn ghost sm" data-act="status" data-v="abandonne">Abandonner</button>` : ""}${rs.length ? "" : `<button class="btn ghost sm" data-act="del-book">Retirer</button>`}</div>
     <p class="facts">Commencé le ${fmtDate(b.started_at)}${b.finished_at ? ` · fini le ${fmtDate(b.finished_at)}` : ""}</p></div>`;
+  const tgt = $("#tgt", bookview); if (tgt) tgt.onchange = async () => { await api.updateBook(b.id, { target_date: tgt.value || null }); await reload(); };
   bookview.hidden = false; bookview.scrollTop = 0;
 }
 function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; }
@@ -1019,6 +1085,8 @@ document.addEventListener("click", async e => {
     else if (act === "sort-entries") { bookSort = bookSort === "recent" ? "pages" : "recent"; const y = bookview.scrollTop; showBook(); bookview.scrollTop = y; }
     else if (act === "goto-entry") { const t = document.getElementById("e-" + el.dataset.id); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1400); } }
     else if (act === "export") exportBook();
+    else if (act === "copy-quotes") copyQuotes();
+    else if (act === "review") dlgReview(el.dataset.id);
     else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); if (v === "fini") { toast("Livre terminé, bravo."); } }
     else if (act === "del-book") { if (confirm("Retirer ce livre de la bibliothèque ?")) { await api.deleteBook(openBook); closeBook(); await reload(); } }
     else if (act === "goto-audit") { tab = "me"; render(); $("#audit")?.scrollIntoView({ behavior: "smooth" }); }
@@ -1027,8 +1095,8 @@ document.addEventListener("click", async e => {
       const r = await api.submitAudit(dayKey(lastMonday()), el.dataset.app, +v); if (!r.ok) return void ($("#audit-err").textContent = r.error);
       await reload(); toast(r.undeclared ? `${r.undeclared} min non déclarées : dette ajoutée.` : `Rien à signaler pour ${el.dataset.app}.`); }
     else if (act === "save-config") { const apps = $("#apps").value.split("\n").map(s => s.trim()).filter(Boolean); if (!apps.length) return void ($("#cfg-err").textContent = "Garde au moins une appli.");
-      setPref("goal", Math.max(1, Math.min(200, +$("#goal").value || 15)));
-      await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) }); await reload(); closeSettings(); toast("Réglages enregistrés"); }
+      const g = Math.max(1, Math.min(200, +$("#goal").value || 15)); setPref("goal", g);
+      await api.updateConfig({ apps, goal_pages: g, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) }); await reload(); closeSettings(); toast("Réglages enregistrés"); }
     else if (act === "copy-secret") { await navigator.clipboard.writeText(S.config.secret); $("#copy-ok").textContent = "Copié."; }
     else if (act === "signout") { await api.signOut(); closeSettings(); viewLogin(); }
   } catch (err) { toast(err.message || String(err), 4000); }
