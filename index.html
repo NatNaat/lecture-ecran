@@ -186,11 +186,11 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
-.hp-home { position: relative; display: grid; gap: 14px; margin: 0 -16px; padding: 16px 16px 0; background: var(--surface-2); }
+.hp-home { position: relative; display: grid; gap: 14px; margin: 0 -16px; padding: 16px 16px 64px; background: var(--surface-2); }
 .hp-home > * { position: relative; }
 .hp-home .hp-bubble { justify-self: start; max-width: 85%; } .hp-home .hp-bubble::after { right: auto; left: 22px; bottom: -8px; transform: rotate(135deg); }
-.hp-home .hp-unit { width: 100%; max-width: 380px; margin: 0 auto; }
-.sheet { position: relative; z-index: 1; margin: -44px -16px 0; padding: 46px 16px 4px; background: var(--bg); border-radius: 100% 100% 0 0 / 64px 64px 0 0; min-height: 50vh; }
+.hp-home .hp-unit { width: min(210px, 56vw); margin: 6px auto 0; }
+.sheet { position: relative; z-index: 1; margin: -64px -16px 0; padding: 48px 16px 4px; background: var(--bg); border-radius: 100% 100% 0 0 / 64px 64px 0 0; min-height: 50vh; }
 .px { width: 16px; height: 18px; shape-rendering: crispEdges; flex: none; } .btn .px { width: 14px; height: 16px; }
 .plumes { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
 /* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
@@ -697,7 +697,7 @@ const ICONS = {
 // ───────────── L'hippo (le même que le Cockpit D2) ─────────────
 const HIPPO_ROWS = [".BB........BB.", ".BPB......BPB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", "BSSSSSSSSSSSSB", "BSSNSSSSSSNSSB", "BSSSSSSSSSSSSB", ".BSSSSSSSSSSB.", "..BBBBBBBBBB..", ".FF.FF..FF.FF."];
 function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--hp3)", P: "var(--hpp)", N: "var(--hp3)" }; const px = (x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`; let body = "", earL = "", earR = "";
-  HIPPO_ROWS.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "." || (opt.bust && y === 11)) return; const r = px(x, y, col[ch]); if (y < 2) { if (x < 7) earL += r; else earR += r; } else body += r; }));
+  HIPPO_ROWS.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === ".") return; const r = px(x, y, col[ch]); if (y < 2) { if (x < 7) earL += r; else earR += r; } else body += r; }));
   const eyes = px(3, 4, "var(--hpk)", 1, 2) + px(10, 4, "var(--hpk)", 1, 2), cheeks = px(1, 6, "var(--hpp)", 2, 1) + px(11, 6, "var(--hpp)", 2, 1);
   const crown = px(4, -1, "var(--hpg)") + px(6, -1, "var(--hpg)", 2, 1) + px(9, -1, "var(--hpg)") + px(4, 0, "var(--hpg)", 6, 1) + px(4, 1, "var(--hpg2)", 6, 1) + px(6, 1, "var(--hpp)", 2, 1);
   const spark = `<g class="hp-spark">${px(0, 1, "var(--hpg)") + px(13, 3, "var(--hpg)")}</g><g class="hp-spark b">${px(13, 0, "var(--hpg)") + px(0, 4, "var(--hpg)")}</g>`;
@@ -705,10 +705,8 @@ function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: 
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
   const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
   const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
-  const paw = (x, y) => px(x + 1, y, col.B, 3, 1) + px(x, y + 1, col.B, 5, 2) + px(x + 1, y + 3, col.B, 3, 1) + px(x + 2, y, col.P) + px(x + 1, y + 1, col.P) + px(x + 3, y + 1, col.P) + px(x + 1, y + 2, col.P, 3, 1);
-  const bust = opt.bust ? px(1, 11, col.B, 12, 1) + px(0, 12, col.B, 14, 1) + px(-1, 13, col.B, 16, 1) + px(-2, 14, col.B, 18, 6) + px(4, 12, col.S, 6, 1) + px(3, 13, col.S, 8, 1) + px(1, 14, col.S, 12, 6) + paw(1, 14) + paw(8, 14) : "";
-  const layers = opt.only ? { above: opt.only.px && opt.only.layer !== "below" ? opt.only.px(px) : "", below: opt.only.px && opt.only.layer === "below" ? opt.only.px(px) : "" } : (S ? outfitLayers(px, opt.bust) : { above: "", below: "" }), wear = layers.above;
-  return `<svg viewBox="${opt.bust ? "-4 -4 22 24" : "0 -4 14 16"}" aria-hidden="true"><g class="hp-wear-below">${layers.below}</g><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${bust}${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
+  const layers = opt.only ? { above: opt.only.px && opt.only.layer !== "below" ? opt.only.px(px) : "", below: opt.only.px && opt.only.layer === "below" ? opt.only.px(px) : "" } : (S ? outfitLayers(px) : { above: "", below: "" }), wear = layers.above;
+  return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-wear-below">${layers.below}</g><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
 // Humeurs, du plus urgent au plus calme. Chaque humeur a sa posture ; l'hippo réagit aussi quand on le touche.
 function hippoMood() {
   const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance(), lost = pref("lastStreak", 0);
@@ -768,7 +766,7 @@ const ITEMS = [
   { id: "acc-noeud", cat: "acc", name: "Nœud papillon", price: 60, px: p => p(4, 10, "#B9503F", 2, 1) + p(8, 10, "#B9503F", 2, 1) + p(6, 10, "#7A2F22", 2, 1) },
   { id: "acc-moustache", cat: "acc", name: "Moustache", price: 70, px: p => p(4, 8, K, 6, 1) + p(3, 7, K) + p(10, 7, K) },
   { id: "acc-clown", cat: "acc", name: "Nez de clown", price: 50, px: p => p(6, 7, "#B9503F", 2, 2) + p(6, 7, "#E58B7B") },
-  { id: "acc-cape", cat: "acc", name: "Cape de héros", price: 210, layer: "below", px: (p, bust) => bust ? p(-3, 4, "#B9503F", 4, 8) + p(13, 4, "#B9503F", 4, 8) + p(-4, 11, "#B9503F", 4, 3) + p(14, 11, "#B9503F", 4, 3) + p(-6, 14, "#B9503F", 2, 6) + p(18, 14, "#B9503F", 2, 6) : p(-2, 3, "#B9503F", 3, 8) + p(13, 3, "#B9503F", 3, 8) + p(-3, 8, "#B9503F", 1, 3) + p(16, 8, "#B9503F", 1, 3) + p(-2, 11, "#7A2F22", 18, 1) },
+  { id: "acc-cape", cat: "acc", name: "Cape de héros", price: 210, layer: "below", px: p => p(-2, 3, "#B9503F", 3, 8) + p(13, 3, "#B9503F", 3, 8) + p(-3, 8, "#B9503F", 1, 3) + p(16, 8, "#B9503F", 1, 3) + p(-2, 11, "#7A2F22", 18, 1) },
   { id: "acc-ailes", cat: "acc", name: "Ailes", price: 240, layer: "below", px: p => p(-3, 2, "#8C88A8", 3, 1) + p(-3, 3, "#FFFFFF", 3, 1) + p(-4, 4, "#8C88A8", 3, 1) + p(-3, 5, "#FFFFFF", 3, 1) + p(-2, 6, "#8C88A8", 3, 1) + p(14, 2, "#8C88A8", 3, 1) + p(14, 3, "#FFFFFF", 3, 1) + p(15, 4, "#8C88A8", 3, 1) + p(14, 5, "#FFFFFF", 3, 1) + p(13, 6, "#8C88A8", 3, 1) },
   { id: "acc-plume", cat: "acc", name: "Plume d'or", unlock: "succès « Plume »", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at, px: p => p(12, 0, "#B5862A") + p(12, -1, "#E3B341") + p(13, -2, "#E3B341") + p(13, -3, "#E3B341") + p(12, -2, "#B5862A") },
   { id: "acc-toge", cat: "acc", name: "Toge", unlock: "20 livres finis", when: () => nthFinished(20), px: p => p(1, 6, "#EDECF3", 1, 4) + p(2, 8, "#EDECF3", 3, 2) + p(1, 6, "#B9503F", 1, 1) },
@@ -780,7 +778,7 @@ const CATS = { hat: "Chapeaux", glass: "Lunettes", skin: "Pelage", acc: "Accesso
 const item = id => ITEMS.find(i => i.id === id);
 const owns = id => { const it = item(id); return !it || it.price === 0 || player().owned.includes(id) || (it.when && !!it.when()); };
 // Ce que porte l'hippo : ses pixels s'ajoutent au dessin, son pelage remplace les couleurs.
-function outfitLayers(px, bust) { const eq = player().equipped, out = { above: "", below: "" }; for (const cat of ["acc", "glass", "hat"]) { const it = eq[cat] && item(eq[cat]); if (it && it.px && owns(it.id)) out[it.layer === "below" ? "below" : "above"] += it.px(px, bust); } return out; }
+function outfitLayers(px) { const eq = player().equipped, out = { above: "", below: "" }; for (const cat of ["acc", "glass", "hat"]) { const it = eq[cat] && item(eq[cat]); if (it && it.px && owns(it.id)) out[it.layer === "below" ? "below" : "above"] += it.px(px); } return out; }
 function skinStyle() { const it = player().equipped.skin && item(player().equipped.skin); return it && it.colors && owns(it.id) ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""; }
 const sceneClass = () => { const s = player().equipped.scene; return s && owns(s) ? "stage-" + s.replace("scene-", "") : ""; };
 // Le gel de série : un jour manqué compte comme lu s'il a été gelé. Appliqué tout seul, au plus un par semaine.
@@ -843,7 +841,7 @@ function viewHome() {
   return `<section class="view">
   <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
     <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
-  <div class="hp-home ${sceneClass()}"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG({ bust: true })}</button></div>
+  <div class="hp-home ${sceneClass()}"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
