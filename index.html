@@ -158,7 +158,7 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 
 /* ───── Hippo ───── */
 .hp-unit { position: relative; width: 64px; }
-.hp-unit svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; transform-origin: 50% 100%; animation: hp-breathe 2.4s steps(2, end) infinite; }
+.hp-unit svg { display: block; width: 100%; height: auto; overflow: visible; shape-rendering: crispEdges; transform-origin: 50% 100%; animation: hp-breathe 2.4s steps(2, end) infinite; }
 @keyframes hp-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.045) scaleX(.985); } }
 .hp-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: hp-blink 4.6s infinite; } @keyframes hp-blink { 0%, 92%, 100% { transform: scaleY(1); } 95%, 97% { transform: scaleY(.12); } }
 .hp-ear { transform-box: fill-box; transform-origin: 50% 100%; animation: hp-ear 6.2s steps(1, end) infinite; } .hp-ear.r { animation-delay: .18s; }
@@ -188,7 +188,8 @@ button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
 .hp-home { display: grid; grid-template-columns: 1fr 84px; gap: 12px; align-items: end; margin-bottom: 14px; }
 .hp-home .hp-unit { width: 64px; }
-.plumes { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
+.px { width: 16px; height: 18px; shape-rendering: crispEdges; flex: none; } .btn .px { width: 14px; height: 16px; }
+.plumes { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
 /* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
 .stage { display: grid; place-items: end center; width: 84px; height: 84px; border-radius: 16px; background: var(--surface-2); padding: 4px 0 0; overflow: hidden; }
 .stage.stage-etagere { background: repeating-linear-gradient(180deg, #8C6A48 0 4px, #5E4630 4px 6px, transparent 6px 22px), linear-gradient(#C9A97A, #C9A97A); background-color: #C9A97A; }
@@ -203,7 +204,9 @@ button.hp-unit { display: block; cursor: pointer; }
 .ward { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .witem { display: grid; gap: 8px; padding: 10px; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); text-align: center; } .witem.on { border-color: var(--plum); }
 .witem b { font: 600 13.5px var(--body); } .witem .btn.sm { min-height: 36px; } .witem small { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font: 500 12px var(--body); color: var(--muted); min-height: 36px; } .witem small svg.i { width: 15px; height: 15px; }
-.witem.locked .stage .hp-unit { opacity: .6; }
+.witem.locked { border-style: dashed; background: transparent; } .witem.locked .stage { background: var(--surface-2); } .witem.locked .stage .hp-unit { filter: grayscale(1); opacity: .45; } .witem.locked b { color: var(--muted); }
+.witem.poor { opacity: .8; } .witem.poor .stage .hp-unit { opacity: .7; } .poorlbl { color: var(--muted) !important; }
+.witem.buyable { border-color: var(--ok); }
 .cal div.frz { background: var(--teal-soft); color: var(--teal); box-shadow: inset 0 0 0 2px var(--teal); }
 .hp-fx { position: absolute; inset: 0; pointer-events: none; } .hp-fx i { position: absolute; bottom: 60%; left: 50%; width: 6px; height: 6px; background: var(--hpp); animation: hp-pop .9s ease-out forwards; }
 @keyframes hp-pop { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
@@ -699,8 +702,8 @@ function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: 
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
   const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
   const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
-  const wear = opt.only ? (opt.only.px ? opt.only.px(px) : "") : (S ? outfitLayers(px).above : "");
-  return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
+  const layers = opt.only ? { above: opt.only.px && opt.only.layer !== "below" ? opt.only.px(px) : "", below: opt.only.px && opt.only.layer === "below" ? opt.only.px(px) : "" } : (S ? outfitLayers(px) : { above: "", below: "" }), wear = layers.above;
+  return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-wear-below">${layers.below}</g><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
 // Humeurs, du plus urgent au plus calme. Chaque humeur a sa posture ; l'hippo réagit aussi quand on le touche.
 function hippoMood() {
   const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance(), lost = pref("lastStreak", 0);
@@ -728,25 +731,41 @@ const plumes = () => plumesEarned() - player().spent;
 const freezesLeft = () => player().freezesBought - player().freezesUsed.length;
 // Cosmétiques en pixel art, dessinés par-dessus l'hippo (x de 0 à 13, y de −4 à 11). Les pièces « unlock » ne s'achètent pas.
 const K = "var(--hpk)";
+const PLUME_ROWS = ["......GG", ".....GGG", "....GDGG", "...GDGG.", "..GDGG..", "..DGG...", ".DG.....", ".D......", "D......."];
+const PLUME = `<svg class="px" viewBox="0 0 8 9" aria-hidden="true">${PLUME_ROWS.flatMap((row, y) => [...row].map((ch, x) => ch === "." ? "" : `<rect x="${x}" y="${y}" width="1" height="1" fill="${ch === "G" ? "#E3B341" : "#B5862A"}"/>`)).join("")}</svg>`;
 const ITEMS = [
   { id: "skin-lavande", cat: "skin", name: "Lavande", price: 0, colors: null },
   { id: "skin-menthe", cat: "skin", name: "Menthe", price: 90, colors: ["#7FB39C", "#A9D3C0", "#5E8B78"] },
   { id: "skin-peche", cat: "skin", name: "Pêche", price: 90, colors: ["#D9A08C", "#F0C7B8", "#B27A68"] },
   { id: "skin-nuit", cat: "skin", name: "Nuit", price: 150, colors: ["#5C5A85", "#8482AB", "#41405F"] },
   { id: "skin-sable", cat: "skin", name: "Sable", price: 120, colors: ["#C9A97A", "#E4CDA6", "#9E8259"] },
-  { id: "hat-beret", cat: "hat", name: "Béret", price: 60, px: p => p(3, -1, "#B9503F", 8, 1) + p(4, -2, "#B9503F", 7, 1) + p(7, -3, "#7A2F22") },
-  { id: "hat-bonnet", cat: "hat", name: "Bonnet", price: 60, px: p => p(2, -1, "#3E7C5C", 10, 1) + p(3, -2, "#3E7C5C", 8, 1) + p(4, -3, "#3E7C5C", 6, 1) + p(6, -4, "#EDECF3", 2, 1) + p(2, -1, "#EDECF3", 10, 1) },
-  { id: "hat-sorcier", cat: "hat", name: "Sorcier", price: 140, px: p => p(1, -1, "#4A4670", 12, 1) + p(4, -2, "#4A4670", 6, 1) + p(5, -3, "#4A4670", 4, 1) + p(6, -4, "#4A4670", 2, 1) + p(4, -2, "#E3B341", 6, 1) },
-  { id: "hat-haut", cat: "hat", name: "Haut-de-forme", price: 200, px: p => p(3, -1, "#1D1B26", 8, 1) + p(4, -4, "#1D1B26", 6, 3) + p(4, -2, "#B9503F", 6, 1) },
-  { id: "hat-casque", cat: "hat", name: "Casque audio", price: 120, px: p => p(1, -1, "#1D1B26", 12, 1) + p(1, 0, "#1D1B26", 1, 3) + p(12, 0, "#1D1B26", 1, 3) + p(0, 2, "#6B6880", 2, 2) + p(12, 2, "#6B6880", 2, 2) },
-  { id: "hat-couronne", cat: "hat", name: "Couronne d'or", unlock: "30 jours d'affilée", when: () => streakDate(30), px: p => p(4, -2, "#E3B341") + p(6, -2, "#E3B341", 2, 1) + p(9, -2, "#E3B341") + p(4, -1, "#E3B341", 6, 1) + p(4, 0, "#B5862A", 6, 1) + p(6, 0, "#E79AA8", 2, 1) },
+  { id: "hat-beret", cat: "hat", name: "Béret", price: 60, px: p => p(2, 1, "#B9503F", 10, 1) + p(3, 0, "#B9503F", 8, 1) + p(6, -1, "#7A2F22") },
+  { id: "hat-bonnet", cat: "hat", name: "Bonnet", price: 60, px: p => p(1, 1, "#EDECF3", 12, 1) + p(2, 0, "#3E7C5C", 10, 1) + p(3, -1, "#3E7C5C", 8, 1) + p(4, -2, "#3E7C5C", 6, 1) + p(6, -3, "#EDECF3", 2, 1) },
+  { id: "hat-sorcier", cat: "hat", name: "Sorcier", price: 140, px: p => p(0, 1, "#4A4670", 14, 1) + p(3, 0, "#E3B341", 8, 1) + p(4, -1, "#4A4670", 6, 1) + p(5, -2, "#4A4670", 4, 1) + p(6, -3, "#4A4670", 2, 1) + p(7, -4, "#4A4670") },
+  { id: "hat-haut", cat: "hat", name: "Haut-de-forme", price: 200, px: p => p(1, 1, "#1D1B26", 12, 1) + p(3, -3, "#1D1B26", 8, 3) + p(3, 0, "#B9503F", 8, 1) },
+  { id: "hat-casque", cat: "hat", name: "Casque audio", price: 120, px: p => p(2, 1, "#1D1B26", 10, 1) + p(1, 2, "#1D1B26", 1, 3) + p(12, 2, "#1D1B26", 1, 3) + p(0, 3, "#6B6880", 2, 2) + p(12, 3, "#6B6880", 2, 2) },
+  { id: "hat-pirate", cat: "hat", name: "Tricorne de pirate", price: 180, px: p => p(1, 1, "#B9503F", 12, 1) + p(1, 0, "#1D1B26", 12, 1) + p(2, -1, "#1D1B26", 10, 1) + p(3, -2, "#1D1B26", 8, 1) + p(6, -1, "#EDECF3", 2, 1) + p(5, 0, "#EDECF3") + p(8, 0, "#EDECF3") },
+  { id: "hat-viking", cat: "hat", name: "Casque viking", price: 170, px: p => p(2, 0, "#6B6880", 10, 2) + p(3, -1, "#6B6880", 8, 1) + p(2, 1, "#B9B6CC", 10, 1) + p(1, 0, "#EDECF3") + p(0, -1, "#EDECF3") + p(0, -2, "#EDECF3") + p(12, 0, "#EDECF3") + p(13, -1, "#EDECF3") + p(13, -2, "#EDECF3") },
+  { id: "hat-fete", cat: "hat", name: "Chapeau de fête", price: 70, px: p => p(4, 1, "#4A4670", 6, 1) + p(5, 0, "#4A4670", 4, 1) + p(5, -1, "#E3B341", 4, 1) + p(6, -2, "#4A4670", 2, 1) + p(6, -3, "#E79AA8", 2, 1) + p(5, 1, "#E3B341") + p(8, 1, "#E3B341") },
+  { id: "hat-canard", cat: "hat", name: "Canard sur la tête", price: 220, px: p => p(4, 0, "#E3B341", 5, 2) + p(8, -1, "#E3B341", 2, 2) + p(10, 0, "#B9503F") + p(9, -1, K) + p(3, 1, "#B5862A") },
+  { id: "hat-alien", cat: "hat", name: "Antennes d'alien", price: 150, px: p => p(3, -1, "#3E7C5C", 1, 3) + p(3, -2, "#8CC7A9") + p(10, -1, "#3E7C5C", 1, 3) + p(10, -2, "#8CC7A9") },
+  { id: "hat-aureole", cat: "hat", name: "Auréole", price: 160, px: p => p(4, -2, "#E3B341", 6, 1) + p(3, -1, "#E3B341") + p(10, -1, "#E3B341") },
+  { id: "hat-sombrero", cat: "hat", name: "Sombrero", price: 190, px: p => p(0, 1, "#C9A97A", 14, 1) + p(1, 2, "#C9A97A") + p(12, 2, "#C9A97A") + p(4, 0, "#B9503F", 6, 1) + p(4, -1, "#C9A97A", 6, 1) + p(5, -2, "#C9A97A", 4, 1) },
+  { id: "hat-couronne", cat: "hat", name: "Couronne d'or", unlock: "30 jours d'affilée", when: () => streakDate(30), px: p => p(4, -1, "#E3B341") + p(6, -1, "#E3B341", 2, 1) + p(9, -1, "#E3B341") + p(4, 0, "#E3B341", 6, 1) + p(4, 1, "#B5862A", 6, 1) + p(6, 1, "#E79AA8", 2, 1) },
   { id: "glass-rondes", cat: "glass", name: "Lunettes rondes", price: 70, px: p => p(2, 4, K, 1, 2) + p(4, 4, K, 1, 2) + p(3, 3, K) + p(3, 6, K) + p(9, 4, K, 1, 2) + p(11, 4, K, 1, 2) + p(10, 3, K) + p(10, 6, K) + p(5, 4, K, 4, 1) },
   { id: "glass-soleil", cat: "glass", name: "Lunettes de soleil", price: 90, px: p => p(2, 4, "#1D1B26", 3, 2) + p(9, 4, "#1D1B26", 3, 2) + p(5, 4, "#1D1B26", 4, 1) + p(2, 4, "#6B6880") + p(9, 4, "#6B6880") },
   { id: "glass-monocle", cat: "glass", name: "Monocle", price: 110, px: p => p(9, 4, "#E3B341", 1, 2) + p(11, 4, "#E3B341", 1, 2) + p(10, 3, "#E3B341") + p(10, 6, "#E3B341") + p(12, 6, "#B5862A", 1, 3) },
+  { id: "glass-3d", cat: "glass", name: "Lunettes 3D", price: 90, px: p => p(2, 4, "#B9503F", 3, 2) + p(9, 4, "#2F7A86", 3, 2) + p(5, 4, "#EDECF3", 4, 1) + p(1, 4, "#EDECF3") + p(12, 4, "#EDECF3") },
+  { id: "glass-bandeau", cat: "glass", name: "Cache-œil", price: 80, px: p => p(9, 4, "#1D1B26", 3, 2) + p(2, 3, "#1D1B26", 8, 1) + p(12, 3, "#1D1B26") },
   { id: "acc-echarpe", cat: "acc", name: "Écharpe", price: 50, px: p => p(1, 9, "#B9503F", 12, 1) + p(2, 10, "#B9503F", 3, 1) + p(2, 11, "#7A2F22", 2, 1) },
   { id: "acc-livre", cat: "acc", name: "Livre sous le bras", price: 80, px: p => p(11, 8, "#3E7C5C", 3, 3) + p(12, 9, "#EDECF3", 2, 1) },
   { id: "acc-tasse", cat: "acc", name: "Tasse de thé", price: 80, px: p => p(0, 8, "#EDECF3", 2, 3) + p(2, 9, "#EDECF3") + p(1, 7, "#B4B0CC") + p(0, 9, "#7A3D12", 2, 1) },
-  { id: "acc-plume", cat: "acc", name: "Plume d'or", unlock: "succès « Plume »", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at, px: p => p(11, -2, "#E3B341") + p(12, -3, "#E3B341") + p(11, -1, "#B5862A") + p(12, -2, "#B5862A") + p(13, -4, "#E3B341") },
+  { id: "acc-noeud", cat: "acc", name: "Nœud papillon", price: 60, px: p => p(4, 10, "#B9503F", 2, 1) + p(8, 10, "#B9503F", 2, 1) + p(6, 10, "#7A2F22", 2, 1) },
+  { id: "acc-moustache", cat: "acc", name: "Moustache", price: 70, px: p => p(4, 8, K, 6, 1) + p(3, 7, K) + p(10, 7, K) },
+  { id: "acc-clown", cat: "acc", name: "Nez de clown", price: 50, px: p => p(6, 7, "#B9503F", 2, 2) + p(6, 7, "#E58B7B") },
+  { id: "acc-cape", cat: "acc", name: "Cape de héros", price: 210, layer: "below", px: p => p(-2, 3, "#B9503F", 3, 8) + p(13, 3, "#B9503F", 3, 8) + p(-3, 8, "#B9503F", 1, 3) + p(16, 8, "#B9503F", 1, 3) + p(-2, 11, "#7A2F22", 18, 1) },
+  { id: "acc-ailes", cat: "acc", name: "Ailes", price: 240, layer: "below", px: p => p(-3, 2, "#8C88A8", 3, 1) + p(-3, 3, "#FFFFFF", 3, 1) + p(-4, 4, "#8C88A8", 3, 1) + p(-3, 5, "#FFFFFF", 3, 1) + p(-2, 6, "#8C88A8", 3, 1) + p(14, 2, "#8C88A8", 3, 1) + p(14, 3, "#FFFFFF", 3, 1) + p(15, 4, "#8C88A8", 3, 1) + p(14, 5, "#FFFFFF", 3, 1) + p(13, 6, "#8C88A8", 3, 1) },
+  { id: "acc-plume", cat: "acc", name: "Plume d'or", unlock: "succès « Plume »", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at, px: p => p(12, 0, "#B5862A") + p(12, -1, "#E3B341") + p(13, -2, "#E3B341") + p(13, -3, "#E3B341") + p(12, -2, "#B5862A") },
   { id: "acc-toge", cat: "acc", name: "Toge", unlock: "20 livres finis", when: () => nthFinished(20), px: p => p(1, 6, "#EDECF3", 1, 4) + p(2, 8, "#EDECF3", 3, 2) + p(1, 6, "#B9503F", 1, 1) },
   { id: "scene-etagere", cat: "scene", name: "Étagère", price: 100 },
   { id: "scene-nuit", cat: "scene", name: "Fenêtre de nuit", price: 130 },
@@ -756,7 +775,7 @@ const CATS = { hat: "Chapeaux", glass: "Lunettes", skin: "Pelage", acc: "Accesso
 const item = id => ITEMS.find(i => i.id === id);
 const owns = id => { const it = item(id); return !it || it.price === 0 || player().owned.includes(id) || (it.when && !!it.when()); };
 // Ce que porte l'hippo : ses pixels s'ajoutent au dessin, son pelage remplace les couleurs.
-function outfitLayers(px) { const eq = player().equipped, out = { above: "", below: "" }; for (const cat of ["acc", "glass", "hat"]) { const it = eq[cat] && item(eq[cat]); if (it && it.px && owns(it.id)) out.above += it.px(px); } return out; }
+function outfitLayers(px) { const eq = player().equipped, out = { above: "", below: "" }; for (const cat of ["acc", "glass", "hat"]) { const it = eq[cat] && item(eq[cat]); if (it && it.px && owns(it.id)) out[it.layer === "below" ? "below" : "above"] += it.px(px); } return out; }
 function skinStyle() { const it = player().equipped.skin && item(player().equipped.skin); return it && it.colors && owns(it.id) ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""; }
 const sceneClass = () => { const s = player().equipped.scene; return s && owns(s) ? "stage-" + s.replace("scene-", "") : ""; };
 // Le gel de série : un jour manqué compte comme lu s'il a été gelé. Appliqué tout seul, au plus un par semaine.
@@ -776,16 +795,16 @@ let wardCat = "hat";
 function showWardrobe() {
   const bal = plumes(), eq = player().equipped, list = ITEMS.filter(i => i.cat === wardCat);
   wardrobeEl.innerHTML = `<div class="inner"><button class="back" data-act="close-wardrobe"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-    <div class="topbar"><h1>Le placard<span class="sub">ce que porte ton hippo</span></h1><span class="plumes num">${ICONS.feather}${bal}</span></div>
+    <div class="topbar"><h1>Le placard<span class="sub">ce que porte ton hippo</span></h1><span class="plumes num">${PLUME}${bal}</span></div>
     <div class="stage ${sceneClass()}"><div class="hp-unit big ${hippoMood().cls}" style="${skinStyle()}">${hippoSVG()}</div></div>
     <div class="chips">${Object.entries(CATS).map(([k, v]) => `<button class="chip" data-act="ward-cat" data-v="${k}" aria-pressed="${k === wardCat}">${v}</button>`).join("")}</div>
     ${wardCat === "util" ? `<div class="card"><div class="lead"><h2>Gel de série</h2><span class="tag ${freezesLeft() ? "teal" : ""}">${freezesLeft()} en réserve</span></div><p class="small muted">Un jour sans lecture ne casse pas la série. Il s'applique tout seul au premier jour manqué, au plus un par semaine.</p>
-        <button class="btn wide" style="margin-top:12px" data-act="buy" data-id="freeze" ${bal < 100 ? "disabled" : ""}>${ICONS.feather}Acheter un gel · 100</button></div>
+        <button class="btn wide" style="margin-top:12px" data-act="buy" data-id="freeze" ${bal < 100 ? "disabled" : ""}>${PLUME}Acheter un gel · 100</button></div>
       <div class="card"><h2>Comment gagner des plumes</h2><p class="small muted">1 page résumée = 1 plume. Objectif du jour : +10. Quête finie : sa valeur en XP. Succès : +25. Et un petit cadeau à la première ouverture chaque jour.</p></div>`
     : `<div class="ward">${list.map(it => { const own = owns(it.id), on = eq[it.cat] === it.id || (it.cat === "skin" && !eq.skin && it.price === 0);
-        return `<div class="witem ${on ? "on" : ""} ${own ? "" : "locked"}"><div class="stage mini ${it.cat === "scene" ? "stage-" + it.id.replace("scene-", "") : ""}"><div class="hp-unit" style="${it.colors ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""}">${hippoSVG(it.px ? { only: it } : {})}</div></div>
+        return `<div class="witem ${on ? "on" : ""} ${own ? "" : it.unlock ? "locked" : bal >= it.price ? "buyable" : "poor"}"><div class="stage mini ${it.cat === "scene" ? "stage-" + it.id.replace("scene-", "") : ""}"><div class="hp-unit" style="${it.colors ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""}">${hippoSVG(it.px ? { only: it } : {})}</div></div>
           <b>${esc(it.name)}</b>${own ? `<button class="btn sm ${on ? "ghost" : ""}" data-act="equip" data-id="${it.id}">${on ? (it.cat === "skin" || it.price === 0 ? "Porté" : "Retirer") : "Porter"}</button>`
-          : it.unlock ? `<small>${ICONS.lock}${esc(it.unlock)}</small>` : `<button class="btn sm ${bal >= it.price ? "" : "ghost"}" data-act="buy" data-id="${it.id}" ${bal >= it.price ? "" : "disabled"}>${ICONS.feather}${it.price}</button>`}</div>`; }).join("")}</div>`}</div>`;
+          : it.unlock ? `<small>${ICONS.lock}${esc(it.unlock)}</small>` : bal >= it.price ? `<button class="btn sm ok" data-act="buy" data-id="${it.id}">${PLUME}${it.price}</button>` : `<small class="poorlbl">${PLUME}${it.price} · manque ${it.price - bal}</small>`}</div>`; }).join("")}</div>`}</div>`;
   wardrobeEl.hidden = false;
 }
 function closeWardrobe() { wardrobeEl.hidden = true; wardrobeEl.innerHTML = ""; }
@@ -818,7 +837,7 @@ function viewHome() {
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
   <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
-    <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${ICONS.feather}${plumes()}</button>${GEAR}</div></div>
+    <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
   <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><div class="stage ${sceneClass()}"><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div></div>
   <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
@@ -841,7 +860,7 @@ function viewGoals() {
   const st = streakInfo(), lv = levelInfo(), quests = questsFor(mondayOf(todayKey())), bd = badges(), days = readingDays();
   const start = addDays(mondayOf(todayKey()), -21), cells = Array.from({ length: 28 }, (_, i) => addDays(start, i));
   return `<section class="view"><div class="topbar"><h1>Objectifs<span class="sub">Niveau ${lv.n} · ${esc(lv.name)}</span></h1>${GEAR}</div>
-  <div class="section" style="margin-top:4px"><div class="lead"><h2 style="font-size:15px">Niveau</h2><button class="plumes num" data-act="wardrobe">${ICONS.feather}${plumes()} · placard</button></div><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin plum" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
+  <div class="section" style="margin-top:4px"><div class="lead"><h2 style="font-size:15px">Niveau</h2><button class="plumes num" data-act="wardrobe">${PLUME}${plumes()} · placard</button></div><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin plum" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
   <div class="card"><div class="lead"><h2>Série</h2><span class="tag ${st.cur ? "warn" : ""}">${ICONS.flame}${st.cur} j.</span></div>
     <p class="small muted">${st.today ? "Lecture du jour faite : la série tient." : st.cur ? (freezesLeft() ? "Pas encore lu aujourd'hui : un gel de série te couvrirait." : "Pas encore lu aujourd'hui : la série tombe à minuit.") : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.${freezesLeft() ? ` ${freezesLeft()} gel${freezesLeft() > 1 ? "s" : ""} en réserve.` : ""}</p>
     <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : (S.config.player?.freezesUsed || []).includes(k) ? "frz" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}${(S.config.player?.freezesUsed || []).includes(k) ? " (gel de série)" : ""}">${+k.slice(8)}</div>`).join("")}</div></div>
