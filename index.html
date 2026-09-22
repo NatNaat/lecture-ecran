@@ -20,7 +20,7 @@
 :root {
   --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
   --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
-  --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8;
+  --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2F7A86; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
   --hp: #8C88A8; --hp2: #B4B0CC; --hp3: #6A6686; --hpk: #1A1D1B; --hpp: #E79AA8; --hpg: #E3B341; --hpg2: #B5862A;
   --display: "Bricolage Grotesque", "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
   --body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -29,11 +29,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
-  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; } }
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
 :root[data-theme="dark"] {
   --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
-  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; }
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; background: var(--bg); }
@@ -58,7 +58,7 @@ nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-co
 nav.tabs button { display: grid; justify-items: center; gap: 3px; min-height: var(--tab); padding-top: 8px; font: 600 11.5px var(--body); color: var(--muted); border-radius: 0; }
 nav.tabs button[aria-current="page"] { color: var(--accent); }
 nav.tabs button[aria-current="page"] svg.i { background: var(--accent-soft); }
-nav.tabs svg.i { width: 40px; height: 28px; padding: 3px 9px; border-radius: 10px; stroke-width: 2.1; }
+nav.tabs svg.i { width: 40px; height: 30px; padding: 4px 9px; border-radius: 10px; stroke-width: 2.1; overflow: visible; }
 section.view { animation: fadein .25s ease both; }
 @keyframes fadein { from { opacity: 0; transform: translateY(4px); } }
 
@@ -79,7 +79,9 @@ section.view { animation: fadein .25s ease both; }
 .chip { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: 600 13.5px var(--body); color: var(--ink-2); }
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font: 600 12px var(--body); background: var(--surface-2); color: var(--ink-2); }
-.tag.ok { background: var(--ok-soft); color: var(--ok); } .tag.warn { background: var(--warn-soft); color: var(--warn); } .tag.bad { background: var(--bad-soft); color: var(--bad); }
+.tag.ok { background: var(--ok-soft); color: var(--ok); } .tag.teal { background: var(--teal-soft); color: var(--teal); }
+.tint-warn { background: var(--warn-soft) !important; color: var(--warn) !important; } .tint-ok { background: var(--ok-soft) !important; color: var(--ok) !important; } .tint-teal { background: var(--teal-soft) !important; color: var(--teal) !important; } .tint-bad { background: var(--bad-soft) !important; color: var(--bad) !important; } .tint-plum { background: var(--plum-soft) !important; color: var(--plum) !important; }
+.bar.teal i { background: var(--teal); } .bar.plum i { background: var(--plum); } .bar.bad i { background: var(--bad); } .tag.warn { background: var(--warn-soft); color: var(--warn); } .tag.bad { background: var(--bad-soft); color: var(--bad); }
 .bar { height: 14px; background: var(--surface-2); border-radius: 999px; overflow: hidden; } .bar i { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px; transform-origin: left; transform: scaleX(0); transition: transform .5s var(--ease); }
 .bar.ok i { background: var(--ok); } .bar.warn i { background: var(--warn); } .bar.thin { height: 8px; }
 .row { display: flex; gap: 10px; align-items: center; } .row > * { flex: 1; }
@@ -95,21 +97,17 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 .hero { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; margin-bottom: 14px; }
 .hero h1 { font-size: 24px; font-weight: 800; }
 .hero .greet { font: 500 14px var(--body); color: var(--muted); margin-bottom: 4px; }
-.streak { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r); border: 2px solid var(--line); background: var(--surface); margin-bottom: 12px; }
-.streak .flame { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--warn-soft); color: var(--warn); }
-.streak .flame.off { background: var(--surface-2); color: var(--muted); }
-.streak b { display: block; font: 800 22px/1 var(--display); font-variant-numeric: tabular-nums; } .streak span { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 3px; }
-.streak .days { margin-left: auto; display: flex; gap: 5px; }
-.streak .days i { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-2); border: 1.5px solid var(--line-strong); } .streak .days i.on { background: var(--warn); border-color: var(--warn); } .streak .days i.today { outline: 2px solid var(--accent); outline-offset: 1px; }
+.streakpill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.streakpill svg.i { width: 18px; height: 18px; } .streakpill.risk { background: var(--bad-soft); color: var(--bad); }
+.reserve { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.reserve .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--teal-soft); color: var(--teal); flex: none; } .reserve.debt .ic { background: var(--bad-soft); color: var(--bad); }
+.reserve b.big { font: 800 22px/1 var(--display); font-variant-numeric: tabular-nums; } .reserve.debt b.big { color: var(--bad); }
+.reserve p { font: 500 13px/1.35 var(--body); color: var(--muted); } .reserve .tag { margin-left: auto; white-space: nowrap; flex: none; }
 .goal { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
 .ring { width: 96px; height: 96px; position: relative; } .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); } .ring circle { fill: none; stroke-width: 10; stroke-linecap: round; }
 .ring .track { stroke: var(--surface-2); } .ring .val { stroke: var(--accent); transition: stroke-dashoffset .6s var(--ease); } .ring.done .val { stroke: var(--ok); }
-.ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 800 22px var(--display); font-variant-numeric: tabular-nums; } .ring b small { display: block; font: 500 11px var(--body); color: var(--muted); text-align: center; }
+.ring b { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; font: 800 24px/1 var(--display); font-variant-numeric: tabular-nums; } .ring b small { font: 500 11px/1 var(--body); color: var(--muted); margin-top: 3px; }
 .goal p { font-size: 14px; color: var(--ink-2); margin: 6px 0 12px; }
-.reserve { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
-.reserve b.big { font: 800 34px/1 var(--display); font-variant-numeric: tabular-nums; } .reserve b.big small { font: 600 14px var(--body); color: var(--muted); margin-left: 4px; }
-.reserve.debt b.big { color: var(--bad); }
-.reserve p { font-size: 13.5px; color: var(--ink-2); }
 .covers { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 4px 16px 6px; } .covers::-webkit-scrollbar { display: none; }
 .cov { flex: none; width: 92px; text-align: left; }
 .cov .img { display: block; position: relative; width: 92px; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line); }
@@ -127,7 +125,7 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 
 /* ───── Objectifs ───── */
 .level { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: center; }
-.level .badge { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 800 20px var(--display); }
+.level .badge { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--plum-soft); color: var(--plum); font: 800 20px var(--display); border: 2px solid var(--plum); }
 .level b { font: 700 16px var(--display); } .level span { display: block; font: 500 12.5px var(--body); color: var(--muted); }
 .quest { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); } .quest:first-of-type { border-top: 0; padding-top: 4px; }
 .quest .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); } .quest.done .ic { background: var(--ok-soft); color: var(--ok); }
@@ -137,13 +135,13 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 .bdg { display: grid; justify-items: center; gap: 6px; padding: 12px 6px 10px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); text-align: center; }
 .bdg .ic { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
 .bdg b { font: 600 12.5px/1.2 var(--body); } .bdg small { font: 500 11px var(--body); color: var(--muted); }
-.bdg.locked { opacity: .55; border-style: dashed; } .bdg.locked .ic { background: var(--surface-2); color: var(--muted); }
+.bdg.locked { border-style: dashed; } .bdg.locked .ic { background: var(--surface-2); color: var(--line-strong); } .bdg.locked b { color: var(--muted); }
 .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; } .cal div { aspect-ratio: 1; border-radius: 8px; background: var(--surface-2); display: grid; place-items: center; font: 600 11px var(--body); color: var(--muted); }
-.cal div.on { background: var(--ok); color: #fff; } .cal div.today { outline: 2px solid var(--accent); outline-offset: -2px; } .cal .lbl { aspect-ratio: auto; background: none; font-size: 10.5px; }
+.cal div.on { background: var(--warn); color: #1D1B26; } .cal div.today { outline: 2px solid var(--accent); outline-offset: -2px; } .cal .lbl { aspect-ratio: auto; background: none; font-size: 10.5px; }
 
 /* ───── Profil ───── */
 .figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
-.figures div { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; }
+.figures div { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; } .figures div:nth-child(1) b { color: var(--accent); } .figures div:nth-child(2) b { color: var(--teal); } .figures div:nth-child(3) b { color: var(--plum); }
 .figures b { display: block; font: 800 22px/1.1 var(--display); font-variant-numeric: tabular-nums; } .figures span { display: block; font: 500 12px/1.3 var(--body); color: var(--muted); margin-top: 3px; }
 .chart { width: 100%; height: auto; display: block; } .chart text { font: 11px var(--body); fill: var(--muted); } .chart .v { fill: var(--ink); font-weight: 600; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: left; } td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } th { font-size: 12px; color: var(--muted); font-weight: 600; }
@@ -167,6 +165,18 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 .hp-unit.happy .hp-happy-only { opacity: 1; } .hp-unit.happy svg { animation: hp-jump .55s cubic-bezier(.3, 1.6, .5, 1) 2; } @keyframes hp-jump { 0%, 100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-14px) scale(.96, 1.06); } 60% { transform: translateY(0) scale(1.08, .9); } }
 .hp-unit.happy .hp-eyes { animation: none; opacity: 0; } .hp-unit.sleepy .hp-eyes { animation: none; transform: scaleY(.12); } .hp-unit.sleepy svg { animation-duration: 4s; }
 .hp-unit.mood-down.happy .hp-lids, .hp-unit.sleepy .hp-lids { opacity: 0; }
+/* colère : sourcils, oreilles en arrière, tremblement ; pleurs : oreilles tombées, larmes ; inquiétude : goutte de sueur ; toucher : pirouette */
+.hp-brows, .hp-sad, .hp-tear, .hp-sweat { opacity: 0; }
+.hp-unit.mood-angry .hp-brows { opacity: 1; } .hp-unit.mood-angry .hp-ear { animation: none; } .hp-unit.mood-angry .hp-ear.l { transform: rotate(18deg); } .hp-unit.mood-angry .hp-ear.r { transform: rotate(-18deg); }
+.hp-unit.mood-angry svg { animation: hp-shake .5s steps(2, end) infinite; } @keyframes hp-shake { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-1.5px) scaleY(1.02); } }
+.hp-unit.mood-angry .hp-eyes { animation: none; transform: scaleY(.7); transform-origin: 50% 70%; }
+.hp-unit.mood-cry .hp-ear { animation: none; } .hp-unit.mood-cry .hp-ear.l { transform: rotate(-32deg) translateY(.5px); } .hp-unit.mood-cry .hp-ear.r { transform: rotate(32deg) translateY(.5px); }
+.hp-unit.mood-cry .hp-sad { opacity: 1; } .hp-unit.mood-cry .hp-tear { opacity: 1; animation: hp-tear 1.3s steps(3, end) infinite; } .hp-unit.mood-cry .hp-tear.b { animation-delay: .5s; } @keyframes hp-tear { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(4px); opacity: 0; } }
+.hp-unit.mood-cry svg { animation: hp-sob 2.2s steps(2, end) infinite; } @keyframes hp-sob { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.96) translateY(.4px); } }
+.hp-unit.mood-worried .hp-sweat { opacity: 1; animation: hp-sweat 1.6s steps(3, end) infinite; } @keyframes hp-sweat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(3px); opacity: 0; } }
+.hp-unit.mood-worried .hp-eyes { animation: hp-look 3s steps(1, end) infinite; } @keyframes hp-look { 0%, 100% { transform: translateX(0); } 30%, 45% { transform: translateX(1px); } 60%, 80% { transform: translateX(-1px); } }
+.hp-unit.spin svg { animation: hp-spin .7s cubic-bezier(.4, 0, .2, 1) 1; } @keyframes hp-spin { to { transform: rotateY(360deg); } }
+button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
 .hp-home { display: grid; grid-template-columns: 1fr 72px; gap: 14px; align-items: end; margin-bottom: 14px; }
@@ -245,7 +255,7 @@ dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin 
 <body>
 <main id="app"><p class="muted" style="padding:40px 0">Chargement…</p></main>
 <nav class="tabs" id="tabs" aria-label="Sections" hidden><div>
-  <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Aujourd'hui</button>
+  <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Accueil</button>
   <button data-tab="books"><svg class="i" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>Livres</button>
   <button data-tab="goals"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12h.01"/></svg>Objectifs</button>
   <button data-tab="me"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil</button>
@@ -498,6 +508,7 @@ async function dlgCover(bookId) {
   } catch { $("#cvs").innerHTML = `<p class="err">Recherche impossible : vérifie ta connexion.</p>`; }
 }
 
+window.nextCover = img => { const rest = (img.dataset.alts || "").split("|").filter(Boolean); if (rest.length) { img.dataset.alts = rest.slice(1).join("|"); img.src = rest[0]; } else img.remove(); };
 const altsOf = (b, first) => esc([...(b.covers || []), b.cover_url].filter((u, i, a) => u && u !== first && a.indexOf(u) === i).join("|"));
 const coverThumb = b => `<span class="noc">${esc((b.title || "?")[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" data-alts="${altsOf(b, b.cover_url)}" alt="" loading="lazy" onerror="nextCover(this)">` : ""}</span>`;
 const pickCard = (b, compact) => `${coverThumb(b)}<span class="pk"><b>${esc(b.title)}</b><small>${compact ? "" : esc(b.author || "Auteur inconnu") + " · "}p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}</small></span>`;
@@ -591,11 +602,11 @@ function questsFor(weekKey) {
   const finished = S.books.filter(b => b.finished_at && inWeek(b.finished_at)).length, long = rs.filter(r => r.summary.trim().length >= 400).length;
   const goalDays = [...new Set(rs.map(r => dayKey(r.created_at)))].filter(k => pagesOn(k) >= goalPages()).length;
   return [
-    { id: "days", label: "Lire 5 jours cette semaine", cur: days, max: 5, xp: 30, icon: "cal" },
-    { id: "pages", label: "Lire 120 pages", cur: pages, max: 120, xp: 40, icon: "book" },
-    { id: "goal", label: "Atteindre l'objectif du jour 3 fois", cur: goalDays, max: 3, xp: 30, icon: "target" },
-    { id: "long", label: "Écrire 2 résumés de plus de 400 caractères", cur: long, max: 2, xp: 20, icon: "pen" },
-    { id: "finish", label: "Finir un livre", cur: finished, max: 1, xp: 60, icon: "flag" },
+    { id: "days", label: "Lire 5 jours cette semaine", cur: days, max: 5, xp: 30, icon: "cal", tint: "warn" },
+    { id: "pages", label: "Lire 120 pages", cur: pages, max: 120, xp: 40, icon: "book", tint: "accent" },
+    { id: "goal", label: "Atteindre l'objectif du jour 3 fois", cur: goalDays, max: 3, xp: 30, icon: "target", tint: "teal" },
+    { id: "long", label: "Écrire 2 résumés de plus de 400 caractères", cur: long, max: 2, xp: 20, icon: "pen", tint: "plum" },
+    { id: "finish", label: "Finir un livre", cur: finished, max: 1, xp: 60, icon: "flag", tint: "ok" },
   ].map(q => ({ ...q, cur: Math.min(q.cur, q.max), done: q.cur >= q.max }));
 }
 function allWeeklyQuests() {
@@ -603,21 +614,21 @@ function allWeeklyQuests() {
   return [...weeks].flatMap(questsFor);
 }
 const BADGES = [
-  { id: "first", name: "Première page", desc: "Un premier résumé", icon: "pen", when: () => S.readings[0] && earliest(S.readings) },
-  { id: "s7", name: "Une semaine", desc: "7 jours d'affilée", icon: "flame", when: () => streakDate(7) },
-  { id: "s30", name: "Un mois", desc: "30 jours d'affilée", icon: "flame", when: () => streakDate(30) },
-  { id: "s100", name: "Cent jours", desc: "100 jours d'affilée", icon: "flame", when: () => streakDate(100) },
-  { id: "p100", name: "Cent pages", desc: "100 pages résumées", icon: "book", when: () => pagesDate(100) },
-  { id: "p1000", name: "Mille pages", desc: "1 000 pages résumées", icon: "book", when: () => pagesDate(1000) },
-  { id: "p5000", name: "Cinq mille", desc: "5 000 pages résumées", icon: "book", when: () => pagesDate(5000) },
-  { id: "b1", name: "Fini !", desc: "Un livre lu jusqu'au bout", icon: "flag", when: () => nthFinished(1) },
-  { id: "b5", name: "Cinq livres", desc: "Cinq livres finis", icon: "flag", when: () => nthFinished(5) },
-  { id: "b20", name: "Vingt livres", desc: "Vingt livres finis", icon: "flag", when: () => nthFinished(20) },
-  { id: "marathon", name: "Marathon", desc: "50 pages en un jour", icon: "target", when: () => { const by = {}; for (const r of S.readings) { const k = dayKey(r.created_at); by[k] = (by[k] || 0) + r.pages; if (by[k] >= 50) return r.created_at; } return null; } },
-  { id: "owl", name: "Oiseau de nuit", desc: "Un résumé après 23 h", icon: "moon", when: () => S.readings.find(r => new Date(r.created_at).getHours() >= 23)?.created_at },
-  { id: "lark", name: "Lève-tôt", desc: "Un résumé avant 8 h", icon: "sun", when: () => S.readings.find(r => new Date(r.created_at).getHours() < 8)?.created_at },
-  { id: "clean", name: "Bon élève", desc: "4 contrôles hebdo faits", icon: "check", when: () => { const w = [...new Set(S.audits.map(a => a.week_start))].sort(); return w.length >= 4 ? S.audits.filter(a => a.week_start === w[3])[0]?.created_at : null; } },
-  { id: "essay", name: "Plume", desc: "Un résumé de 800 caractères", icon: "pen", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at },
+  { id: "first", name: "Première page", desc: "Un premier résumé", icon: "pen", tint: "plum", when: () => S.readings[0] && earliest(S.readings) },
+  { id: "s7", name: "Une semaine", desc: "7 jours d'affilée", icon: "flame", tint: "warn", when: () => streakDate(7) },
+  { id: "s30", name: "Un mois", desc: "30 jours d'affilée", icon: "cal", tint: "warn", when: () => streakDate(30) },
+  { id: "s100", name: "Cent jours", desc: "100 jours d'affilée", icon: "trophy", tint: "warn", when: () => streakDate(100) },
+  { id: "p100", name: "Cent pages", desc: "100 pages résumées", icon: "book", tint: "accent", when: () => pagesDate(100) },
+  { id: "p1000", name: "Mille pages", desc: "1 000 pages résumées", icon: "stack", tint: "accent", when: () => pagesDate(1000) },
+  { id: "p5000", name: "Cinq mille", desc: "5 000 pages résumées", icon: "mountain", tint: "accent", when: () => pagesDate(5000) },
+  { id: "b1", name: "Fini !", desc: "Un livre lu jusqu'au bout", icon: "flag", tint: "ok", when: () => nthFinished(1) },
+  { id: "b5", name: "Cinq livres", desc: "Cinq livres finis", icon: "bookmark", tint: "ok", when: () => nthFinished(5) },
+  { id: "b20", name: "Vingt livres", desc: "Vingt livres finis", icon: "columns", tint: "ok", when: () => nthFinished(20) },
+  { id: "marathon", name: "Marathon", desc: "50 pages en un jour", icon: "bolt", tint: "teal", when: () => { const by = {}; for (const r of S.readings) { const k = dayKey(r.created_at); by[k] = (by[k] || 0) + r.pages; if (by[k] >= 50) return r.created_at; } return null; } },
+  { id: "owl", name: "Oiseau de nuit", desc: "Un résumé après 23 h", icon: "moon", tint: "teal", when: () => S.readings.find(r => new Date(r.created_at).getHours() >= 23)?.created_at },
+  { id: "lark", name: "Lève-tôt", desc: "Un résumé avant 8 h", icon: "sun", tint: "teal", when: () => S.readings.find(r => new Date(r.created_at).getHours() < 8)?.created_at },
+  { id: "clean", name: "Bon élève", desc: "4 contrôles hebdo faits", icon: "shield", tint: "bad", when: () => { const w = [...new Set(S.audits.map(a => a.week_start))].sort(); return w.length >= 4 ? S.audits.filter(a => a.week_start === w[3])[0]?.created_at : null; } },
+  { id: "essay", name: "Plume", desc: "Un résumé de 800 caractères", icon: "feather", tint: "plum", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at },
 ];
 const earliest = rs => rs.reduce((a, r) => !a || r.created_at < a ? r.created_at : a, null);
 function streakDate(n) { const days = [...readingDays()].sort(); let run = 0, prev = null; for (const d of days) { run = prev && addDays(prev, 1) === d ? run + 1 : 1; prev = d; if (run >= n) return d + "T12:00:00"; } return null; }
@@ -635,6 +646,17 @@ const ICONS = {
   sun: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>',
   check: '<svg class="i" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>',
   lock: '<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  alert: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3l10 18H2zM12 10v5M12 18v.01"/></svg>',
+  trophy: '<svg class="i" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9 17h6"/></svg>',
+  stack: '<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16v4H4zM4 13h16v4H4zM6 4h12M6 20h12"/></svg>',
+  mountain: '<svg class="i" viewBox="0 0 24 24"><path d="M3 20l6-11 4 6 2-3 6 8z"/><path d="M9 9l1.5-2.5L12 9"/></svg>',
+  bookmark: '<svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',
+  columns: '<svg class="i" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg>',
+  bolt: '<svg class="i" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  shield: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  feather: '<svg class="i" viewBox="0 0 24 24"><path d="M20 3c-7 1-12 6-14 14l-2 4 4-2c8-2 13-7 12-16z"/><path d="M6 17c3-4 6-7 10-10"/></svg>',
+  star: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+  hand: '<svg class="i" viewBox="0 0 24 24"><path d="M7 11V6a1.5 1.5 0 0 1 3 0v5M10 10V4a1.5 1.5 0 0 1 3 0v6M13 10V5a1.5 1.5 0 0 1 3 0v6M16 12V8a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1a7 7 0 0 1-7-7v-2a1.5 1.5 0 0 1 3 0"/></svg>',
   plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
   clock: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
 };
@@ -648,17 +670,23 @@ function hippoSVG() { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--h
   const spark = `<g class="hp-spark">${px(0, 1, "var(--hpg)") + px(13, 3, "var(--hpg)")}</g><g class="hp-spark b">${px(13, 0, "var(--hpg)") + px(0, 4, "var(--hpg)")}</g>`;
   const lids = px(3, 4, "var(--hp)", 1, 1) + px(10, 4, "var(--hp)", 1, 1);
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
-  return `<svg viewBox="0 -1 14 13" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}</svg>`; }
+  const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
+  const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
+  return `<svg viewBox="0 -1 14 13" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}</svg>`; }
+// Humeurs, du plus urgent au plus calme. Chaque humeur a sa posture ; l'hippo réagit aussi quand on le touche.
 function hippoMood() {
-  const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance();
+  const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance(), lost = pref("lastStreak", 0);
   if (todayP >= goalPages()) return { cls: "mood-great crowned", say: `Objectif du jour atteint, ${todayP} pages. Tu peux souffler.` };
+  if (st.cur === 0 && lost >= 2) return { cls: "mood-cry", say: `La série de ${lost} jours est perdue… Une lecture ce soir et on repart.` };
+  if (st.atRisk && h >= 20) return { cls: "mood-angry", say: `${h} h passées et toujours rien ? La série de ${st.cur} jours tombe à minuit.` };
+  if (bal < 0) return { cls: "mood-worried", say: `${plural(-bal, "minute")} de dette. Ça se rembourse en pages, pas en excuses.` };
   if (h >= 23 || h < 6) return { cls: "sleepy", say: "Il est tard. Quelques pages et au lit ?" };
-  if (st.cur === 0 && S.readings.length) return { cls: "mood-down", say: "La série s'est arrêtée. On en recommence une ce soir ?" };
   if (st.atRisk) return { cls: "", say: `${st.cur} jour${st.cur > 1 ? "s" : ""} d'affilée. Une lecture aujourd'hui pour garder la série.` };
-  if (bal < 0) return { cls: "", say: `Il reste ${plural(-bal, "page")} à lire pour rembourser la dette.` };
-  if (!S.books.some(b => b.status === "en_cours")) return { cls: "", say: "Pas de livre en cours. Lequel on commence ?" };
+  if (!S.books.some(b => b.status === "en_cours")) return { cls: "mood-down", say: "Pas de livre en cours. Lequel on commence ?" };
   return { cls: st.cur >= 7 ? "crowned" : "", say: todayP ? `${todayP} pages aujourd'hui, encore ${goalPages() - todayP} pour l'objectif.` : "Une page lue et résumée, c'est une minute gagnée." };
 }
+const POKES = ["Hé ! Je lisais, moi.", "Tu comptes lire ou me chatouiller ?", "Une page, une minute. Simple.", "Le livre ne va pas se lire tout seul.", "Ok, ok, je suis là.", "Encore ? Bon, une dernière fois."];
+function hippoPoke() { const h = $(".hp-unit"), b = $(".hp-bubble"); if (!h) return; haptic(); h.classList.remove("happy", "spin"); void h.offsetWidth; h.classList.add(Math.random() < .3 ? "spin" : "happy"); if (b) { b.textContent = POKES[Math.floor(Math.random() * POKES.length)]; clearTimeout(hippoPoke.t); hippoPoke.t = setTimeout(() => { b.textContent = hippoMood().say; }, 2600); } }
 function hippoCheer() { const h = $(".hp-unit"); if (!h) return; h.classList.remove("happy"); void h.offsetWidth; h.classList.add("happy"); const fx = document.createElement("div"); fx.className = "hp-fx";
   fx.innerHTML = Array.from({ length: 8 }, (_, i) => `<i style="--dx:${Math.round(Math.cos(i / 8 * 6.28) * 34)}px;--dy:${Math.round(Math.sin(i / 8 * 6.28) * 34 - 20)}px"></i>`).join(""); h.append(fx); setTimeout(() => fx.remove(), 1000); }
 
@@ -680,24 +708,22 @@ function covCard(b) {
 function viewHome() {
   const st = streakInfo(), goal = goalPages(), tp = pagesOn(todayKey()), pct = Math.min(1, tp / goal), bal = balance(), mood = hippoMood();
   const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
-  const week = Array.from({ length: 7 }, (_, i) => addDays(todayKey(), i - 6)), days = readingDays(), circ = 2 * Math.PI * 42;
+  const circ = 2 * Math.PI * 42;
   return `<section class="view">
-  <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo · " : ""}Pages contre minutes</h1></div></div>
-  <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><div class="hp-unit ${mood.cls}">${hippoSVG()}</div></div>
-  <div class="streak"><div class="flame ${st.cur ? "" : "off"}">${ICONS.flame}</div><div><b class="num">${st.cur}</b><span>${st.cur > 1 ? "jours d'affilée" : st.cur === 1 ? "jour d'affilée" : "pas de série en cours"}${st.best > st.cur ? ` · record ${st.best}` : ""}</span></div>
-    <div class="days" aria-label="Sept derniers jours">${week.map(k => `<i class="${days.has(k) ? "on" : ""} ${k === todayKey() ? "today" : ""}" title="${k}"></i>`).join("")}</div></div>
-  <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num">${tp}<small>/ ${goal} p.</small></b></div>
+  <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
+    ${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}</div>
+  <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
+  <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
-  <div class="card"><div class="reserve ${bal < 0 ? "debt" : ""}"><b class="big num">${bal < 0 ? "−" + -bal : bal}<small>min</small></b>
-    <p>${bal < 0 ? `<b>Dette d'écran.</b> Lis ${plural(-bal, "page")} pour repartir de zéro.` : bal === 0 ? "<b>Réserve vide.</b> Une page résumée vaut une minute sur TikTok & co." : `<b>Réserve d'écran.</b> Jusqu'à ${Math.min(bal, S.config.session_cap_min)} min d'affilée sur une appli bloquée.`}
-    ${active.map(s => `<br><span class="tag warn">${ICONS.clock}${esc(s.app)} ouvert · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}${auditDue() ? `<br><button class="link" data-act="goto-audit">Contrôle de la semaine à faire ›</button>` : ""}</p></div></div>
+  <div class="card reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link" style="min-height:0;font-size:13px" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
+    ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
   <div class="card"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
     ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours. Ajoute celui que tu lis : c'est lui que le raccourci te proposera.</p>`}</div>
   ${next ? `<div class="card"><div class="lead"><h2>Quête de la semaine</h2><button class="link" data-act="tab" data-tab="goals">Toutes ›</button></div>${questRow(next)}</div>` : ""}
   </section>`;
 }
-function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : ""}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
+function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic tint-${q.done ? "ok" : q.tint}">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : q.tint === "accent" ? "" : q.tint}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
 function viewBooks() {
   const lists = { en_cours: "En cours", fini: "Finis", abandonne: "Abandonnés" }, list = S.books.filter(b => b.status === libFilter);
   return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><button class="btn sm" data-act="add-book">${ICONS.plus}Ajouter</button></div>
@@ -714,14 +740,14 @@ function viewGoals() {
     <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}">${+k.slice(8)}</div>`).join("")}</div></div>
   <div class="card"><div class="lead"><h2>Quêtes de la semaine</h2><span class="small muted">${quests.filter(q => q.done).length} / ${quests.length}</span></div>${quests.map(questRow).join("")}</div>
   <div class="card"><div class="lead"><h2>Succès</h2><span class="small muted">${bd.filter(b => b.at).length} / ${bd.length}</span></div>
-    <div class="badges">${bd.sort((a, b) => (b.at ? 1 : 0) - (a.at ? 1 : 0)).map(b => `<div class="bdg ${b.at ? "" : "locked"}" role="img" aria-label="${esc(b.name)}, ${b.at ? "obtenu le " + fmtDate(b.at) : "à débloquer : " + esc(b.desc)}"><div class="ic">${b.at ? ICONS[b.icon] : ICONS.lock}</div><b>${esc(b.name)}</b><small>${b.at ? fmtDate(b.at) : esc(b.desc)}</small></div>`).join("")}</div></div>
+    <div class="badges">${bd.sort((a, b) => (b.at ? 1 : 0) - (a.at ? 1 : 0)).map(b => `<div class="bdg ${b.at ? "" : "locked"}" role="img" aria-label="${esc(b.name)}, ${b.at ? "obtenu le " + fmtDate(b.at) : "à débloquer : " + esc(b.desc)}"><div class="ic ${b.at ? "tint-" + b.tint : ""}">${ICONS[b.icon]}</div><b>${esc(b.name)}</b><small>${b.at ? fmtDate(b.at) : esc(b.desc)}</small></div>`).join("")}</div></div>
   </section>`;
 }
 function barChart(data, key, unit) {
   const W = 340, H = 140, pad = 18, bw = (W - 8) / data.length, max = Math.max(1, ...data.map(d => d[key]));
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${unit} par jour sur ${data.length} jours"><line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="var(--line)"/>
   ${data.map((d, i) => { const h = Math.round((H - pad - 22) * d[key] / max), x = 4 + i * bw, y = H - pad - h;
-    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="4" fill="var(--accent)"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}<text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle">${i % 2 === (data.length - 1) % 2 ? d.date.getDate() : ""}</text>`; }).join("")}</svg>`;
+    return `${d[key] ? `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="4" fill="${unit === "Minutes" ? "var(--teal)" : "var(--accent)"}"/><text class="v" x="${x + bw / 2}" y="${y - 4}" text-anchor="middle">${d[key]}</text>` : `<text x="${x + bw / 2}" y="${H - pad - 5}" text-anchor="middle">·</text>`}<text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle">${i % 2 === (data.length - 1) % 2 ? d.date.getDate() : ""}</text>`; }).join("")}</svg>`;
 }
 function viewMe() {
   const d14 = byDay(14), d7 = d14.slice(7), sum = (a, k) => a.reduce((x, y) => x + y[k], 0), p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0), over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
@@ -839,6 +865,7 @@ document.addEventListener("click", async e => {
   try {
     if (act === "tab") { tab = el.dataset.tab; render(); }
     else if (act === "close-book") closeBook();
+    else if (act === "poke") hippoPoke();
     else if (act === "log") dlgLog(el.dataset.id || openBook);
     else if (act === "add-book") openStudy();
     else if (act === "filter") { libFilter = el.dataset.v; render(); }
@@ -863,7 +890,7 @@ document.addEventListener("click", async e => {
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !dlg.open && !bookview.hidden) closeBook(); });
 
-async function reload() { S = await api.load(); render(); if (openBook) showBook(); }
+async function reload() { S = await api.load(); const st = streakInfo(); if (st.cur > 0) setPref("lastStreak", st.cur); render(); if (openBook) showBook(); }
 async function start() {
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Pages contre minutes</h1><p class="muted">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--accent)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
