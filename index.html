@@ -186,19 +186,20 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
-.hp-home { display: grid; gap: 10px; margin-bottom: 14px; }
+.hp-home { position: relative; display: grid; gap: 14px; margin: 0 -16px; padding: 16px 16px 0; background: var(--surface-2); }
+.hp-home > * { position: relative; }
 .hp-home .hp-bubble { justify-self: start; max-width: 85%; } .hp-home .hp-bubble::after { right: auto; left: 22px; bottom: -8px; transform: rotate(135deg); }
-.hp-home .stage { width: 100%; height: clamp(240px, 42vh, 380px); border-radius: var(--r); border: 2px solid var(--line); padding-top: 0; }
-.hp-home .hp-unit { width: min(250px, 66vw); }
+.hp-home .hp-unit { width: min(250px, 66vw); margin: 0 auto; }
+.sheet { position: relative; z-index: 1; margin: -30px -16px 0; padding: 46px 16px 4px; background: var(--bg); border-radius: 100% 100% 0 0 / 64px 64px 0 0; min-height: 50vh; }
 .px { width: 16px; height: 18px; shape-rendering: crispEdges; flex: none; } .btn .px { width: 14px; height: 16px; }
 .plumes { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
 /* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
 .stage { display: grid; place-items: end center; width: 84px; height: 84px; border-radius: 16px; background: var(--surface-2); padding: 4px 0 0; overflow: hidden; }
-.stage.stage-etagere { background: repeating-linear-gradient(180deg, #8C6A48 0 4px, #5E4630 4px 6px, transparent 6px 22px), linear-gradient(#C9A97A, #C9A97A); background-color: #C9A97A; }
-.stage.stage-etagere::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, #4A4670 0 5px, #B9503F 5px 9px, #3E7C5C 9px 15px, #E3B341 15px 18px, #6B6880 18px 22px, transparent 22px 24px); mask: repeating-linear-gradient(180deg, transparent 0 8px, #000 8px 22px); -webkit-mask: repeating-linear-gradient(180deg, transparent 0 8px, #000 8px 22px); opacity: .85; }
-.stage.stage-nuit { background: radial-gradient(circle at 70% 25%, #EDE6C8 0 7px, transparent 8px), radial-gradient(circle at 20% 40%, #fff 0 1px, transparent 2px), radial-gradient(circle at 45% 15%, #fff 0 1px, transparent 2px), radial-gradient(circle at 85% 60%, #fff 0 1px, transparent 2px), linear-gradient(#1B2447, #2E2B4F); }
-.stage.stage-jardin { background: linear-gradient(180deg, #BFD9EA 0 55%, #7FB39C 55% 70%, #5E8B78 70%); }
-.stage.stage-jardin::after { content: ""; position: absolute; left: 8px; bottom: 26px; width: 10px; height: 10px; background: #E79AA8; border-radius: 50%; box-shadow: 40px 4px 0 #E3B341, 24px -6px 0 #EDECF3; }
+.stage-etagere { background: repeating-linear-gradient(180deg, #8C6A48 0 4px, #5E4630 4px 6px, transparent 6px 22px), linear-gradient(#C9A97A, #C9A97A); background-color: #C9A97A; }
+.stage-etagere::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, #4A4670 0 5px, #B9503F 5px 9px, #3E7C5C 9px 15px, #E3B341 15px 18px, #6B6880 18px 22px, transparent 22px 24px); mask: repeating-linear-gradient(180deg, transparent 0 8px, #000 8px 22px); -webkit-mask: repeating-linear-gradient(180deg, transparent 0 8px, #000 8px 22px); opacity: .85; }
+.stage-nuit { background: radial-gradient(circle at 70% 25%, #EDE6C8 0 7px, transparent 8px), radial-gradient(circle at 20% 40%, #fff 0 1px, transparent 2px), radial-gradient(circle at 45% 15%, #fff 0 1px, transparent 2px), radial-gradient(circle at 85% 60%, #fff 0 1px, transparent 2px), linear-gradient(#1B2447, #2E2B4F); }
+.stage-jardin { background: linear-gradient(180deg, #BFD9EA 0 55%, #7FB39C 55% 70%, #5E8B78 70%); }
+.stage-jardin::after { content: ""; position: absolute; left: 8px; bottom: 26px; width: 10px; height: 10px; background: #E79AA8; border-radius: 50%; box-shadow: 40px 4px 0 #E3B341, 24px -6px 0 #EDECF3; }
 .stage { position: relative; } .stage > * { position: relative; }
 .stage.big, .stage:has(.hp-unit.big) { width: 100%; height: 190px; border-radius: var(--r); margin: 10px 0 14px; border: 2px solid var(--line); } .hp-unit.big { width: 120px; }
 .stage.mini { width: 100%; height: 88px; border-radius: 12px; } .stage.mini .hp-unit { width: 56px; }
@@ -840,8 +841,8 @@ function viewHome() {
   return `<section class="view">
   <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
     <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
-  <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><div class="stage ${sceneClass()}"><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div></div>
-  <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
+  <div class="hp-home ${sceneClass()}"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
+  <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
   <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link" style="min-height:0;font-size:13px" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
@@ -849,7 +850,7 @@ function viewHome() {
   <div class="section"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
     ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours. Ajoute celui que tu lis : c'est lui que le raccourci te proposera.</p>`}</div>
   ${next ? `<div class="section quests"><div class="lead"><h2>Quête de la semaine</h2><button class="link" data-act="tab" data-tab="goals">Toutes ›</button></div>${questRow(next)}</div>` : ""}
-  </section>`;
+  </div></section>`;
 }
 function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic tint-${q.done ? "ok" : q.tint}">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : q.tint === "accent" ? "" : q.tint}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
 function viewBooks() {
