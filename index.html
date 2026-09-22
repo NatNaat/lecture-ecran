@@ -186,11 +186,12 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
-.hp-home { position: relative; display: grid; gap: 14px; margin: 0 -16px; padding: 16px 16px 64px; background: var(--surface-2); }
+.hp-home { position: relative; display: grid; gap: 14px; margin: calc(-1 * (env(safe-area-inset-top) + 14px)) -16px 0; padding: calc(env(safe-area-inset-top) + 14px) 16px 64px; background: var(--surface-2); }
+.hp-home .hero { margin-bottom: 2px; } .hp-home.stage-nuit .hero { --ink: #EDECF3; --muted: #B4B0CC; color: var(--ink); } .hp-home.stage-etagere::before { top: 96px; } .hp-home.stage-etagere { background-image: linear-gradient(#C9A97A 0 92px, transparent 92px), repeating-linear-gradient(180deg, #8C6A48 0 4px, #5E4630 4px 6px, transparent 6px 22px); }   /* bois uni derrière les titres */
 .hp-home > * { position: relative; }
 .hp-home .hp-bubble { justify-self: start; max-width: 85%; } .hp-home .hp-bubble::after { right: auto; left: 22px; bottom: -8px; transform: rotate(135deg); }
 .hp-home .hp-unit { width: min(210px, 56vw); margin: 6px auto 0; }
-.sheet { position: relative; z-index: 1; margin: -64px -16px 0; padding: 48px 16px 4px; background: var(--bg); border-radius: 100% 100% 0 0 / 64px 64px 0 0; min-height: 50vh; }
+.sheet { position: relative; z-index: 1; margin: -64px -16px 0; padding: 48px 16px 4px; background: var(--bg); border-radius: 100% 100% 0 0 / 64px 64px 0 0; min-height: 50vh; box-shadow: 0 -8px 20px rgba(29, 27, 38, .07); }
 .px { width: 16px; height: 18px; shape-rendering: crispEdges; flex: none; } .btn .px { width: 14px; height: 16px; }
 .plumes { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
 /* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
@@ -903,9 +904,9 @@ function viewHome() {
   const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
-  <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
+  <div class="hp-home ${sceneClass()}"><div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
     <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
-  <div class="hp-home ${sceneClass()}"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
+    <div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
