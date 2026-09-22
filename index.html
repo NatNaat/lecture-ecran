@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#F4F3F7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15141B" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pages">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -52,6 +52,13 @@ svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-widt
 main { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 14px) 16px calc(var(--tab) + env(safe-area-inset-bottom) + 24px); }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .topbar h1 { font-size: 26px; font-weight: 800; }
+.topbar .right, .hero .right { display: flex; align-items: center; gap: 8px; }
+.gear { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink-2); box-shadow: 0 2px 0 var(--line); } .gear svg.i { width: 20px; height: 20px; }
+.section { margin: 22px 0 12px; } .section h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; } .section .lead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; } .section .lead h2 { margin: 0; } .section .lead button.link { font: 600 13px var(--body); color: var(--accent); min-height: 0; }
+.quests .quest { border-top: 1px solid var(--line); } .quests .quest:first-child { border-top: 0; padding-top: 0; }
+.list { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 4px 16px; margin-bottom: 14px; } .list .setrow { padding: 12px 0; } .list label { margin-top: 12px; } .list > :last-child { margin-bottom: 12px; }
+.hp-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .hp-gallery figure { margin: 0; padding: 12px 6px 10px; border: 2px solid var(--line); border-radius: 14px; display: grid; justify-items: center; gap: 8px; background: var(--surface); } .hp-gallery .hp-unit { width: 52px; } .hp-gallery figcaption { font: 500 11.5px/1.3 var(--body); color: var(--muted); text-align: center; } .hp-gallery figcaption b { display: block; color: var(--ink); font-weight: 600; }
+#settings { position: fixed; inset: 0; z-index: 40; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 30px); animation: slidein .28s var(--ease) both; } #settings .inner { max-width: 620px; margin: 0 auto; }
 .topbar .sub { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 2px; letter-spacing: 0; }
 nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 2px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
 nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
@@ -99,7 +106,7 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 .hero .greet { font: 500 14px var(--body); color: var(--muted); margin-bottom: 4px; }
 .streakpill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .streakpill svg.i { width: 18px; height: 18px; } .streakpill.risk { background: var(--bad-soft); color: var(--bad); }
-.reserve { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.reserve { display: flex; align-items: center; gap: 12px; padding: 4px 2px 0; }
 .reserve .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--teal-soft); color: var(--teal); flex: none; } .reserve.debt .ic { background: var(--bad-soft); color: var(--bad); }
 .reserve b.big { font: 800 22px/1 var(--display); font-variant-numeric: tabular-nums; } .reserve.debt b.big { color: var(--bad); }
 .reserve p { font: 500 13px/1.35 var(--body); color: var(--muted); } .reserve .tag { margin-left: auto; white-space: nowrap; flex: none; }
@@ -256,11 +263,12 @@ dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin 
 <main id="app"><p class="muted" style="padding:40px 0">Chargement…</p></main>
 <nav class="tabs" id="tabs" aria-label="Sections" hidden><div>
   <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Accueil</button>
-  <button data-tab="books"><svg class="i" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>Livres</button>
+  <button data-tab="books"><svg class="i" viewBox="0 0 24 24"><path d="M12 7a3 3 0 0 0-3-3H4v14h5a3 3 0 0 1 3 2zM12 7a3 3 0 0 1 3-3h5v14h-5a3 3 0 0 0-3 2zM12 7v13"/></svg>Livres</button>
   <button data-tab="goals"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12h.01"/></svg>Objectifs</button>
   <button data-tab="me"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil</button>
 </div></nav>
 <div id="bookview" hidden></div>
+<div id="settings" hidden></div>
 <dialog id="dlg"></dialog>
 <label class="sr-only" aria-hidden="true"><input type="checkbox" switch tabindex="-1" id="haptic"></label>
 
@@ -565,7 +573,8 @@ function exportBook() {
 
 // ───────────── État ─────────────
 let S = null, tab = "home", openBook = null, tick = null, libFilter = "en_cours", bookSort = "pages";
-const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs");
+const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs"), settingsEl = $("#settings");
+const GEAR = `<button class="gear" data-act="settings" aria-label="Réglages"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>`;
 const pref = (k, d) => { try { const v = localStorage.getItem("pcm:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
 const setPref = (k, v) => { try { localStorage.setItem("pcm:" + k, JSON.stringify(v)); } catch {} };
 const todayKey = () => dayKey(new Date());
@@ -711,35 +720,35 @@ function viewHome() {
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
   <div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
-    ${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}</div>
+    <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}${GEAR}</div></div>
   <div class="hp-home"><div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
   <div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
-  <div class="card reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link" style="min-height:0;font-size:13px" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
+  <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link" style="min-height:0;font-size:13px" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
     ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
-  <div class="card"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
+  <div class="section"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
     ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours. Ajoute celui que tu lis : c'est lui que le raccourci te proposera.</p>`}</div>
-  ${next ? `<div class="card"><div class="lead"><h2>Quête de la semaine</h2><button class="link" data-act="tab" data-tab="goals">Toutes ›</button></div>${questRow(next)}</div>` : ""}
+  ${next ? `<div class="section quests"><div class="lead"><h2>Quête de la semaine</h2><button class="link" data-act="tab" data-tab="goals">Toutes ›</button></div>${questRow(next)}</div>` : ""}
   </section>`;
 }
 function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic tint-${q.done ? "ok" : q.tint}">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : q.tint === "accent" ? "" : q.tint}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
 function viewBooks() {
   const lists = { en_cours: "En cours", fini: "Finis", abandonne: "Abandonnés" }, list = S.books.filter(b => b.status === libFilter);
-  return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><button class="btn sm" data-act="add-book">${ICONS.plus}Ajouter</button></div>
+  return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><div class="right"><button class="btn sm" data-act="add-book">${ICONS.plus}Ajouter</button>${GEAR}</div></div>
   <div class="chips">${Object.entries(lists).map(([k, v]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${k === libFilter}">${v} · ${S.books.filter(b => b.status === k).length}</button>`).join("")}</div>
   ${list.length ? `<div class="grid">${list.map(covCard).join("")}</div>` : `<p class="empty">${libFilter === "en_cours" ? "Rien en cours. Ajoute un livre pour commencer à gagner des minutes." : "Rien ici pour l'instant."}</p>`}</section>`;
 }
 function viewGoals() {
   const st = streakInfo(), lv = levelInfo(), quests = questsFor(mondayOf(todayKey())), bd = badges(), days = readingDays();
   const start = addDays(mondayOf(todayKey()), -21), cells = Array.from({ length: 28 }, (_, i) => addDays(start, i));
-  return `<section class="view"><div class="topbar"><h1>Objectifs<span class="sub">Niveau ${lv.n} · ${esc(lv.name)}</span></h1></div>
-  <div class="card"><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
+  return `<section class="view"><div class="topbar"><h1>Objectifs<span class="sub">Niveau ${lv.n} · ${esc(lv.name)}</span></h1>${GEAR}</div>
+  <div class="section" style="margin-top:4px"><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin plum" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div></div>
   <div class="card"><div class="lead"><h2>Série</h2><span class="tag ${st.cur ? "warn" : ""}">${ICONS.flame}${st.cur} j.</span></div>
     <p class="small muted">${st.today ? "Lecture du jour faite : la série tient." : st.cur ? "Pas encore lu aujourd'hui : la série tombe à minuit." : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.</p>
     <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}">${+k.slice(8)}</div>`).join("")}</div></div>
   <div class="card"><div class="lead"><h2>Quêtes de la semaine</h2><span class="small muted">${quests.filter(q => q.done).length} / ${quests.length}</span></div>${quests.map(questRow).join("")}</div>
-  <div class="card"><div class="lead"><h2>Succès</h2><span class="small muted">${bd.filter(b => b.at).length} / ${bd.length}</span></div>
+  <div class="section"><div class="lead"><h2>Succès</h2><span class="small muted">${bd.filter(b => b.at).length} / ${bd.length}</span></div>
     <div class="badges">${bd.sort((a, b) => (b.at ? 1 : 0) - (a.at ? 1 : 0)).map(b => `<div class="bdg ${b.at ? "" : "locked"}" role="img" aria-label="${esc(b.name)}, ${b.at ? "obtenu le " + fmtDate(b.at) : "à débloquer : " + esc(b.desc)}"><div class="ic ${b.at ? "tint-" + b.tint : ""}">${ICONS[b.icon]}</div><b>${esc(b.name)}</b><small>${b.at ? fmtDate(b.at) : esc(b.desc)}</small></div>`).join("")}</div></div>
   </section>`;
 }
@@ -752,29 +761,38 @@ function barChart(data, key, unit) {
 function viewMe() {
   const d14 = byDay(14), d7 = d14.slice(7), sum = (a, k) => a.reduce((x, y) => x + y[k], 0), p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0), over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
   const perApp = {}; S.sessions.forEach(s => { const o = perApp[s.app] ??= { n: 0, m: 0, o: 0 }; o.n++; o.m += s.minutes_granted; o.o += s.overtime_min || 0; });
-  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a));
-  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">${DEMO ? "démonstration" : "tes chiffres et tes réglages"}</span></h1></div>
+  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a)), lv = levelInfo(), st = streakInfo();
+  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">Niveau ${lv.n} · ${esc(lv.name)} · record ${st.best} j.</span></h1>${GEAR}</div>
   <div class="figures"><div><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
   <div class="card"><h2>Pages lues par jour</h2>${barChart(d14, "pages", "Pages")}</div>
   <div class="card"><h2>Minutes d'écran par jour</h2>${barChart(d14, "minutes", "Minutes")}</div>
-  <div class="card"><h2>Par appli</h2>${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépass.</th></tr>${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="quiet">Aucune session pour l'instant.</p>`}</div>
+  <div class="section"><h2>Par appli</h2>${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépass.</th></tr>${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="quiet">Aucune session pour l'instant.</p>`}</div>
   <div class="figures"><div><b class="num">${totalP}</b><span>pages résumées</span></div><div><b class="num">${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div><b class="num">${over}</b><span>min de dépassement</span></div></div>
   <div class="card" id="audit"><div class="lead"><h2>Contrôle de la semaine du ${fmtDate(wk)}</h2>${todo.length ? "" : `<span class="tag ok">${ICONS.check}fait</span>`}</div>
     ${todo.length ? `<p class="small muted">Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière : relève le temps de chaque appli. Un écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
     ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="btn sm ghost" style="flex:0 0 100px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}<div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p class="small muted">Toutes les applis sont contrôlées pour cette semaine.</p>`}
     ${S.audits.length ? `<details style="margin-top:10px"><summary class="small muted">Historique</summary><table style="margin-top:8px"><tr><th>Semaine</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></details>` : ""}</div>
-  <div class="card"><h2>Réglages</h2>
-    <div class="setrow"><div><b>Objectif du jour</b><span>pages à lire et résumer</span></div><input id="goal" type="number" inputmode="numeric" min="1" max="200" value="${goalPages()}"></div>
-    <div class="setrow"><div><b>Max par session</b><span>minutes d'affilée sur une appli</span></div><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
-    <div class="setrow"><div><b>Max par jour</b><span>minutes d'écran accordées</span></div><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div>
-    <label for="apps">Applis bloquées, une par ligne (nom exact des automatisations)</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea>
-    <button class="btn wide" style="margin-top:12px" data-act="save-config">Enregistrer</button><div class="okmsg" id="cfg-ok"></div><div class="err" id="cfg-err"></div></div>
-  <div class="card"><h2>Raccourci iPhone</h2><p class="small muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
-    <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
-    <button class="btn sm ghost" style="margin-top:12px" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
-  ${DEMO ? "" : `<button class="btn ghost wide" data-act="signout">Se déconnecter</button>`}
   </section>`;
 }
+const HP_MOODS = [["", "Tranquille", "au repos"], ["crowned", "Fier", "série de 7 jours ou plus"], ["mood-great crowned", "Ravi", "objectif du jour atteint"], ["happy", "Content", "lecture enregistrée, ou chatouilles"], ["mood-down", "Boudeur", "aucun livre en cours"], ["mood-angry", "Fâché", "après 20 h sans lecture, série en danger"], ["mood-cry", "En larmes", "série perdue"], ["mood-worried", "Inquiet", "dette d'écran"], ["sleepy", "Endormi", "après 23 h"]];
+function showSettings() {
+  const c = S.config;
+  settingsEl.innerHTML = `<div class="inner"><button class="back" data-act="close-settings"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button><div class="topbar"><h1>Réglages</h1></div>
+    <div class="list"><h2 style="font-size:15px;margin:12px 0 2px">Lecture et écran</h2>
+      <div class="setrow"><div><b>Objectif du jour</b><span>pages à lire et résumer</span></div><input id="goal" type="number" inputmode="numeric" min="1" max="200" value="${goalPages()}"></div>
+      <div class="setrow"><div><b>Max par session</b><span>minutes d'affilée sur une appli</span></div><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
+      <div class="setrow"><div><b>Max par jour</b><span>minutes d'écran accordées</span></div><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div>
+      <label for="apps">Applis bloquées, une par ligne (nom exact des automatisations)</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea>
+      <button class="btn wide" style="margin-top:12px" data-act="save-config">Enregistrer</button><div class="err" id="cfg-err"></div></div>
+    <div class="list"><h2 style="font-size:15px;margin:12px 0 6px">Raccourci iPhone</h2><p class="small muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
+      <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
+      <button class="btn sm ghost" style="margin-top:12px" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
+    <div class="section"><h2>Les humeurs de l'hippo</h2><div class="hp-gallery">${HP_MOODS.map(([cls, name, when]) => `<figure><div class="hp-unit ${cls}">${hippoSVG()}</div><figcaption><b>${name}</b>${when}</figcaption></figure>`).join("")}</div></div>
+    ${DEMO ? "" : `<button class="btn ghost wide" style="margin-top:14px" data-act="signout">Se déconnecter</button>`}
+    <p class="facts">Pages contre minutes · même monde que le Cockpit D2.</p></div>`;
+  settingsEl.hidden = false; settingsEl.scrollTop = 0;
+}
+function closeSettings() { settingsEl.hidden = true; settingsEl.innerHTML = ""; }
 function updateCountdowns() { document.querySelectorAll("[data-exp]").forEach(el => { const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000)); el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "terminé"; }); }
 function viewLogin(msg = "") {
   tabs.hidden = true; app.innerHTML = `<div class="login"><div class="hp-unit" style="margin-bottom:14px">${hippoSVG()}</div><h1>Pages contre minutes</h1><p class="muted">Connecte-toi avec le compte créé dans Supabase.</p>
@@ -866,6 +884,8 @@ document.addEventListener("click", async e => {
     if (act === "tab") { tab = el.dataset.tab; render(); }
     else if (act === "close-book") closeBook();
     else if (act === "poke") hippoPoke();
+    else if (act === "settings") showSettings();
+    else if (act === "close-settings") closeSettings();
     else if (act === "log") dlgLog(el.dataset.id || openBook);
     else if (act === "add-book") openStudy();
     else if (act === "filter") { libFilter = el.dataset.v; render(); }
@@ -883,12 +903,12 @@ document.addEventListener("click", async e => {
       await reload(); toast(r.undeclared ? `${r.undeclared} min non déclarées : dette ajoutée.` : `Rien à signaler pour ${el.dataset.app}.`); }
     else if (act === "save-config") { const apps = $("#apps").value.split("\n").map(s => s.trim()).filter(Boolean); if (!apps.length) return void ($("#cfg-err").textContent = "Garde au moins une appli.");
       setPref("goal", Math.max(1, Math.min(200, +$("#goal").value || 15)));
-      await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) }); await reload(); toast("Réglages enregistrés"); }
+      await api.updateConfig({ apps, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) }); await reload(); closeSettings(); toast("Réglages enregistrés"); }
     else if (act === "copy-secret") { await navigator.clipboard.writeText(S.config.secret); $("#copy-ok").textContent = "Copié."; }
-    else if (act === "signout") { await api.signOut(); viewLogin(); }
+    else if (act === "signout") { await api.signOut(); closeSettings(); viewLogin(); }
   } catch (err) { toast(err.message || String(err), 4000); }
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape" && !dlg.open && !bookview.hidden) closeBook(); });
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!settingsEl.hidden) closeSettings(); else if (!bookview.hidden) closeBook(); });
 
 async function reload() { S = await api.load(); const st = streakInfo(); if (st.cur > 0) setPref("lastStreak", st.cur); render(); if (openBook) showBook(); }
 async function start() {
