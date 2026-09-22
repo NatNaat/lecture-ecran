@@ -186,8 +186,10 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 button.hp-unit { display: block; cursor: pointer; }
 .hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
 .hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
-.hp-home { display: grid; grid-template-columns: 1fr 84px; gap: 12px; align-items: end; margin-bottom: 14px; }
-.hp-home .hp-unit { width: 64px; }
+.hp-home { display: grid; gap: 10px; margin-bottom: 14px; }
+.hp-home .hp-bubble { justify-self: start; max-width: 85%; } .hp-home .hp-bubble::after { right: auto; left: 22px; bottom: -8px; transform: rotate(135deg); }
+.hp-home .stage { width: 100%; height: clamp(240px, 42vh, 380px); border-radius: var(--r); border: 2px solid var(--line); padding-top: 0; }
+.hp-home .hp-unit { width: min(250px, 66vw); }
 .px { width: 16px; height: 18px; shape-rendering: crispEdges; flex: none; } .btn .px { width: 14px; height: 16px; }
 .plumes { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
 /* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
