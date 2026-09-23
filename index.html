@@ -38,6 +38,8 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; background: var(--bg); }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); min-height: 100dvh; overflow-x: hidden; }
+/* pas de barre de défilement visible : la page, les panneaux plein écran et les feuilles défilent sans ascenseur */
+html, body, #settings, #wardrobe, #bookview, dialog .sheet { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar, #settings::-webkit-scrollbar, #wardrobe::-webkit-scrollbar, #bookview::-webkit-scrollbar, dialog .sheet::-webkit-scrollbar { display: none; }
 ::selection { background: var(--accent-soft); }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3, .display { font-family: var(--display); letter-spacing: -.01em; line-height: 1.1; text-wrap: balance; }
