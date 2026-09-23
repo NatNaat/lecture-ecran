@@ -18,7 +18,7 @@
 <style>
 /* Même monde que le Cockpit D2 : lavande, Bricolage Grotesque + IBM Plex Sans, et le même hippo. */
 :root {
-  --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
+  color-scheme: light; --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
   --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
   --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2F7A86; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
   --hp: #8C88A8; --hp2: #B4B0CC; --hp3: #6A6686; --hpk: #1A1D1B; --hpp: #E79AA8; --hpg: #E3B341; --hpg2: #B5862A;
@@ -27,11 +27,11 @@
   --r: 16px; --tab: 64px; --ease: cubic-bezier(.2, .8, .2, 1);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  color-scheme: dark; --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
   --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
 :root[data-theme="dark"] {
-  --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  color-scheme: dark; --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
   --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
 
@@ -56,7 +56,7 @@ main { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top) 
 .topbar h1 { font-size: 26px; font-weight: 800; }
 .topbar .right, .hero .right { display: flex; align-items: center; gap: 8px; }
 .gear { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink-2); box-shadow: 0 2px 0 var(--line); } .gear svg.i { width: 20px; height: 20px; }
-.section { margin: 22px 0 12px; } .section h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; } .section .lead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; } .section .lead h2 { margin: 0; } .section .lead button.link { font: 600 13px var(--body); color: var(--accent); min-height: 0; }
+.section { margin: 22px 0 12px; } .section h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; } .section .lead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; } .section .lead h2 { margin: 0; } .section .lead button.link, .card .lead button.link { font: 600 13px var(--body); color: var(--accent); min-height: 36px; margin: -10px -4px; padding: 0 4px; }
 .quests .quest { border-top: 1px solid var(--line); } .quests .quest:first-child { border-top: 0; padding-top: 0; }
 .list { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 4px 16px; margin-bottom: 14px; } .list .setrow { padding: 12px 0; } .list label { margin-top: 12px; } .list > :last-child { margin-bottom: 12px; }
 .hp-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .hp-gallery figure { margin: 0; padding: 12px 6px 10px; border: 2px solid var(--line); border-radius: 14px; display: grid; justify-items: center; gap: 8px; background: var(--surface); } .hp-gallery .hp-unit { width: 52px; } .hp-gallery figcaption { font: 500 11.5px/1.3 var(--body); color: var(--muted); text-align: center; } .hp-gallery figcaption b { display: block; color: var(--ink); font-weight: 600; }
@@ -83,7 +83,7 @@ section.view { animation: fadein .25s ease both; }
 .btn.ok { background: var(--ok); color: #fff; }
 .btn.wide { width: 100%; } .btn.sm { min-height: 40px; padding: 0 14px; font-size: 14px; border-radius: 11px; }
 .btn:disabled { opacity: .5; transform: none; }
-.link { font: 600 14px var(--body); color: var(--accent); min-height: 40px; }
+.link { font: 600 14px var(--body); color: var(--accent); min-height: 40px; } .link.inl { display: inline-block; min-height: 0; font-size: 13px; padding: 8px 0; margin: -8px 0; }
 .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin: 0 -16px 12px; padding-left: 16px; padding-right: 16px; } .chips::-webkit-scrollbar { display: none; }
 .chip { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: 600 13.5px var(--body); color: var(--ink-2); }
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
@@ -105,8 +105,8 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 /* ───── Accueil ───── */
 .hero { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; margin-bottom: 14px; }
 .hero h1 { font-size: 24px; font-weight: 800; }
-.hero .greet { font: 500 14px var(--body); color: var(--muted); margin-bottom: 4px; }
-.streakpill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hero .greet { font: 500 14px var(--body); color: var(--muted); margin-bottom: 4px; white-space: nowrap; }
+.streakpill { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px 0 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .streakpill svg.i { width: 18px; height: 18px; } .streakpill.risk { background: var(--bad-soft); color: var(--bad); }
 .reserve { display: flex; align-items: center; gap: 12px; padding: 4px 2px 0; }
 .reserve .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--teal-soft); color: var(--teal); flex: none; } .reserve.debt .ic { background: var(--bad-soft); color: var(--bad); }
@@ -150,7 +150,7 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 
 /* ───── Profil ───── */
 .figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
-.figures div { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; } .figures div:nth-child(1) b { color: var(--accent); } .figures div:nth-child(2) b { color: var(--teal); } .figures div:nth-child(3) b { color: var(--plum); }
+.figures div { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; } .figures .accent b { color: var(--accent); } .figures .teal b { color: var(--teal); } .figures .warn b { color: var(--warn); } .figures .ok b { color: var(--ok); } .figures .bad b { color: var(--bad); } .figures .plum b { color: var(--plum); }
 .figures b { display: block; font: 800 22px/1.1 var(--display); font-variant-numeric: tabular-nums; } .figures span { display: block; font: 500 12px/1.3 var(--body); color: var(--muted); margin-top: 3px; }
 .chart { width: 100%; height: auto; display: block; } .chart text { font: 11px var(--body); fill: var(--muted); } .chart .v { fill: var(--ink); font-weight: 600; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: left; } td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } th { font-size: 12px; color: var(--muted); font-weight: 600; }
@@ -195,7 +195,7 @@ button.hp-unit { display: block; cursor: pointer; }
 .hp-home .hp-unit { width: min(210px, 56vw); margin: 6px auto 0; }
 .sheet { position: relative; z-index: 1; margin: -64px -16px 0; padding: 48px 16px 4px; background: var(--bg); border-radius: 100% 100% 0 0 / 64px 64px 0 0; min-height: 50vh; box-shadow: 0 -8px 20px rgba(29, 27, 38, .07); }
 .px { width: 16px; height: 18px; shape-rendering: crispEdges; flex: none; } .btn .px { width: 14px; height: 16px; }
-.plumes { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
+.plumes { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px 0 8px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; } .plumes svg.i { width: 18px; height: 18px; }
 /* la scène : un petit décor derrière l'hippo, dessiné en dégradés à gros pixels */
 .stage { display: grid; place-items: end center; width: 84px; height: 84px; border-radius: 16px; background: var(--surface-2); padding: 4px 0 0; overflow: hidden; }
 .stage-etagere { background: repeating-linear-gradient(180deg, #8C6A48 0 4px, #5E4630 4px 6px, transparent 6px 22px), linear-gradient(#C9A97A, #C9A97A); background-color: #C9A97A; }
@@ -237,14 +237,14 @@ button.hp-unit { display: block; cursor: pointer; }
 .entry { position: relative; margin: 0 0 12px; padding: 14px 14px 12px 50px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); transition: background .5s; } .entry.flash { background: var(--accent-soft); }
 .entry .no { position: absolute; left: 12px; top: 14px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 12px var(--display); color: var(--accent-ink); background: var(--accent); font-variant-numeric: tabular-nums; }
 .entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .entry .rg { font: 700 14.5px var(--body); font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 500 12px var(--body); color: var(--muted); } .entry .fol time { margin-left: auto; font: 500 12px var(--body); color: var(--muted); text-align: right; }
-.target { display: flex; align-items: center; gap: 10px; margin: 2px 0 12px; } .target label { margin: 0; white-space: nowrap; } .target input { flex: 1; min-width: 0; width: auto; } .target .bad { color: var(--bad); }
+.setrow.target { border-top: 0; padding: 2px 0 10px; } .setrow.target input { width: 158px; text-align: left; padding: 8px 10px; } .setrow.target span.bad { color: var(--bad); }
 .cov .pace { display: block; font: 600 11px/1.3 var(--body); color: var(--muted); margin-top: 3px; } .cov .pace.late { color: var(--bad); }
 .remember .btn, .bilan .figures { margin-top: 10px; }
 .entry blockquote, .rtxt blockquote, .quotes blockquote { margin: 8px 0 0; padding: 6px 12px; background: var(--plum-soft); color: var(--plum); border-radius: 10px; font-style: italic; quotes: "« " " »"; } .entry blockquote::before, .rtxt blockquote::before, .quotes blockquote::before { content: open-quote; } .entry blockquote::after, .rtxt blockquote::after, .quotes blockquote::after { content: close-quote; }
 .rtxt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; margin: 12px 0 16px; } .quotes { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 8px; } .quotes blockquote { margin: 0; } .quotes small { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; } textarea.short { min-height: 56px; }
 .entry .txt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; hyphens: auto; }
 .iconbtn { display: grid; place-items: center; width: 36px; height: 36px; margin: -8px -8px -8px 0; border-radius: 18px; color: var(--muted); } .iconbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.inkrow { display: flex; gap: 10px; margin: 12px 0 6px; flex-wrap: wrap; } .inkrow > * { flex: 1 1 46%; }
+.inkrow { display: flex; gap: 10px; margin: 12px 0 6px; flex-wrap: wrap; } .inkrow > * { flex: 1 1 46%; } .inkrow.tidy { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); } .inkrow.tidy .btn { padding: 0 8px; }
 .quiet { font: 500 14px/1.5 var(--body); color: var(--muted); padding: 6px 0; }
 .facts { font: 500 12.5px/1.5 var(--body); color: var(--muted); margin-top: 14px; font-variant-numeric: tabular-nums; }
 
@@ -807,7 +807,7 @@ let wardCat = "hat";
 function showWardrobe() {
   const bal = plumes(), eq = player().equipped, list = ITEMS.filter(i => i.cat === wardCat);
   wardrobeEl.innerHTML = `<div class="inner"><button class="back" data-act="close-wardrobe"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
-    <div class="topbar"><h1>Le placard<span class="sub">ce que porte ton hippo</span></h1><span class="plumes num">${PLUME}${bal}</span></div>
+    <div class="topbar"><h1>Le placard</h1><span class="plumes num">${PLUME}${bal}</span></div>
     <div class="stage ${sceneClass()}"><div class="hp-unit big ${hippoMood().cls}" style="${skinStyle()}">${hippoSVG()}</div></div>
     <div class="chips">${Object.entries(CATS).map(([k, v]) => `<button class="chip" data-act="ward-cat" data-v="${k}" aria-pressed="${k === wardCat}">${v}</button>`).join("")}</div>
     ${wardCat === "util" ? `<div class="card"><div class="lead"><h2>Gel de série</h2><span class="tag ${freezesLeft() ? "teal" : ""}">${freezesLeft()} en réserve</span></div><p class="small muted">Un jour sans lecture ne casse pas la série. Il s'applique tout seul au premier jour manqué, au plus un par semaine.</p>
@@ -850,7 +850,7 @@ function bilanCard() {   // visible le dimanche seulement (en démo : ?bilan)
   else { say.push(w.pages > w.prev ? `Mieux que la semaine dernière, +${w.pages - w.prev} pages.` : w.prev ? `${w.prev - w.pages} pages de moins que la semaine dernière.` : "Une semaine de plus dans les livres.");
     if (w.best) say.push(`Meilleur jour : ${w.best.day}, ${w.best.pages} pages.`); if (w.finished) say.push(`${plural(w.finished, "livre")} fini${w.finished > 1 ? "s" : ""}.`); }
   return `<div class="card bilan"><div class="lead"><h2>Bilan de la semaine</h2><span class="small muted">dimanche</span></div>
-    <div class="figures"><div><b class="num">${w.pages}</b><span>pages</span></div><div><b class="num">${w.minutes}</b><span>min gagnées</span></div><div><b class="num">${w.days} / 7</b><span>jours lus</span></div></div><p class="small" style="margin-top:10px">${say.join(" ")}</p></div>`;
+    <div class="figures"><div class="accent"><b class="num">${w.pages}</b><span>pages</span></div><div class="teal"><b class="num">${w.minutes}</b><span>min gagnées</span></div><div class="warn"><b class="num">${w.days} / 7</b><span>jours lus</span></div></div><p class="small" style="margin-top:10px">${say.join(" ")}</p></div>`;
 }
 // Répétition espacée : un résumé vieux de 7 puis de 30 jours revient sur l'accueil pour être relu.
 const REVIEW_STAGES = [30, 7];
@@ -862,7 +862,7 @@ function reviewDue() {
 function rememberCard() {
   const d = reviewDue(); if (!d) return ""; const b = S.books.find(x => x.id === d.r.book_id);
   return `<div class="card remember"><div class="lead"><h2>Tu te souviens ?</h2><span class="small muted">il y a ${d.age} jours</span></div><p class="small"><b>${esc(b ? b.title : "")}</b> · p. ${d.r.page_start} → ${d.r.page_end}</p>
-    <p class="small muted">Relis ton résumé avant qu'il s'efface : c'est là que la lecture devient mémoire.</p><button class="btn sm" data-act="review" data-id="${esc(d.r.id)}">Relire · +5 ${PLUME}</button></div>`;
+    <button class="btn sm" data-act="review" data-id="${esc(d.r.id)}">Relire · +5 ${PLUME}</button></div>`;
 }
 function dlgReview(id) {
   const r = S.readings.find(x => x.id === id); if (!r) return; const b = S.books.find(x => x.id === r.book_id), d = reviewDue(), stage = d && d.r.id === id ? d.stage : 0;
@@ -895,7 +895,7 @@ function render() {
   if (tab === "home") { tick = setInterval(updateCountdowns, 1000); updateCountdowns(); }
   window.scrollTo(0, 0);
 }
-const coverBox = (b, cls = "img") => `<span class="${cls}" style="${cloth(b)}">${b.cover_url ? coverImg(b) : ""}<span class="ph" style="background:var(--bg)" ${b.cover_url ? "hidden" : ""}>${esc(b.title)}</span></span>`;
+const coverBox = (b, cls = "img") => `<span class="${cls}" style="${cloth(b)}"><span class="ph" style="background:var(--bg)">${esc(b.title)}</span>${b.cover_url ? coverImg(b) : ""}</span>`;
 function covCard(b) {
   const pct = b.total_pages ? Math.min(1, b.current_page / b.total_pages) : null, st = { en_cours: "", fini: "Fini", abandonne: "Abandonné" }[b.status];
   return `<button class="cov" data-book="${esc(b.id)}" aria-label="${esc(b.title)}, ${esc(b.author || "auteur inconnu")}${pct !== null ? `, ${Math.round(pct * 100)} % lu` : ""}">${coverBox(b)}<span class="t">${esc(b.title)}</span>
@@ -906,14 +906,14 @@ function viewHome() {
   const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
-  <div class="hp-home ${sceneClass()}"><div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
+  <div class="hp-home ${sceneClass()}"><div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
     <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
     <div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
     <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
   ${bilanCard()}${rememberCard()}
-  <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link" style="min-height:0;font-size:13px" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
+  <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link inl" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
     ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
   <div class="section"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
     ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours. Ajoute celui que tu lis : c'est lui que le raccourci te proposera.</p>`}</div>
@@ -923,7 +923,7 @@ function viewHome() {
 function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic tint-${q.done ? "ok" : q.tint}">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : q.tint === "accent" ? "" : q.tint}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
 function viewBooks() {
   const lists = { en_cours: "En cours", fini: "Finis", abandonne: "Abandonnés" }, list = S.books.filter(b => b.status === libFilter);
-  return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><div class="right"><button class="btn sm" data-act="add-book">${ICONS.plus}Ajouter</button>${GEAR}</div></div>
+  return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><div class="right"><button class="gear" data-act="add-book" aria-label="Ajouter un livre">${ICONS.plus}</button>${GEAR}</div></div>
   <div class="chips">${Object.entries(lists).map(([k, v]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${k === libFilter}">${v} · ${S.books.filter(b => b.status === k).length}</button>`).join("")}</div>
   ${list.length ? `<div class="grid">${list.map(covCard).join("")}</div>` : `<p class="empty">${libFilter === "en_cours" ? "Rien en cours. Ajoute un livre pour commencer à gagner des minutes." : "Rien ici pour l'instant."}</p>`}</section>`;
 }
@@ -950,12 +950,12 @@ function viewMe() {
   const d14 = byDay(14), d7 = d14.slice(7), sum = (a, k) => a.reduce((x, y) => x + y[k], 0), p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0), over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
   const perApp = {}; S.sessions.forEach(s => { const o = perApp[s.app] ??= { n: 0, m: 0, o: 0 }; o.n++; o.m += s.minutes_granted; o.o += s.overtime_min || 0; });
   const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a)), lv = levelInfo(), st = streakInfo();
-  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">Niveau ${lv.n} · ${esc(lv.name)} · record ${st.best} j.</span></h1>${GEAR}</div>
-  <div class="figures"><div><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
+  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">${plural(S.books.length, "livre")}${S.readings.length ? ` · lecteur depuis le ${fmtDate(earliest(S.readings))}` : ""}</span></h1>${GEAR}</div>
+  <div class="figures"><div class="accent"><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div class="teal"><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
   <div class="card"><h2>Pages lues par jour</h2>${barChart(d14, "pages", "Pages")}</div>
   <div class="card"><h2>Minutes d'écran par jour</h2>${barChart(d14, "minutes", "Minutes")}</div>
   <div class="section"><h2>Par appli</h2>${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépass.</th></tr>${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="quiet">Aucune session pour l'instant.</p>`}</div>
-  <div class="figures"><div><b class="num">${totalP}</b><span>pages résumées</span></div><div><b class="num">${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div><b class="num">${over}</b><span>min de dépassement</span></div></div>
+  <div class="figures"><div class="accent"><b class="num">${totalP}</b><span>pages résumées</span></div><div class="ok"><b class="num">${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div class="${over ? "bad" : ""}"><b class="num">${over}</b><span>min de dépassement</span></div></div>
   <div class="card" id="audit"><div class="lead"><h2>Contrôle de la semaine du ${fmtDate(wk)}</h2>${todo.length ? "" : `<span class="tag ok">${ICONS.check}fait</span>`}</div>
     ${todo.length ? `<p class="small muted">Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière : relève le temps de chaque appli. Un écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
     ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="btn sm ghost" style="flex:0 0 100px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}<div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p class="small muted">Toutes les applis sont contrôlées pour cette semaine.</p>`}
@@ -970,14 +970,14 @@ function showSettings() {
       <div class="setrow"><div><b>Objectif du jour</b><span>pages à lire et résumer</span></div><input id="goal" type="number" inputmode="numeric" min="1" max="200" value="${goalPages()}"></div>
       <div class="setrow"><div><b>Max par session</b><span>minutes d'affilée sur une appli</span></div><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
       <div class="setrow"><div><b>Max par jour</b><span>minutes d'écran accordées</span></div><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div>
-      <label for="apps">Applis bloquées, une par ligne (nom exact des automatisations)</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea>
+      <label for="apps">Applis bloquées</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea><p class="note" style="margin-top:6px">Une par ligne, avec le nom exact donné aux automatisations.</p>
       <button class="btn wide" style="margin-top:12px" data-act="save-config">Enregistrer</button><div class="err" id="cfg-err"></div></div>
     <div class="list"><h2 style="font-size:15px;margin:12px 0 6px">Raccourci iPhone</h2><p class="small muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
       <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
       <button class="btn sm ghost" style="margin-top:12px" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
     <div class="section"><h2>Les humeurs de l'hippo</h2><div class="hp-gallery">${HP_MOODS.map(([cls, name, when]) => `<figure><div class="hp-unit ${cls}">${hippoSVG({ only: {} })}</div><figcaption><b>${name}</b>${when}</figcaption></figure>`).join("")}</div></div>
     ${DEMO ? "" : `<button class="btn ghost wide" style="margin-top:14px" data-act="signout">Se déconnecter</button>`}
-    <p class="facts">Pages contre minutes · même monde que le Cockpit D2.</p></div>`;
+    </div>`;
   settingsEl.hidden = false; settingsEl.scrollTop = 0;
 }
 function closeSettings() { settingsEl.hidden = true; settingsEl.innerHTML = ""; }
@@ -999,12 +999,12 @@ function showBook() {
     <header class="bookhero">${coverBox(b, "bigcover")}<div><span class="tag ${b.status === "fini" ? "ok" : ""}">${status}</span><h1 style="margin-top:8px">${esc(b.title)}</h1><p class="by">${esc(b.author || "Auteur inconnu")}</p><p class="where">p. <b class="num">${b.current_page}</b>${b.total_pages ? ` / ${b.total_pages}` : ""}${pct !== null ? ` · ${pct} %` : ""}</p></div></header>
     ${rs.length || b.current_page ? `<div class="pagemap" role="img" aria-label="Pages résumées : ${rs.map(r => `${r.page_start} à ${r.page_end}`).join(", ") || "aucune"}">${pre > 0 ? `<i class="pre" style="left:0;width:${100 * pre / T}%"></i>` : ""}${rs.map((r, i) => `<button class="seg" data-act="goto-entry" data-id="${esc(r.id)}" style="left:${100 * r.page_start / T}%;width:${Math.max(.8, 100 * r.pages / T)}%" aria-label="Séance ${i + 1}, pages ${r.page_start} à ${r.page_end}"></button>`).join("")}</div>
       <div class="maplegend"><span>0</span>${pre > 0 ? `<span class="lg"><i class="pre"></i>lu avant l'appli</span>` : ""}<span class="lg"><i class="seg"></i>résumé</span><span>${b.total_pages || b.current_page}</span></div>` : ""}
-    <dl class="stats"><div><dt>Séances</dt><dd class="num">${rs.length}</dd></div><div><dt>Pages résumées</dt><dd class="num">${summed}</dd></div><div><dt>Par séance</dt><dd class="num">${avg || "—"}</dd></div><div><dt>${left !== null && b.status === "en_cours" ? "Pour finir" : "Jours de lecture"}</dt><dd class="num">${left !== null && b.status === "en_cours" ? (avg ? `≈ ${Math.ceil(left / avg)} séance${Math.ceil(left / avg) > 1 ? "s" : ""}` : `${left} p.`) : days}</dd></div></dl>
-    ${b.status === "en_cours" && b.total_pages ? `<div class="target"><label for="tgt">Finir avant le</label><input id="tgt" type="date" value="${b.target_date || ""}" min="${todayKey()}"><span class="small ${pace(b)?.late ? "bad" : "muted"}">${pace(b) ? (pace(b).late ? "date dépassée" : `≈ ${pace(b).txt}`) : ""}</span></div>` : ""}<div class="inkrow">${b.status === "en_cours" ? `<button class="btn" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
+    <dl class="stats"><div><dt>Séances</dt><dd class="num">${rs.length}</dd></div><div><dt>Résumées</dt><dd class="num">${summed} p.</dd></div><div><dt>Par séance</dt><dd class="num">${avg ? avg + " p." : "—"}</dd></div><div><dt>${left !== null && b.status === "en_cours" ? "Reste" : "Jours lus"}</dt><dd class="num">${left !== null && b.status === "en_cours" ? `${left} p.` : days}</dd></div></dl>
+    ${b.status === "en_cours" && b.total_pages ? `<div class="setrow target"><div><b><label for="tgt" style="margin:0;font:inherit;color:inherit">Finir avant le</label></b><span class="${pace(b)?.late ? "bad" : ""}">${pace(b) ? (pace(b).late ? "date dépassée" : `≈ ${pace(b).txt}`) : "aucune date fixée"}</span></div><input id="tgt" type="date" value="${b.target_date || ""}" min="${todayKey()}"></div>` : ""}<div class="inkrow">${b.status === "en_cours" ? `<button class="btn" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
     ${quotesBlock(rs)}<div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
     ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${fmtSummary(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé. Le premier s'écrira ici après ta prochaine lecture.</p>`}
     <h2 style="margin-top:26px;font-size:18px">Ranger</h2>
-    <div class="inkrow"><button class="btn ghost sm" data-act="cover">Couverture</button>${b.status === "en_cours" ? `<button class="btn ghost sm" data-act="status" data-v="fini">Marquer fini</button><button class="btn ghost sm" data-act="status" data-v="abandonne">Abandonner</button>` : ""}${rs.length ? "" : `<button class="btn ghost sm" data-act="del-book">Retirer</button>`}</div>
+    <div class="inkrow tidy"><button class="btn ghost sm" data-act="cover">Couverture</button>${b.status === "en_cours" ? `<button class="btn ghost sm" data-act="status" data-v="fini">Marquer fini</button><button class="btn ghost sm" data-act="status" data-v="abandonne">Abandonner</button>` : ""}${rs.length ? "" : `<button class="btn ghost sm" data-act="del-book">Retirer</button>`}</div>
     <p class="facts">Commencé le ${fmtDate(b.started_at)}${b.finished_at ? ` · fini le ${fmtDate(b.finished_at)}` : ""}</p></div>`;
   const tgt = $("#tgt", bookview); if (tgt) tgt.onchange = async () => { await api.updateBook(b.id, { target_date: tgt.value || null }); await reload(); };
   bookview.hidden = false; bookview.scrollTop = 0;
@@ -1049,7 +1049,7 @@ function openStudy() {
     <div class="searchwrap"><label for="aq" class="sr-only">Chercher un titre, un auteur ou un ISBN</label>
       <div class="searchbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="aq" type="search" enterkeyhint="search" placeholder="Titre, auteur ou ISBN"><button type="button" id="aqx" aria-label="Effacer la recherche" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
       <div id="sugg" aria-live="polite"></div></div>
-    <p class="note" id="ahint">Les suggestions arrivent pendant que tu tapes. Tu peux aussi <button type="button" class="textlink" id="amanual">remplir la fiche à la main</button>.</p>
+    <p class="note" id="ahint">Pas trouvé ? <button type="button" class="textlink" id="amanual">Remplir la fiche à la main</button>.</p>
     <div id="afields" hidden><div class="fiche"><span class="noc big" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0"><label for="at" style="margin-top:0">Titre</label><input id="at" required><label for="aa">Auteur</label><input id="aa"></div></div>
       <div class="row"><div><label for="ap">Pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div><div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
       <div id="aeds" class="edchips" aria-label="Autres éditions"></div><p class="note">Vérifie le nombre de pages sur ton exemplaire. Les pages déjà lues ne rapportent pas de minutes.</p></div>
