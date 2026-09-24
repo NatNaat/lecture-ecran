@@ -874,7 +874,7 @@ function showWardrobe() {
           : it.unlock ? `<small>${ICONS.lock}${esc(it.unlock)}</small>` : bal >= it.price ? `<button class="btn sm ok" data-act="buy" data-id="${it.id}">${PLUME}${it.price}</button>` : `<small class="poorlbl">${PLUME}${it.price} · manque ${it.price - bal}</small>`}</div>`; }).join("")}</div>`}</div>`;
   arrive(wardrobeEl); const ch = $(".chips", wardrobeEl); if (ch) ch.scrollLeft = chipsX;
 }
-function closeWardrobe() { leave(wardrobeEl, () => { wardrobeEl.hidden = true; wardrobeEl.innerHTML = ""; }); }
+function closeWardrobe() { if (wardrobeEl.hidden || wardrobeEl._leaving) return; render(); leave(wardrobeEl, () => { wardrobeEl.hidden = true; wardrobeEl.innerHTML = ""; }); }
 async function buyItem(id) {
   const bal = plumes(), it = id === "freeze" ? { name: "un gel de série", price: 100 } : item(id); if (!it || bal < it.price) return toast("Pas assez de plumes.");
   if (!confirm(`Acheter ${it.name} pour ${it.price} plumes ?`)) return;
