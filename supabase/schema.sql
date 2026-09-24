@@ -21,11 +21,14 @@ create table if not exists app_config (
   tz              text not null default 'Europe/Paris',
   app_urls        jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}',
   player          jsonb not null default '{}'::jsonb,         -- placard de l'hippo : achats, équipement, gels, cadeaux
-  goal_pages      int  not null default 15 check (goal_pages > 0) -- objectif du jour (le rappel du soir le lit ici)
+  goal_pages      int  not null default 15 check (goal_pages > 0), -- objectif du jour (le rappel du soir le lit ici)
+  prepa_factor    numeric not null default 1.5 check (prepa_factor >= 1)  -- minutes par page pour un livre « prépa »
 );
 alter table app_config add column if not exists player jsonb not null default '{}'::jsonb;
 alter table app_config add column if not exists goal_pages int not null default 15 check (goal_pages > 0);
 alter table books add column if not exists target_date date;
+alter table books add column if not exists kind text not null default 'plaisir' check (kind in ('prepa','plaisir'));
+alter table app_config add column if not exists prepa_factor numeric not null default 1.5 check (prepa_factor >= 1);
 alter table app_config add column if not exists app_urls jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}';
 insert into app_config (id) values (1) on conflict do nothing;
 
@@ -40,7 +43,8 @@ create table if not exists books (
   current_page    int  not null default 0 check (current_page >= 0),
   started_at      timestamptz not null default now(),
   finished_at     timestamptz,
-  target_date     date                                    -- « finir avant le », facultatif
+  target_date     date,                                   -- « finir avant le », facultatif
+  kind            text not null default 'plaisir' check (kind in ('prepa','plaisir'))   -- une page « prépa » rapporte prepa_factor minutes
 );
 
 create table if not exists readings (
@@ -126,7 +130,7 @@ revoke all on app_config, books, readings, sessions, ledger, audits from anon, a
 grant select on app_config, books, readings, sessions, ledger, audits to authenticated;
 grant insert, delete on books to authenticated;
 -- current_page n'est pas modifiable à la main : sinon on pourrait « relire » les mêmes pages.
-grant update (title, author, cover_url, total_pages, status, finished_at, target_date) on books to authenticated;
+grant update (title, author, cover_url, total_pages, status, finished_at, target_date, kind) on books to authenticated;
 grant update (apps, session_cap_min, daily_cap_min, player, goal_pages) on app_config to authenticated;
 
 -- ───────────────────────────── Outils internes ─────────────────────────────
@@ -186,7 +190,7 @@ end $$;
 -- « J'ai lu » : p_book est le libellé choisi dans la liste renvoyée par gate_status.
 create or replace function log_reading(p_secret text, p_book text, p_page_end int, p_summary text) returns json
 language plpgsql security definer set search_path = public, extensions as $$
-declare c app_config; b books; n int; need int; last_at timestamptz; wait_min int; rid uuid; txt text;
+declare c app_config; b books; n int; need int; credit int; last_at timestamptz; wait_min int; rid uuid; txt text;
 begin
   perform _check_secret(p_secret);
   select * into c from app_config where id = 1;
@@ -216,7 +220,8 @@ begin
   end if;
 
   txt := btrim(regexp_replace(coalesce(p_summary, ''), '\s+', ' ', 'g'));
-  need := least(c.summary_base + c.summary_per_page * n, c.summary_max_req);
+  -- Petite séance (5 pages ou moins) : une phrase suffit ; au-delà, la règle habituelle.
+  need := case when n <= 5 then 60 else least(c.summary_base + c.summary_per_page * n, c.summary_max_req) end;
   if char_length(txt) < need then
     return json_build_object('ok', false, 'status', 'refus', 'error',
       format('Résumé trop court : %s caractères, il en faut %s pour %s pages.', char_length(txt), need, n));
@@ -231,10 +236,11 @@ begin
                    status = case when total_pages is not null and p_page_end >= total_pages then 'fini' else status end,
                    finished_at = case when total_pages is not null and p_page_end >= total_pages then now() else finished_at end
     where id = b.id;
-  insert into ledger (delta, reason, ref_id) values (n, 'lecture', rid);
+  credit := case when b.kind = 'prepa' then ceil(n * c.prepa_factor)::int else n end;
+  insert into ledger (delta, reason, ref_id) values (credit, 'lecture', rid);
 
   return json_build_object('ok', true, 'status', 'ok',
-    'message', format('+%s min pour %s pages. ', n, n) || case when _balance() < 0 then format('Dette restante : %s min.', -_balance()) else format('Solde : %s min.', _balance()) end,
+    'message', format('+%s min pour %s pages. ', credit, n) || case when _balance() < 0 then format('Dette restante : %s min.', -_balance()) else format('Solde : %s min.', _balance()) end,
     'pages', n, 'balance_min', greatest(_balance(), 0), 'debt_min', greatest(-_balance(), 0),
     'max_minutes', greatest(least(_balance(), c.session_cap_min), 0));
 end $$;
@@ -347,18 +353,23 @@ end $$;
 -- Rappel du soir (raccourci « Rappel », automatisation à heure fixe) : un message tant que l'objectif du jour n'est pas atteint, sinon rien.
 create or replace function evening_status(p_secret text) returns json
 language plpgsql security definer set search_path = public as $$
-declare c app_config; today int; yday int; msg text;
+declare c app_config; today int; yday int; msg text; bk books; at_book text;
 begin
   perform _check_secret(p_secret);
   select * into c from app_config where id = 1;
   select coalesce(sum(pages), 0) into today from readings where created_at >= _today_start();
   select coalesce(sum(pages), 0) into yday from readings where created_at >= _today_start() - interval '1 day' and created_at < _today_start();
+  -- Livre proposé : le dernier lu parmi les livres en cours ; tant que rien n'est lu aujourd'hui, un livre plaisir d'abord (même règle que l'app).
+  select b.* into bk from books b left join lateral (select max(r.created_at) m from readings r where r.book_id = b.id) l on true
+    where b.status = 'en_cours'
+    order by case when today = 0 and b.kind = 'plaisir' then 0 else 1 end, coalesce(l.m, b.started_at) desc limit 1;
+  at_book := case when bk.id is null then '' else format(' %s, p. %s.', bk.title, bk.current_page) end;
   if today >= c.goal_pages then msg := null;
-  elsif today = 0 and yday > 0 then msg := format('Ta série est en jeu : %s pages à lire et résumer avant minuit.', c.goal_pages);
-  elsif today = 0 then msg := format('Pas encore lu aujourd''hui : %s pages pour l''objectif.', c.goal_pages);
-  else msg := format('Encore %s pages pour l''objectif du jour (%s lues).', c.goal_pages - today, today);
+  elsif today = 0 and yday > 0 then msg := format('Rendez-vous lecture : ta série est en jeu.%s Cinq pages suffisent pour la garder.', at_book);
+  elsif today = 0 then msg := format('Rendez-vous lecture.%s Cinq pages suffisent pour commencer.', at_book);
+  else msg := format('Encore %s pages pour l''objectif du jour.%s', c.goal_pages - today, at_book);
   end if;
-  return json_strip_nulls(json_build_object('pages_today', today, 'goal', c.goal_pages, 'message', msg));
+  return json_strip_nulls(json_build_object('pages_today', today, 'goal', c.goal_pages, 'message', msg, 'book', bk.title));
 end $$;
 
 -- ───────────────────────────── Droits d'exécution ─────────────────────────────

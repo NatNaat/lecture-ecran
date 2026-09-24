@@ -57,7 +57,7 @@ Demande à quelqu'un de définir le **code Temps d'écran** (Réglages › Temps
 
 1. Exécute `supabase/migration-2026-09-23-rappel-cible.sql` dans Supabase › SQL Editor (une fois).
 2. Importe `shortcuts/Rappel.shortcut` sur l'iPhone et colle ton secret dans le premier bloc, comme pour Portier.
-3. Raccourcis › **Automatisation › +** › **Heure de la journée** › 20 h 00, tous les jours › **Exécuter immédiatement** › *Exécuter le raccourci* › Rappel.
+3. Raccourcis › **Automatisation › +** › **Heure de la journée** › ton **rendez-vous lecture** (l'heure choisie dans la web app › Réglages, 21 h par défaut), tous les jours › **Exécuter immédiatement** › *Exécuter le raccourci* › Rappel. Si tu changes l'heure du rendez-vous dans l'app, change aussi celle de l'automatisation : iOS ne permet pas à l'app de la modifier.
 
 Tant que l'objectif du jour n'est pas atteint, une notification te dit combien de pages il reste (et si ta série est en jeu). Objectif atteint : rien, pas de bruit.
 

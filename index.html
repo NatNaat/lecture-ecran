@@ -237,7 +237,6 @@ button.hp-unit { display: block; cursor: pointer; }
 .entry { position: relative; margin: 0 0 12px; padding: 14px 14px 12px 50px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); transition: background .5s; } .entry.flash { background: var(--accent-soft); }
 .entry .no { position: absolute; left: 12px; top: 14px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 12px var(--display); color: var(--accent-ink); background: var(--accent); font-variant-numeric: tabular-nums; }
 .entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .entry .rg { font: 700 14.5px var(--body); font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 500 12px var(--body); color: var(--muted); } .entry .fol time { margin-left: auto; font: 500 12px var(--body); color: var(--muted); text-align: right; }
-.setrow.target { border-top: 0; padding: 2px 0 10px; } .setrow.target input { width: 158px; text-align: left; padding: 8px 10px; } .setrow.target span.bad { color: var(--bad); }
 .cov .pace { display: block; font: 600 11px/1.3 var(--body); color: var(--muted); margin-top: 3px; } .cov .pace.late { color: var(--bad); }
 .remember .btn, .bilan .figures { margin-top: 10px; }
 .entry blockquote, .rtxt blockquote, .quotes blockquote { margin: 8px 0 0; padding: 6px 12px; background: var(--plum-soft); color: var(--plum); border-radius: 10px; font-style: italic; quotes: "« " " »"; } .entry blockquote::before, .rtxt blockquote::before, .quotes blockquote::before { content: open-quote; } .entry blockquote::after, .rtxt blockquote::after, .quotes blockquote::after { content: close-quote; }
@@ -247,6 +246,25 @@ button.hp-unit { display: block; cursor: pointer; }
 .inkrow { display: flex; gap: 10px; margin: 12px 0 6px; flex-wrap: wrap; } .inkrow > * { flex: 1 1 46%; } .inkrow.tidy { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); } .inkrow.tidy .btn { padding: 0 8px; }
 .quiet { font: 500 14px/1.5 var(--body); color: var(--muted); padding: 6px 0; }
 .facts { font: 500 12.5px/1.5 var(--body); color: var(--muted); margin-top: 14px; font-variant-numeric: tabular-nums; }
+
+/* ───── Mode lecture ───── */
+#reading { position: fixed; inset: 0; z-index: 45; overflow-y: auto; background: var(--bg); padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 18px); animation: rdin .4s var(--ease) both; }
+@keyframes rdin { from { opacity: 0; transform: translateY(18px); } }
+#reading .inner { max-width: 520px; min-height: 100%; margin: 0 auto; display: flex; flex-direction: column; }
+#reading .pickwrap { margin-top: 4px; }
+.rd-main { flex: 1; display: grid; align-content: center; justify-items: center; gap: 14px; padding: 28px 0; text-align: center; }
+.rd-main .hp-unit { width: min(170px, 44vw); }
+.hp-unit.reading .hp-eyes { animation: none; transform-origin: 50% 100%; transform: scaleY(.5); }
+.rd-clock { font: 800 60px/1 var(--display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.rd-hint { font: 500 15px/1.4 var(--body); color: var(--muted); }
+.rd-foot { display: grid; gap: 4px; } .rd-foot .link { width: 100%; color: var(--muted); }
+.goal .link.declare { display: block; width: 100%; text-align: center; margin: 4px 0 -8px; }
+.inkrow > .full { flex-basis: 100%; }
+.setrow.bare { border-top: 0; padding: 2px 0 10px; } .setrow.bare input[type=date] { width: 158px; text-align: left; padding: 8px 10px; } .setrow.bare span.bad { color: var(--bad); }
+.setrow input[type=time] { width: 108px; }
+.seg2 { display: inline-flex; flex: none; gap: 2px; padding: 3px; border-radius: 12px; background: var(--surface-2); }
+.seg2 button { min-height: 34px; padding: 0 12px; border-radius: 9px; font: 600 13.5px var(--body); color: var(--muted); transition: background .2s, color .2s; }
+.seg2 button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(29, 27, 38, .14); }
 
 /* ───── Feuilles (dialog en bas d'écran) ───── */
 dialog { border: 0; margin: auto 0 0; width: 100%; max-width: none; max-height: 92dvh; padding: 0; background: transparent; color: var(--ink); }
@@ -301,6 +319,7 @@ dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin 
 <div id="bookview" hidden></div>
 <div id="settings" hidden></div>
 <div id="wardrobe" hidden></div>
+<div id="reading" hidden></div>
 <dialog id="dlg"></dialog>
 <label class="sr-only" aria-hidden="true"><input type="checkbox" switch tabindex="-1" id="haptic"></label>
 
@@ -350,10 +369,10 @@ function supabaseApi() {
 
 function demoApi() {
   const now = Date.now(), H = 3600e3, D = 24 * H; let n = 0; const id = () => "demo-" + (++n);
-  const db = { config: { secret: "secret-de-demonstration", apps: ["TikTok", "Instagram", "YouTube"], session_cap_min: 30, daily_cap_min: 120, player: { spent: 130, owned: ["hat-beret", "acc-echarpe"], equipped: { hat: "hat-beret", acc: "acc-echarpe" }, freezesBought: 1, freezesUsed: [], gifts: 40, lastGift: null } },
+  const db = { config: { secret: "secret-de-demonstration", apps: ["TikTok", "Instagram", "YouTube"], session_cap_min: 30, daily_cap_min: 120, prepa_factor: 1.5, player: { rdv: "21:30", spent: 130, owned: ["hat-beret", "acc-echarpe"], equipped: { hat: "hat-beret", acc: "acc-echarpe" }, freezesBought: 1, freezesUsed: [], gifts: 40, lastGift: null } },
     books: [], readings: [], sessions: [], ledger: [], audits: [] };
-  const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", current_page: 0, started_at: new Date(now - 13 * D).toISOString(), target_date: new Date(now + 40 * D).toISOString().slice(0, 10) };
-  const b2 = { id: id(), title: "La Grande Transformation", author: "Karl Polanyi", cover_url: null, total_pages: 420, status: "en_cours", current_page: 0, started_at: new Date(now - 6 * D).toISOString() };
+  const b1 = { id: id(), title: "Du côté de chez Swann", author: "Marcel Proust", cover_url: null, total_pages: 527, status: "en_cours", kind: "prepa", current_page: 0, started_at: new Date(now - 13 * D).toISOString(), target_date: new Date(now + 40 * D).toISOString().slice(0, 10) };
+  const b2 = { id: id(), title: "La Grande Transformation", author: "Karl Polanyi", cover_url: null, total_pages: 420, status: "en_cours", kind: "prepa", current_page: 0, started_at: new Date(now - 6 * D).toISOString() };
   const b3 = { id: id(), title: "L'Étranger", author: "Albert Camus", cover_url: null, total_pages: 120, status: "fini", current_page: 120, started_at: new Date(now - 30 * D).toISOString(), finished_at: new Date(now - 20 * D).toISOString() };
   const b4 = { id: id(), title: "Le Petit Prince", author: "Antoine de Saint-Exupéry", cover_url: "https://covers.openlibrary.org/b/isbn/9782070612758-M.jpg", total_pages: 97, status: "en_cours", current_page: 40, started_at: new Date(now - 2 * D).toISOString() };
   const b5 = { id: id(), title: "1984", author: "George Orwell", cover_url: "https://covers.openlibrary.org/b/isbn/9780451524935-M.jpg", total_pages: 328, status: "fini", current_page: 328, started_at: new Date(now - 300 * D).toISOString(), finished_at: new Date(now - 280 * D).toISOString() };
@@ -388,11 +407,11 @@ function demoApi() {
     deleteBook: async bid => { db.books = db.books.filter(b => b.id !== bid); },
     updateConfig: async patch => Object.assign(db.config, patch),
     logReading: async (_s, label, pageEnd, summary) => {
-      const b = db.books.find(b => bookLabel(b) === label), pages = pageEnd - b.current_page, need = Math.min(150 + 20 * pages, 800);
+      const b = db.books.find(b => bookLabel(b) === label), pages = pageEnd - b.current_page, need = needChars(pages);
       if (pages <= 0) return { ok: false, error: `Tu en étais déjà page ${b.current_page} : indique une page plus loin.` };
       if (summary.trim().length < need) return { ok: false, error: `Résumé trop court : ${summary.trim().length} caractères, il en faut ${need} pour ${pages} pages.` };
       db.readings.push({ id: id(), book_id: b.id, page_start: b.current_page, page_end: pageEnd, pages, summary, created_at: new Date().toISOString() });
-      b.current_page = pageEnd; db.ledger.push({ delta: pages, reason: "lecture", created_at: new Date().toISOString() });
+      b.current_page = pageEnd; db.ledger.push({ delta: creditOf(b, pages), reason: "lecture", created_at: new Date().toISOString() });
       return { ok: true, pages };
     },
     editSummary: async (rid, s) => { db.readings.find(r => r.id === rid).summary = s; return true; },
@@ -401,6 +420,11 @@ function demoApi() {
 }
 
 const bookLabel = b => `${b.title} — p. ${b.current_page}`;
+// Mêmes règles que log_reading : petite séance (≤ 5 pages) = une phrase suffit ; une page « prépa » rapporte plus de minutes.
+const needChars = n => n <= 5 ? 60 : Math.min(150 + 20 * n, 800);
+const prepaFactor = () => +(S && S.config.prepa_factor) || 1.5;
+const creditOf = (b, n) => b && b.kind === "prepa" ? Math.ceil(n * prepaFactor()) : n;
+const fmtFactor = () => String(prepaFactor()).replace(".", ",");
 const balance = () => S.ledger.reduce((a, l) => a + l.delta, 0);
 const lastMonday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7); return d; };
 const hash = s => { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.codePointAt(0), 16777619); return h >>> 0; };
@@ -551,7 +575,7 @@ async function dlgCover(bookId) {
 window.nextCover = img => { const rest = (img.dataset.alts || "").split("|").filter(Boolean); if (rest.length) { img.dataset.alts = rest.slice(1).join("|"); img.src = rest[0]; } else img.remove(); };
 const altsOf = (b, first) => esc([...(b.covers || []), b.cover_url].filter((u, i, a) => u && u !== first && a.indexOf(u) === i).join("|"));
 const coverThumb = b => `<span class="noc">${esc((b.title || "?")[0])}${b.cover_url ? `<img src="${esc(b.cover_url)}" data-alts="${altsOf(b, b.cover_url)}" alt="" loading="lazy" onerror="nextCover(this)">` : ""}</span>`;
-const pickCard = (b, compact) => `${coverThumb(b)}<span class="pk"><b>${esc(b.title)}</b><small>${compact ? "" : esc(b.author || "Auteur inconnu") + " · "}p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}</small></span>`;
+const pickCard = (b, compact) => `${coverThumb(b)}<span class="pk"><b>${esc(b.title)}</b><small>${compact ? "" : esc(b.author || "Auteur inconnu") + " · "}p. ${b.current_page}${b.total_pages ? " / " + b.total_pages : ""}${b.kind === "prepa" ? " · prépa" : ""}</small></span>`;
 function bookPicker(list, sel) {
   return `<div class="pickwrap"><button type="button" class="bookpick" id="bpick" aria-haspopup="listbox" aria-expanded="false" ${list.length > 1 ? "" : "disabled"}>${pickCard(sel, true)}${list.length > 1 ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>` : ""}</button>
     <div class="droplist" id="blist" role="listbox" hidden>${list.map(b => `<button type="button" role="option" class="bookopt" data-id="${esc(b.id)}" aria-selected="${b === sel}">${pickCard(b)}</button>`).join("")}</div></div>`;
@@ -564,8 +588,8 @@ function wirePicker(root, list, onChange) {
   root.addEventListener("click", e => { if (!e.target.closest(".pickwrap")) toggle(false); });
 }
 // Le formulaire « J'ai lu » : livre (avec couverture), pages, résumé et jauge de longueur. Sert au journal 3D et à la fiche rapide.
-function readingForm(list, sel, submitLabel) {
-  return `<header class="jhead"><h1>J'ai lu</h1><span>${new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}</span></header>
+function readingForm(list, sel, submitLabel, sub) {
+  return `<header class="jhead"><h1>J'ai lu</h1><span>${sub ? esc(sub) : new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}</span></header>
     ${bookPicker(list, sel)}
     <div class="pagerow"><label for="lp">De la p. <b id="pfrom">${sel.current_page}</b> à la p.</label><input id="lp" type="number" inputmode="numeric" required min="1" aria-describedby="lgain"><span class="gain" id="lgain"></span></div>
     <label for="ls">Ce que je retiens</label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
@@ -574,9 +598,9 @@ function readingForm(list, sel, submitLabel) {
     <div class="err" id="lerr"></div><button class="btn wide">${submitLabel}</button>`;
 }
 function wireReadingForm(form, list, sel, done) {
-  let cur = sel; const upd = () => { const n = Math.max(0, (+$("#lp", form).value || 0) - cur.current_page), need = Math.min(150 + 20 * n, 800), len = $("#ls", form).value.trim().length;
-    $("#pfrom", form).textContent = cur.current_page; $("#lgain", form).textContent = n ? `+${n} min` : "";
-    $("#lbar", form).style.transform = `scaleX(${Math.min(1, len / need)})`; $("#lcount", form).textContent = len >= need ? `${len} caractères, c'est assez` : `${len} / ${need} caractères${n ? ` pour ${plural(n, "page")}` : ""}`; };
+  let cur = sel; const upd = () => { const n = Math.max(0, (+$("#lp", form).value || 0) - cur.current_page), need = needChars(n), len = $("#ls", form).value.trim().length;
+    $("#pfrom", form).textContent = cur.current_page; $("#lgain", form).textContent = n ? `+${creditOf(cur, n)} min` : "";
+    $("#lbar", form).style.transform = `scaleX(${Math.min(1, len / need)})`; $("#lcount", form).textContent = len >= need ? `${len} caractères, c'est assez` : n && n <= 5 ? `${len} / ${need} caractères : une phrase suffit` : `${len} / ${need} caractères${n ? ` pour ${plural(n, "page")}` : ""}`; };
   wirePicker(form, list, b => { cur = b; upd(); }); ["input", "change"].forEach(ev => form.addEventListener(ev, upd)); upd();
   form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector("button.btn:not(.ghost)"); btn.disabled = true;
     try { const r = await api.logReading(S.config.secret, bookLabel(cur), +$("#lp", form).value, withQuote(form));
@@ -606,7 +630,7 @@ function exportBook() {
 
 // ───────────── État ─────────────
 let S = null, tab = "home", openBook = null, tick = null, libFilter = "en_cours", bookSort = "pages";
-const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs"), settingsEl = $("#settings"), wardrobeEl = $("#wardrobe");
+const app = $("#app"), dlg = $("#dlg"), bookview = $("#bookview"), tabs = $("#tabs"), settingsEl = $("#settings"), wardrobeEl = $("#wardrobe"), readingEl = $("#reading");
 const GEAR = `<button class="gear" data-act="settings" aria-label="Réglages"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>`;
 const pref = (k, d) => { try { const v = localStorage.getItem("pcm:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
 const setPref = (k, v) => { try { localStorage.setItem("pcm:" + k, JSON.stringify(v)); } catch {} };
@@ -678,6 +702,7 @@ function pagesDate(n) { let t = 0; for (const r of [...S.readings].sort((a, b) =
 function nthFinished(n) { const f = S.books.filter(b => b.finished_at).map(b => b.finished_at).sort(); return f[n - 1] || null; }
 const badges = () => BADGES.map(b => ({ ...b, at: b.when() || null }));
 const ICONS = {
+  read: '<svg class="i" viewBox="0 0 24 24"><path d="M12 7a3 3 0 0 0-3-3H4v14h5a3 3 0 0 1 3 2zM12 7a3 3 0 0 1 3-3h5v14h-5a3 3 0 0 0-3 2zM12 7v13"/></svg>',
   cal: '<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   book: '<svg class="i" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>',
   target: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12h.01"/></svg>',
@@ -714,19 +739,20 @@ function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: 
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
   const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
   const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
-  const layers = opt.only ? { above: opt.only.px && opt.only.layer !== "below" ? opt.only.px(px) : "", below: opt.only.px && opt.only.layer === "below" ? opt.only.px(px) : "" } : (S ? outfitLayers(px) : { above: "", below: "" }), wear = layers.above;
+  const layers = opt.only ? { above: opt.only.px && opt.only.layer !== "below" ? opt.only.px(px) : "", below: opt.only.px && opt.only.layer === "below" ? opt.only.px(px) : "" } : (S ? outfitLayers(px) : { above: "", below: "" }), wear = layers.above + (opt.extra ? opt.extra(px) : "");
   return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-wear-below">${layers.below}</g><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
 // Humeurs, du plus urgent au plus calme. Chaque humeur a sa posture ; l'hippo réagit aussi quand on le touche.
 function hippoMood() {
   const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance(), lost = pref("lastStreak", 0);
   if (todayP >= goalPages()) return { cls: "mood-great crowned", say: `Objectif du jour atteint, ${todayP} pages. Tu peux souffler.` };
   if (st.cur === 0 && lost >= 2) return { cls: "mood-cry", say: `La série de ${lost} jours est perdue… Une lecture ce soir et on repart.` };
-  if (st.atRisk && h >= 20) return { cls: "mood-angry", say: `${h} h passées et toujours rien ? La série de ${st.cur} jours tombe à minuit.` };
+  if (st.atRisk && pastRdv()) return { cls: "mood-angry", say: `Rendez-vous de ${rdvLabel()} passé et toujours rien ? La série de ${st.cur} jours tombe à minuit.` };
   if (bal < 0) return { cls: "mood-worried", say: `${plural(-bal, "minute")} de dette. Ça se rembourse en pages, pas en excuses.` };
   if (h >= 23 || h < 6) return { cls: "sleepy", say: "Il est tard. Quelques pages et au lit ?" };
-  if (st.atRisk) return { cls: "", say: `${st.cur} jour${st.cur > 1 ? "s" : ""} d'affilée. Une lecture aujourd'hui pour garder la série.` };
   if (!S.books.some(b => b.status === "en_cours")) return { cls: "mood-down", say: "Pas de livre en cours. Lequel on commence ?" };
-  return { cls: st.cur >= 7 ? "crowned" : "", say: todayP ? `${todayP} pages aujourd'hui, encore ${goalPages() - todayP} pour l'objectif.` : "Une page lue et résumée, c'est une minute gagnée." };
+  if (st.atRisk) return { cls: "", say: `${st.cur} jour${st.cur > 1 ? "s" : ""} d'affilée. Rendez-vous à ${rdvLabel()} pour garder la série.` };
+  const sug = suggestedBook();
+  return { cls: st.cur >= 7 ? "crowned" : "", say: todayP ? `${todayP} pages aujourd'hui, encore ${goalPages() - todayP} pour l'objectif.` : pastRdv() ? `${sug.title}, p. ${sug.current_page}. Cinq pages, et la soirée est lancée.` : `Rendez-vous à ${rdvLabel()} : ${sug.title}, p. ${sug.current_page}.` };
 }
 const POKES = ["Hé ! Je lisais, moi.", "Tu comptes lire ou me chatouiller ?", "Une page, une minute. Simple.", "Le livre ne va pas se lire tout seul.", "Ok, ok, je suis là.", "Encore ? Bon, une dernière fois."];
 function hippoPoke() { const h = $(".hp-unit"), b = $(".hp-bubble"); if (!h) return; haptic(); h.classList.remove("happy", "spin"); void h.offsetWidth; h.classList.add(Math.random() < .3 ? "spin" : "happy"); if (b) { b.textContent = POKES[Math.floor(Math.random() * POKES.length)]; clearTimeout(hippoPoke.t); hippoPoke.t = setTimeout(() => { b.textContent = hippoMood().say; }, 2600); } }
@@ -740,6 +766,10 @@ async function savePlayer(patch) { const p = { ...player(), ...patch }; S.config
 const plumesEarned = () => S.readings.reduce((a, r) => a + r.pages, 0) + Object.keys(byDayPages()).filter(k => byDayPages()[k] >= goalPages()).length * 10 + allWeeklyQuests().filter(q => q.done).reduce((a, q) => a + q.xp, 0) + badges().filter(b => b.at).length * 25 + player().gifts + Object.values(player().reviews).reduce((a, l) => a + l.length, 0) * 5;
 function byDayPages() { if (byDayPages.k === S) return byDayPages.v; const v = {}; for (const r of S.readings) { const k = dayKey(r.created_at); v[k] = (v[k] || 0) + r.pages; } byDayPages.k = S; byDayPages.v = v; return v; }
 const plumes = () => plumesEarned() - player().spent;
+// Rendez-vous de lecture : l'heure fixée dans Réglages (la même que l'automatisation « Rappel »).
+const rdv = () => player().rdv || "21:00";
+const rdvLabel = () => { const [h, m] = rdv().split(":"); return `${+h} h${m && m !== "00" ? " " + m : ""}`; };
+const pastRdv = () => { const [h, m] = rdv().split(":").map(Number), d = new Date(); return d.getHours() * 60 + d.getMinutes() >= h * 60 + (m || 0); };
 const freezesLeft = () => player().freezesBought - player().freezesUsed.length;
 // Cosmétiques en pixel art, dessinés par-dessus l'hippo (x de 0 à 13, y de −4 à 11). Les pièces « unlock » ne s'achètent pas.
 const K = "var(--hpk)";
@@ -886,6 +916,42 @@ async function copyQuotes() {
 }
 const withQuote = form => { const q = ($("#lq", form)?.value || "").trim().replace(/\s*\n+\s*/g, " "); return $("#ls", form).value + (q ? "\n\n> " + q : ""); };
 
+
+// ───────────── Mode lecture ─────────────
+// « Lire » lance une séance sans rien demander : le livre proposé, un chrono, l'hippo qui lit. La séance survit à la fermeture de l'app.
+const session = () => pref("session", null);
+const setSession = v => { try { v ? localStorage.setItem("pcm:session", JSON.stringify(v)) : localStorage.removeItem("pcm:session"); } catch {} };
+const sessionMin = s => Math.max(0, Math.floor((Date.now() - s.start) / 60000));
+function suggestedBook() {   // le dernier lu ; tant que rien n'est lu aujourd'hui, un livre plaisir d'abord
+  const list = S.books.filter(b => b.status === "en_cours"), fresh = !pagesOn(todayKey());
+  const last = b => S.readings.reduce((a, r) => r.book_id === b.id && r.created_at > a ? r.created_at : a, b.started_at || "");
+  return [...list].sort((a, b) => (fresh ? (a.kind === "prepa") - (b.kind === "prepa") : 0) || last(b).localeCompare(last(a)))[0];
+}
+function readingHint() { const left = goalPages() - pagesOn(todayKey()); return left <= 0 ? "Objectif atteint : chaque page en plus compte." : left > 5 ? "Cinq pages suffisent pour commencer." : `Encore ${plural(left, "page")} pour l'objectif.`; }
+const READ_BOOK = p => p(2, 9, "#3E7C5C", 1, 2) + p(11, 9, "#3E7C5C", 1, 2) + p(3, 10, "#3E7C5C", 8, 1) + p(3, 8, "#F4F1E8", 4, 2) + p(7, 8, "#E9E4D6", 4, 2) + p(4, 8, "#CFC9B8", 2, 1) + p(8, 8, "#C4BEAD", 2, 1);
+function startReading(id) {
+  const s = session(); if (!S.books.some(b => b.status === "en_cours")) return openStudy();
+  if (!s) setSession({ bookId: id || suggestedBook().id, start: Date.now() }); else if (id && id !== s.bookId) setSession({ ...s, bookId: id });
+  haptic(); showReading();
+}
+function showReading() {
+  const s = session(); if (!s) return; const list = S.books.filter(b => b.status === "en_cours"); let b = list.find(x => x.id === s.bookId);
+  if (!b) { if (!list.length) return setSession(null); b = suggestedBook(); setSession({ ...s, bookId: b.id }); }
+  readingEl.innerHTML = `<div class="inner"><button class="back" data-act="close-reading"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Réduire</button>
+    ${bookPicker(list, b)}
+    <div class="rd-main"><div class="hp-unit reading" style="${skinStyle()}">${hippoSVG({ extra: READ_BOOK })}</div><div class="rd-clock num" id="rdclock" role="timer" aria-label="Durée de la séance">0:00</div><p class="rd-hint">${readingHint()}</p></div>
+    <div class="rd-foot"><button class="btn wide" data-act="finish-reading">${ICONS.check}J'ai fini</button><button class="link" data-act="cancel-reading">Annuler la séance</button></div></div>`;
+  wirePicker(readingEl, list, nb => setSession({ ...session(), bookId: nb.id }));
+  readingEl.hidden = false; tickReading(); clearInterval(showReading.t); showReading.t = setInterval(tickReading, 1000);
+}
+function tickReading() {
+  const s = session(), el = $("#rdclock", readingEl); if (!s || !el) return;
+  const sec = Math.max(0, Math.floor((Date.now() - s.start) / 1000)), h = Math.floor(sec / 3600), m = Math.floor(sec / 60) % 60;
+  el.textContent = h ? `${h} h ${String(m).padStart(2, "0")}` : `${m}:${String(sec % 60).padStart(2, "0")}`;
+}
+function hideReading() { clearInterval(showReading.t); readingEl.hidden = true; readingEl.innerHTML = ""; }
+function closeReading() { hideReading(); if (tab === "home") render(); }
+
 // ───────────── Vues ─────────────
 function render() {
   clearInterval(tick); tabs.hidden = false;
@@ -903,15 +969,15 @@ function covCard(b) {
 }
 function viewHome() {
   const st = streakInfo(), goal = goalPages(), tp = pagesOn(todayKey()), pct = Math.min(1, tp / goal), bal = balance(), mood = hippoMood();
-  const active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
+  const ses = session(), active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
   <div class="hp-home ${sceneClass()}"><div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
     <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
     <div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
-    <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${pct >= 1 ? "Chaque page en plus compte quand même." : `Encore ${plural(goal - tp, "page")} à lire et résumer.`}</p>
-    <button class="btn wide" data-act="log" ${cur.length ? "" : "disabled"}>${ICONS.pen}J'ai lu</button></div></div></div>
+    <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${ses ? `Séance en cours depuis ${plural(Math.max(1, sessionMin(ses)), "minute")}.` : pct >= 1 ? "Chaque page en plus compte quand même." : tp ? `Encore ${plural(goal - tp, "page")} à lire et résumer.` : pastRdv() ? "Cinq pages suffisent pour commencer." : `Rendez-vous à ${rdvLabel()}. Cinq pages suffisent.`}</p>
+    ${cur.length ? `<button class="btn wide" data-act="read">${ICONS.read}${ses ? "Reprendre" : "Lire"}</button><button class="link inl declare" data-act="log">J'ai déjà lu</button>` : `<button class="btn wide" data-act="add-book">${ICONS.plus}Ajouter un livre</button>`}</div></div></div>
   ${bilanCard()}${rememberCard()}
   <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link inl" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
     ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
@@ -962,12 +1028,13 @@ function viewMe() {
     ${S.audits.length ? `<details style="margin-top:10px"><summary class="small muted">Historique</summary><table style="margin-top:8px"><tr><th>Semaine</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></details>` : ""}</div>
   </section>`;
 }
-const HP_MOODS = [["", "Tranquille", "au repos"], ["crowned", "Fier", "série de 7 jours ou plus"], ["mood-great crowned", "Ravi", "objectif du jour atteint"], ["happy", "Content", "lecture enregistrée, ou chatouilles"], ["mood-down", "Boudeur", "aucun livre en cours"], ["mood-angry", "Fâché", "après 20 h sans lecture, série en danger"], ["mood-cry", "En larmes", "série perdue"], ["mood-worried", "Inquiet", "dette d'écran"], ["sleepy", "Endormi", "après 23 h"]];
+const HP_MOODS = [["", "Tranquille", "au repos"], ["crowned", "Fier", "série de 7 jours ou plus"], ["mood-great crowned", "Ravi", "objectif du jour atteint"], ["happy", "Content", "lecture enregistrée, ou chatouilles"], ["mood-down", "Boudeur", "aucun livre en cours"], ["mood-angry", "Fâché", "rendez-vous passé sans lecture, série en danger"], ["mood-cry", "En larmes", "série perdue"], ["mood-worried", "Inquiet", "dette d'écran"], ["sleepy", "Endormi", "après 23 h"]];
 function showSettings() {
   const c = S.config;
   settingsEl.innerHTML = `<div class="inner"><button class="back" data-act="close-settings"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button><div class="topbar"><h1>Réglages</h1></div>
     <div class="list"><h2 style="font-size:15px;margin:12px 0 2px">Lecture et écran</h2>
       <div class="setrow"><div><b>Objectif du jour</b><span>pages à lire et résumer</span></div><input id="goal" type="number" inputmode="numeric" min="1" max="200" value="${goalPages()}"></div>
+      <div class="setrow"><div><b>Rendez-vous lecture</b><span>même heure que l'automatisation Rappel</span></div><input id="rdv" type="time" value="${esc(rdv())}"></div>
       <div class="setrow"><div><b>Max par session</b><span>minutes d'affilée sur une appli</span></div><input id="cap-s" type="number" inputmode="numeric" min="1" value="${c.session_cap_min}"></div>
       <div class="setrow"><div><b>Max par jour</b><span>minutes d'écran accordées</span></div><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div>
       <label for="apps">Applis bloquées</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea><p class="note" style="margin-top:6px">Une par ligne, avec le nom exact donné aux automatisations.</p>
@@ -1000,7 +1067,7 @@ function showBook() {
     ${rs.length || b.current_page ? `<div class="pagemap" role="img" aria-label="Pages résumées : ${rs.map(r => `${r.page_start} à ${r.page_end}`).join(", ") || "aucune"}">${pre > 0 ? `<i class="pre" style="left:0;width:${100 * pre / T}%"></i>` : ""}${rs.map((r, i) => `<button class="seg" data-act="goto-entry" data-id="${esc(r.id)}" style="left:${100 * r.page_start / T}%;width:${Math.max(.8, 100 * r.pages / T)}%" aria-label="Séance ${i + 1}, pages ${r.page_start} à ${r.page_end}"></button>`).join("")}</div>
       <div class="maplegend"><span>0</span>${pre > 0 ? `<span class="lg"><i class="pre"></i>lu avant l'appli</span>` : ""}<span class="lg"><i class="seg"></i>résumé</span><span>${b.total_pages || b.current_page}</span></div>` : ""}
     <dl class="stats"><div><dt>Séances</dt><dd class="num">${rs.length}</dd></div><div><dt>Résumées</dt><dd class="num">${summed} p.</dd></div><div><dt>Par séance</dt><dd class="num">${avg ? avg + " p." : "—"}</dd></div><div><dt>${left !== null && b.status === "en_cours" ? "Reste" : "Jours lus"}</dt><dd class="num">${left !== null && b.status === "en_cours" ? `${left} p.` : days}</dd></div></dl>
-    ${b.status === "en_cours" && b.total_pages ? `<div class="setrow target"><div><b><label for="tgt" style="margin:0;font:inherit;color:inherit">Finir avant le</label></b><span class="${pace(b)?.late ? "bad" : ""}">${pace(b) ? (pace(b).late ? "date dépassée" : `≈ ${pace(b).txt}`) : "aucune date fixée"}</span></div><input id="tgt" type="date" value="${b.target_date || ""}" min="${todayKey()}"></div>` : ""}<div class="inkrow">${b.status === "en_cours" ? `<button class="btn" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
+    ${b.status === "en_cours" && b.total_pages ? `<div class="setrow bare"><div><b><label for="tgt" style="margin:0;font:inherit;color:inherit">Finir avant le</label></b><span class="${pace(b)?.late ? "bad" : ""}">${pace(b) ? (pace(b).late ? "date dépassée" : `≈ ${pace(b).txt}`) : "aucune date fixée"}</span></div><input id="tgt" type="date" value="${b.target_date || ""}" min="${todayKey()}"></div>` : ""}${b.status === "en_cours" ? `<div class="setrow bare"><div><b>Type</b><span>${b.kind === "prepa" ? `1 page = ${fmtFactor()} min` : "1 page = 1 min"}</span></div>${kindSeg(b.kind, "kind")}</div>` : ""}<div class="inkrow">${b.status === "en_cours" ? `<button class="btn full" data-act="read" data-id="${esc(b.id)}">${ICONS.read}Lire</button><button class="btn ghost" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
     ${quotesBlock(rs)}<div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
     ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${fmtSummary(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé. Le premier s'écrira ici après ta prochaine lecture.</p>`}
     <h2 style="margin-top:26px;font-size:18px">Ranger</h2>
@@ -1009,6 +1076,7 @@ function showBook() {
   const tgt = $("#tgt", bookview); if (tgt) tgt.onchange = async () => { await api.updateBook(b.id, { target_date: tgt.value || null }); await reload(); };
   bookview.hidden = false; bookview.scrollTop = 0;
 }
+const kindSeg = (k, act) => `<div class="seg2" role="group" aria-label="Type de lecture">${[["prepa", "Prépa"], ["plaisir", "Plaisir"]].map(([v, l]) => `<button type="button" ${act ? `data-act="${act}" ` : ""}data-kind="${v}" aria-pressed="${(k || "plaisir") === v}">${l}</button>`).join("")}</div>`;
 function closeBook() { openBook = null; bookview.hidden = true; bookview.innerHTML = ""; }
 
 // ───────────── Feuilles ─────────────
@@ -1021,17 +1089,18 @@ function edgeSwipe(el, close) {
   el.addEventListener("touchstart", e => { const t = e.touches[0]; armed = t.clientX < 28; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
   el.addEventListener("touchend", e => { if (!armed) return; armed = false; const t = e.changedTouches[0]; if (t.clientX - x0 > 70 && Math.abs(t.clientY - y0) < 60) { haptic(); close(); } }, { passive: true });
 }
-edgeSwipe(settingsEl, () => closeSettings()); edgeSwipe(wardrobeEl, () => closeWardrobe()); edgeSwipe(bookview, () => closeBook());
+edgeSwipe(readingEl, () => closeReading()); edgeSwipe(settingsEl, () => closeSettings()); edgeSwipe(wardrobeEl, () => closeWardrobe()); edgeSwipe(bookview, () => closeBook());
 (() => {
   let y0 = 0, dy = 0, sheet = null, drag = false;
   dlg.addEventListener("touchstart", e => { sheet = dlg.querySelector(".sheet"); if (!sheet) return; y0 = e.touches[0].clientY; dy = 0; drag = sheet.scrollTop <= 0 && !e.target.closest("textarea, select, .pickwrap, #sugg"); }, { passive: true });
   dlg.addEventListener("touchmove", e => { if (!drag) return; dy = e.touches[0].clientY - y0; sheet.style.transition = "none"; sheet.style.transform = dy > 0 ? `translateY(${dy}px)` : ""; }, { passive: true });
   dlg.addEventListener("touchend", () => { if (!drag) return; drag = false; sheet.style.transition = "transform .25s var(--ease)"; sheet.style.transform = ""; if (dy > 110) { haptic(); dlg.close(); } }, { passive: true });
 })();
-function dlgLog(bookId) {
+function dlgLog(bookId, ses) {
   const list = S.books.filter(b => b.status === "en_cours"), sel = list.find(b => b.id === bookId) || list[0]; if (!sel) return toast("Ajoute d'abord un livre en cours.");
-  openDlg(`<form id="flog" autocomplete="off">${readingForm(list, sel, "Valider la lecture")}<button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Annuler</button></form>`);
-  wireReadingForm($("#flog"), list, sel, async () => { const before = { p: pagesOn(todayKey()), st: streakInfo().cur, lv: levelInfo().n, bd: badges().filter(b => b.at).length }; dlg.close(); await reload(); celebrate(before); });
+  openDlg(`<form id="flog" autocomplete="off">${readingForm(list, sel, "Valider la lecture", ses ? `séance de ${Math.max(1, sessionMin(ses))} min` : null)}<button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Annuler</button></form>`);
+  wireReadingForm($("#flog"), list, sel, async () => { const before = { p: pagesOn(todayKey()), st: streakInfo().cur, lv: levelInfo().n, bd: badges().filter(b => b.at).length };
+    if (ses) { setSession(null); hideReading(); } dlg.close(); await reload(); celebrate(before); });
 }
 function celebrate(before) {
   const tp = pagesOn(todayKey()), st = streakInfo(), lv = levelInfo(), nb = badges().filter(b => b.at).length; if (tab !== "home") { tab = "home"; render(); }
@@ -1052,6 +1121,7 @@ function openStudy() {
     <p class="note" id="ahint">Pas trouvé ? <button type="button" class="textlink" id="amanual">Remplir la fiche à la main</button>.</p>
     <div id="afields" hidden><div class="fiche"><span class="noc big" id="athumb" aria-hidden="true"></span><div style="flex:1;min-width:0"><label for="at" style="margin-top:0">Titre</label><input id="at" required><label for="aa">Auteur</label><input id="aa"></div></div>
       <div class="row"><div><label for="ap">Pages</label><input id="ap" type="number" inputmode="numeric" min="1"></div><div><label for="ac">Tu en es page</label><input id="ac" type="number" inputmode="numeric" min="0" value="0"></div></div>
+      <div class="setrow bare" style="margin-top:10px"><div><b>Type</b><span>prépa : 1 page = ${fmtFactor()} min</span></div>${kindSeg("plaisir")}</div>
       <div id="aeds" class="edchips" aria-label="Autres éditions"></div><p class="note">Vérifie le nombre de pages sur ton exemplaire. Les pages déjà lues ne rapportent pas de minutes.</p></div>
     <div class="err" id="aerr"></div><button class="btn wide" id="asubmit" style="margin-top:12px" hidden>Ajouter à la bibliothèque</button><button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Annuler</button></form>`);
   const q = $("#aq"), sugg = $("#sugg"), showFields = () => { $("#afields").hidden = false; $("#asubmit").hidden = false; $("#ahint").hidden = true; };
@@ -1070,9 +1140,10 @@ function openStudy() {
   q.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); clearTimeout(addTimer); run(); q.blur(); } });
   $("#aqx").onclick = () => { q.value = ""; addCtl?.abort(); sugg.innerHTML = ""; $("#aqx").hidden = true; q.focus(); };
   $("#amanual").onclick = () => { showFields(); $("#athumb").textContent = "?"; $("#at").focus(); };
+  $("#fadd .seg2").onclick = e => { const k = e.target.closest("[data-kind]"); if (!k) return; k.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === k)); haptic(); };
   $("#aeds").onclick = e => { const c = e.target.closest("[data-pages]"); if (!c) return; $("#ap").value = c.dataset.pages; $("#aeds").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === c)); haptic(); };
   $("#fadd").onsubmit = async e => { e.preventDefault(); const btn = $("#asubmit"); btn.disabled = true;
-    try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0, cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
+    try { const bk = { title: $("#at").value.trim(), author: $("#aa").value.trim() || null, total_pages: +$("#ap").value || null, current_page: +$("#ac").value || 0, kind: $("#fadd .seg2 [aria-pressed=true]").dataset.kind, cover_url: addPick?.cover_url || null, openlibrary_key: addPick?.openlibrary_key || null };
       bk.cover_url = await resolveCover({ ...bk, covers: addPick?.covers }); await api.addBook(bk); dlg.close(); libFilter = "en_cours"; if (tab !== "books") tab = "books"; await reload(); toast("Livre ajouté à la bibliothèque"); hippoCheer();
     } catch (err) { $("#aerr").textContent = err.message; btn.disabled = false; } };
   setTimeout(() => q.focus(), 80);
@@ -1094,7 +1165,12 @@ document.addEventListener("click", async e => {
     else if (act === "buy") await buyItem(el.dataset.id);
     else if (act === "equip") await equipItem(el.dataset.id);
     else if (act === "close-settings") closeSettings();
-    else if (act === "log") dlgLog(el.dataset.id || openBook);
+    else if (act === "log") dlgLog(el.dataset.id || openBook || suggestedBook()?.id);
+    else if (act === "read") startReading(el.dataset.id);
+    else if (act === "close-reading") closeReading();
+    else if (act === "finish-reading") { const s = session(); if (s) dlgLog(s.bookId, s); }
+    else if (act === "cancel-reading") { setSession(null); closeReading(); toast("Séance annulée"); }
+    else if (act === "kind") { await api.updateBook(openBook, { kind: el.dataset.kind }); await reload(); }
     else if (act === "add-book") openStudy();
     else if (act === "filter") { libFilter = el.dataset.v; render(); }
     else if (act === "cover") dlgCover(openBook);
@@ -1112,20 +1188,20 @@ document.addEventListener("click", async e => {
       const r = await api.submitAudit(dayKey(lastMonday()), el.dataset.app, +v); if (!r.ok) return void ($("#audit-err").textContent = r.error);
       await reload(); toast(r.undeclared ? `${r.undeclared} min non déclarées : dette ajoutée.` : `Rien à signaler pour ${el.dataset.app}.`); }
     else if (act === "save-config") { const apps = $("#apps").value.split("\n").map(s => s.trim()).filter(Boolean); if (!apps.length) return void ($("#cfg-err").textContent = "Garde au moins une appli.");
-      const g = Math.max(1, Math.min(200, +$("#goal").value || 15)); setPref("goal", g);
+      const g = Math.max(1, Math.min(200, +$("#goal").value || 15)); setPref("goal", g); if ($("#rdv").value && $("#rdv").value !== rdv()) await savePlayer({ rdv: $("#rdv").value });
       await api.updateConfig({ apps, goal_pages: g, session_cap_min: Math.max(1, +$("#cap-s").value || 30), daily_cap_min: Math.max(1, +$("#cap-d").value || 120) }); await reload(); closeSettings(); toast("Réglages enregistrés"); }
     else if (act === "copy-secret") { await navigator.clipboard.writeText(S.config.secret); $("#copy-ok").textContent = "Copié."; }
     else if (act === "signout") { await api.signOut(); closeSettings(); viewLogin(); }
   } catch (err) { toast(err.message || String(err), 4000); }
 });
-document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!wardrobeEl.hidden) closeWardrobe(); else if (!settingsEl.hidden) closeSettings(); else if (!bookview.hidden) closeBook(); });
+document.addEventListener("keydown", e => { if (e.key !== "Escape" || dlg.open) return; if (!readingEl.hidden) closeReading(); else if (!wardrobeEl.hidden) closeWardrobe(); else if (!settingsEl.hidden) closeSettings(); else if (!bookview.hidden) closeBook(); });
 
 async function reload() { S = await api.load(); const st = streakInfo(); if (st.cur > 0) setPref("lastStreak", st.cur); render(); if (openBook) showBook(); }
 async function start() {
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Pages contre minutes</h1><p class="muted">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--accent)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
   if (!(await api.claimOwner())) { await api.signOut(); return viewLogin("Ce compte n'est pas le propriétaire de cette base."); }
-  await reload(); try { await applyFreeze(); await dailyGift(); } catch (err) { console.warn(err); } backfillCovers().catch(() => {});
+  await reload(); try { await applyFreeze(); await dailyGift(); } catch (err) { console.warn(err); } backfillCovers().catch(() => {}); if (session()) showReading();
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && S && !dlg.open) reload().catch(() => {}); });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
