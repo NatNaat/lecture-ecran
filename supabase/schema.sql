@@ -26,8 +26,6 @@ create table if not exists app_config (
 );
 alter table app_config add column if not exists player jsonb not null default '{}'::jsonb;
 alter table app_config add column if not exists goal_pages int not null default 15 check (goal_pages > 0);
-alter table books add column if not exists target_date date;
-alter table books add column if not exists kind text not null default 'plaisir' check (kind in ('prepa','plaisir'));
 alter table app_config add column if not exists prepa_factor numeric not null default 1.5 check (prepa_factor >= 1);
 alter table app_config add column if not exists app_urls jsonb not null default '{"TikTok":"snssdk1233://","Instagram":"instagram://","YouTube":"youtube://","X":"twitter://","Snapchat":"snapchat://","Reddit":"reddit://"}';
 insert into app_config (id) values (1) on conflict do nothing;
@@ -55,6 +53,7 @@ create table if not exists readings (
   pages       int  generated always as (page_end - page_start) stored,
   summary     text not null,
   created_at  timestamptz not null default now(),
+  duration_min int check (duration_min is null or duration_min between 0 and 720),   -- durée de la séance (bouton Lire)
   check (page_end > page_start)
 );
 create index if not exists readings_book_idx on readings (book_id, page_start);
@@ -92,6 +91,26 @@ create table if not exists audits (
   primary key (week_start, app)
 );
 
+-- Notifications du soir : abonnements Web Push de l'iPhone et journal des envois (un par type et par jour).
+create table if not exists push_subs (
+  endpoint   text primary key,
+  p256dh     text not null,
+  auth       text not null,
+  created_at timestamptz not null default now(),
+  seen_at    timestamptz not null default now()
+);
+create table if not exists push_log (
+  kind    text not null,
+  day     date not null,
+  sent_at timestamptz not null default now(),
+  primary key (kind, day)
+);
+
+-- Colonnes ajoutées après coup (sans effet sur une installation neuve, utiles pour une base existante).
+alter table books add column if not exists target_date date;
+alter table readings add column if not exists duration_min int check (duration_min is null or duration_min between 0 and 720);
+alter table books add column if not exists kind text not null default 'plaisir' check (kind in ('prepa','plaisir'));
+
 -- ───────────────────────────── Accès ─────────────────────────────
 -- La PWA (compte propriétaire) lit tout, mais n'écrit que ce qui ne permet pas de tricher :
 -- le solde, les sessions et les lectures ne passent que par les fonctions ci-dessous.
@@ -99,6 +118,8 @@ create table if not exists audits (
 alter table app_config enable row level security;
 alter table books      enable row level security;
 alter table readings   enable row level security;
+alter table push_subs  enable row level security;
+alter table push_log   enable row level security;
 alter table sessions   enable row level security;
 alter table ledger     enable row level security;
 alter table audits     enable row level security;
@@ -110,7 +131,7 @@ $$ select auth.uid() is not null and auth.uid() = (select owner from app_config 
 do $$
 declare t text;
 begin
-  foreach t in array array['app_config','books','readings','sessions','ledger','audits'] loop
+  foreach t in array array['app_config','books','readings','sessions','ledger','audits','push_subs','push_log'] loop
     execute format('drop policy if exists owner_read on %I', t);
     execute format('create policy owner_read on %I for select to authenticated using (is_owner())', t);
   end loop;
@@ -121,15 +142,18 @@ create policy owner_insert on books for insert to authenticated with check (is_o
 drop policy if exists owner_update on books;
 create policy owner_update on books for update to authenticated using (is_owner()) with check (is_owner());
 drop policy if exists owner_delete on books;
-create policy owner_delete on books for delete to authenticated using (is_owner());  -- échoue s'il y a des lectures (FK restrict)
+create policy owner_delete on books for delete to authenticated using (is_owner());
+drop policy if exists owner_update on readings;
+create policy owner_update on readings for update to authenticated using (is_owner()) with check (is_owner());   -- seule la durée est modifiable (droit par colonne)  -- échoue s'il y a des lectures (FK restrict)
 
 drop policy if exists owner_update on app_config;
 create policy owner_update on app_config for update to authenticated using (is_owner()) with check (is_owner());
 
 revoke all on app_config, books, readings, sessions, ledger, audits from anon, authenticated;
-grant select on app_config, books, readings, sessions, ledger, audits to authenticated;
+grant select on app_config, books, readings, sessions, ledger, audits, push_subs, push_log to authenticated;
 grant insert, delete on books to authenticated;
 -- current_page n'est pas modifiable à la main : sinon on pourrait « relire » les mêmes pages.
+grant update (duration_min) on readings to authenticated;
 grant update (title, author, cover_url, total_pages, status, finished_at, target_date, kind) on books to authenticated;
 grant update (apps, session_cap_min, daily_cap_min, player, goal_pages) on app_config to authenticated;
 
@@ -241,7 +265,7 @@ begin
 
   return json_build_object('ok', true, 'status', 'ok',
     'message', format('+%s min pour %s pages. ', credit, n) || case when _balance() < 0 then format('Dette restante : %s min.', -_balance()) else format('Solde : %s min.', _balance()) end,
-    'pages', n, 'balance_min', greatest(_balance(), 0), 'debt_min', greatest(-_balance(), 0),
+    'pages', n, 'reading_id', rid, 'balance_min', greatest(_balance(), 0), 'debt_min', greatest(-_balance(), 0),
     'max_minutes', greatest(least(_balance(), c.session_cap_min), 0));
 end $$;
 
@@ -372,11 +396,91 @@ begin
   return json_strip_nulls(json_build_object('pages_today', today, 'goal', c.goal_pages, 'message', msg, 'book', bk.title));
 end $$;
 
+-- Livre à proposer : le dernier lu parmi les livres en cours ; tant que rien n'est lu aujourd'hui, un livre plaisir d'abord (même règle que l'app).
+create or replace function _suggested_book(p_fresh boolean) returns books
+language sql stable security definer set search_path = public as $$
+  select b.* from books b left join lateral (select max(r.created_at) m from readings r where r.book_id = b.id) l on true
+  where b.status = 'en_cours'
+  order by case when p_fresh and b.kind = 'plaisir' then 0 else 1 end, coalesce(l.m, b.started_at) desc limit 1
+$$;
+
+-- L'app enregistre (ou rafraîchit) l'abonnement de l'iPhone à chaque ouverture.
+create or replace function save_push(p_endpoint text, p_p256dh text, p_auth text) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not is_owner() then raise exception 'interdit'; end if;
+  insert into push_subs (endpoint, p256dh, auth) values (p_endpoint, p_p256dh, p_auth)
+    on conflict (endpoint) do update set p256dh = excluded.p256dh, auth = excluded.auth, seen_at = now();
+end $$;
+create or replace function drop_push(p_endpoint text) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not is_owner() then raise exception 'interdit'; end if;
+  delete from push_subs where endpoint = p_endpoint;
+end $$;
+
+-- Appelée toutes les 5 minutes (pg_cron → fonction Edge « rappel ») : y a-t-il une notification à envoyer maintenant ?
+-- Rendez-vous lecture : à l'heure choisie dans l'app (heure de Paris), une fois par jour, seulement si l'objectif n'est pas atteint.
+-- Contrôle hebdo : le lundi à la même heure, tant qu'il reste une appli à contrôler pour la semaine passée.
+create or replace function rappel_due(p_secret text, p_test boolean default false) returns json
+language plpgsql security definer set search_path = public as $$
+declare c app_config; loc timestamp; today date; rdv time; pages_today int; yday int; bk books; subs json; at_book text; title text; body text;
+begin
+  perform _check_secret(p_secret);
+  select * into c from app_config where id = 1;
+  select coalesce(json_agg(json_build_object('endpoint', endpoint, 'keys', json_build_object('p256dh', p256dh, 'auth', auth))), '[]'::json) into subs from push_subs;
+  if json_array_length(subs) = 0 then return json_build_object('due', false, 'reason', 'aucun abonnement'); end if;
+  loc := now() at time zone c.tz; today := loc::date;
+  -- Heure du rendez-vous, plafonnée à 23 h 55 (dernier passage de pg_cron dans la journée) ; valeur illisible → 21 h.
+  begin rdv := least(coalesce(nullif(c.player->>'rdv', ''), '21:00')::time, time '23:55'); exception when others then rdv := time '21:00'; end;
+  select coalesce(sum(pages), 0) into pages_today from readings where created_at >= _today_start();
+  select coalesce(sum(pages), 0) into yday from readings where created_at >= _today_start() - interval '1 day' and created_at < _today_start();
+  bk := _suggested_book(pages_today = 0);
+  at_book := case when bk.id is null then '' else format('%s, p. %s. ', bk.title, bk.current_page) end;
+  if p_test then
+    return json_build_object('due', true, 'kind', 'test', 'title', 'Rendez-vous lecture', 'body', at_book || 'Ceci est un essai : touche la notification pour ouvrir le mode lecture.', 'url', '?lire', 'subs', subs);
+  end if;
+  if loc::time >= rdv and not exists (select 1 from push_log where kind = 'rdv' and day = today) then
+    if pages_today >= c.goal_pages then
+      insert into push_log (kind, day) values ('rdv', today) on conflict do nothing;   -- objectif déjà atteint : pas de bruit
+    else
+      if pages_today = 0 and yday > 0 then title := 'Ta série est en jeu'; body := at_book || 'Cinq pages suffisent pour la garder.';
+      elsif pages_today = 0 then title := 'Rendez-vous lecture'; body := at_book || 'Cinq pages suffisent pour commencer.';
+      else title := format('Encore %s pages', c.goal_pages - pages_today); body := at_book || 'L''objectif du jour est tout près.';
+      end if;
+      return json_build_object('due', true, 'kind', 'rdv', 'title', title, 'body', btrim(body), 'url', '?lire', 'subs', subs);
+    end if;
+  end if;
+  if extract(isodow from today) = 1 and loc::time >= rdv and not exists (select 1 from push_log where kind = 'audit' and day = today)
+     and exists (select 1 from unnest(c.apps) a where not exists (select 1 from audits x where x.week_start = today - 7 and x.app = a)) then
+    return json_build_object('due', true, 'kind', 'audit', 'title', 'Contrôle de la semaine', 'body', 'Deux minutes pour reporter ton temps d''écran réel de la semaine passée.', 'url', '?audit', 'subs', subs);
+  end if;
+  return json_build_object('due', false);
+end $$;
+
+-- Après l'envoi : on note le jour (plus rien jusqu'à demain) et on oublie les abonnements que le service Push déclare morts.
+create or replace function rappel_done(p_secret text, p_kind text, p_gone text[] default '{}') returns void
+language plpgsql security definer set search_path = public as $$
+declare c app_config;
+begin
+  perform _check_secret(p_secret);
+  select * into c from app_config where id = 1;
+  if p_kind in ('rdv', 'audit') then insert into push_log (kind, day) values (p_kind, (now() at time zone c.tz)::date) on conflict do nothing; end if;
+  delete from push_subs where endpoint = any(coalesce(p_gone, '{}'));
+end $$;
+
+-- Signe de vie quotidien (tâche GitHub « Garder la base éveillée ») : empêche la mise en pause du projet gratuit.
+create or replace function ping() returns json
+language sql stable security definer set search_path = public as $$ select json_build_object('ok', true, 'at', now()) $$;
+
 -- ───────────────────────────── Droits d'exécution ─────────────────────────────
 
-revoke all on function gate_status(text, text), log_reading(text, text, int, text), evening_status(text),
+revoke all on function gate_status(text, text), log_reading(text, text, int, text), evening_status(text), ping(),
+  rappel_due(text, boolean), rappel_done(text, text, text[]), save_push(text, text, text), drop_push(text),
   start_session(text, text, int), close_session(text, text),
   claim_owner(), edit_summary(uuid, text), submit_audit(date, text, int), is_owner() from public;
-grant execute on function gate_status(text, text), log_reading(text, text, int, text), evening_status(text),
+grant execute on function gate_status(text, text), log_reading(text, text, int, text), evening_status(text), ping(),
+  rappel_due(text, boolean), rappel_done(text, text, text[]),
   start_session(text, text, int), close_session(text, text) to anon, authenticated;
-grant execute on function claim_owner(), edit_summary(uuid, text), submit_audit(date, text, int), is_owner() to authenticated;
+grant execute on function claim_owner(), edit_summary(uuid, text), submit_audit(date, text, int), is_owner(), save_push(text, text, text), drop_push(text) to authenticated;
+revoke all on function _suggested_book(boolean) from public, anon, authenticated;

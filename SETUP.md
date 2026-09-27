@@ -53,20 +53,29 @@ Demande à quelqu'un de définir le **code Temps d'écran** (Réglages › Temps
 - **Contenu web › Limiter les sites pour adultes › Ne jamais autoriser** : ajoute `tiktok.com`, `instagram.com`, `youtube.com`… pour fermer la porte Safari.
 - Dans la web app (Profil), fais chaque lundi le **contrôle de la semaine** : tu reportes le temps réel lu dans Réglages › Temps d'écran ; tout écart de plus de 10 min devient une dette doublée. C'est la parade à « je désactive l'automatisation cinq minutes » — iOS ne permet pas de verrouiller l'app Raccourcis elle-même.
 
-## 6. Le rappel du soir — 2 min
+## 6. La notification du soir — 10 min, une seule fois
 
-1. Exécute `supabase/migration-2026-09-23-rappel-cible.sql` dans Supabase › SQL Editor (une fois).
-2. Importe `shortcuts/Rappel.shortcut` sur l'iPhone et colle ton secret dans le premier bloc, comme pour Portier.
-3. Raccourcis › **Automatisation › +** › **Heure de la journée** › ton **rendez-vous lecture** (l'heure choisie dans la web app › Réglages, 21 h par défaut), tous les jours › **Exécuter immédiatement** › *Exécuter le raccourci* › Rappel. Si tu changes l'heure du rendez-vous dans l'app, change aussi celle de l'automatisation : iOS ne permet pas à l'app de la modifier.
+À l'heure de ton **rendez-vous lecture** (web app › Réglages), l'iPhone reçoit « Rendez-vous lecture — Swann, p. 209. Cinq pages suffisent pour commencer. » ; un toucher ouvre directement le mode lecture. Rien si l'objectif du jour est déjà atteint. Le lundi, un second rappel pour le contrôle hebdo s'il n'est pas fait.
 
-Tant que l'objectif du jour n'est pas atteint, une notification te dit combien de pages il reste (et si ta série est en jeu). Objectif atteint : rien, pas de bruit.
+1. **Fonction d'envoi** — Supabase › **Edge Functions › Deploy a new function › Via Editor**. Nom : `rappel`. Remplace le code par tout le contenu de `supabase/functions/rappel/index.ts`, puis **Deploy**. Laisse le réglage « Verify JWT » tel quel.
+2. **Clé privée** — Edge Functions › **Secrets** › ajoute `VAPID_PRIVATE_KEY` = la valeur `privateKey` du fichier local `supabase/.vapid.json` (ce fichier n'est jamais envoyé sur GitHub ; garde-le).
+3. **Base** — SQL Editor : exécute `supabase/migration-2026-09-27-rappels.sql`. Les trois tests en bas doivent répondre sans erreur. Si la ligne `create extension pg_cron` échoue, active **pg_cron** et **pg_net** dans Database › Extensions et relance.
+4. **iPhone** — ouvre l'app depuis l'écran d'accueil › Réglages › Notification du soir › **Activer**, accepte. Puis **Tester** et quitte l'app : la notification arrive en quelques secondes. La toucher doit ouvrir le mode lecture.
+5. Quand ça marche, supprime l'automatisation **Rappel** dans Raccourcis (sinon tu aurais deux rappels). Le raccourci Rappel ne sert plus.
+
+Pour changer l'heure, il suffit de changer le rendez-vous dans l'app : le serveur la lit à chaque passage. Pour vérifier les envois : SQL Editor › `select * from push_log order by sent_at desc;`.
+
+## 7. Garder la base éveillée — rien à faire
+
+Un projet Supabase gratuit s'endort après 7 jours sans activité, et le Portier ne pourrait plus vérifier ton solde. La tâche GitHub `.github/workflows/keepalive.yml` appelle la base chaque matin (onglet **Actions** du dépôt). GitHub met en pause les tâches planifiées d'un dépôt sans aucun commit pendant 60 jours : si tu reçois un mail de GitHub à ce sujet, rouvre l'onglet Actions et clique **Enable workflow**. La tâche `verif.yml` parcourt toute l'app en mode démo à chaque envoi : une croix rouge sur GitHub signale une régression.
 
 ## Limites connues
 
 - Le blocage vit dans Raccourcis : il ne peut pas être aussi étanche que l'API Temps d'écran (réservée aux comptes développeur payants).
 - Si Supabase est injoignable alors que tu as du réseau, le raccourci s'arrête sur une erreur et l'appli reste ouverte. Sans réseau du tout, tu es bloqué.
 - À la fin du crédit, le minuteur sonne mais ne te sort pas de l'appli : chaque minute en plus est comptée double à la fermeture.
-- Un projet Supabase gratuit s'endort après 7 jours sans aucune requête (réactivation en un clic sur supabase.com).
+- Un projet Supabase gratuit s'endort après 7 jours sans aucune requête : la tâche du § 7 l'en empêche. S'il s'endort quand même, réactivation en un clic sur supabase.com.
+- Les notifications iOS ne s'ouvrent pas toujours au bon endroit (bug WebKit connu) : si le toucher te laisse sur l'accueil, l'app ouvre quand même le mode lecture si tu y reviens dans les 20 minutes qui suivent le rappel.
 - Schémas d'URL pour rouvrir l'appli après déblocage : connus pour TikTok, Instagram, YouTube, X, Snapchat, Reddit. Pour une autre appli, rien ne se rouvre tout seul : tu la relances à la main (ou ajoute son schéma dans `app_config.app_urls`).
 
 ## Annexe — construire « Portier » à la main

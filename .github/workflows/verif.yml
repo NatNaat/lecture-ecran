@@ -1,0 +1,21 @@
+# À chaque envoi, parcourt toute l'app en mode démo dans un Chrome sans écran (?demo&selftest) :
+# onglets, réglages, placard, fiche livre, séance de lecture, ajout de livre, recherche, export, graphiques.
+# Une croix rouge sur GitHub = une régression à corriger avant de se fier à la version en ligne.
+name: Vérifier l'app
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  parcours:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parcours automatique en mode démo
+        run: |
+          python3 -m http.server 8000 >/dev/null 2>&1 &
+          sleep 1
+          google-chrome --headless=new --no-sandbox --disable-gpu --window-size=390,844 \
+            --virtual-time-budget=60000 --dump-dom "http://localhost:8000/?demo&selftest" > dom.html
+          python3 -c "import re,html; d=open('dom.html').read(); m=re.search(r'<pre id=.selftest.>(.*?)</pre>', d, re.S); print(html.unescape(m.group(1)) if m else 'Pas de rapport : la page ne s est pas chargée.')"
+          grep -q 'data-selftest="ok"' dom.html

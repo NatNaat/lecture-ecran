@@ -4,5 +4,7 @@ window.LE_CONFIG = {
   supabaseUrl: "https://tibtyzbwohuwfngmxluc.supabase.co",
   // Clé Google Books (publique, restreinte au site natnaat.github.io et à la Books API dans Google Cloud).
   googleBooksKey: "AIzaSyC-Ud_jjjSXAkn-cDbJf0LUuTWEL-Aoom8",
+  // Clé publique des notifications (VAPID) ; la clé privée correspondante vit dans les secrets de la fonction Edge « rappel ».
+  vapidPublicKey: "BLCjIZFK2F1RdUmIhEV3uLSp-4GY1pXSov5cEdZRFt86ftMhJ6YQhenJtJyypY72oZjKWqHAO1plp3HyKVPyNNs",
   supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpYnR5emJ3b2h1d2ZuZ214bHVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NDk3MDQsImV4cCI6MjEwNTIyNTcwNH0.gs34opoO5zWE4XuH8gZYL4Q5nqPRmfmLC9Vfk5nJ35g",
 };

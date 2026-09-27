@@ -2,3 +2,4 @@
 shortcuts/*.unsigned.shortcut
 .impeccable/
 shortcuts/__pycache__/
+supabase/.vapid.json

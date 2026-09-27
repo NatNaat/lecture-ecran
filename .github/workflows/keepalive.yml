@@ -1,0 +1,19 @@
+# Une base Supabase gratuite se met en pause après 7 jours sans activité : le Portier ne pourrait plus
+# vérifier ton solde. Ce petit job l'appelle chaque matin (adresse et clé publique reprises de config.js).
+name: Garder la base éveillée
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Appeler la base
+        run: |
+          URL=$(sed -nE 's/.*supabaseUrl:[[:space:]]*"([^"]+)".*/\1/p' config.js)
+          KEY=$(sed -nE 's/.*supabaseAnonKey:[[:space:]]*"([^"]+)".*/\1/p' config.js)
+          test -n "$URL" && test -n "$KEY"
+          curl -fsS -X POST "$URL/rest/v1/rpc/ping" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" -d '{}'
