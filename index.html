@@ -185,7 +185,7 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { padd
 .hp-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: hp-blink 4.6s infinite; } @keyframes hp-blink { 0%, 92%, 100% { transform: scaleY(1); } 95%, 97% { transform: scaleY(.12); } }
 .hp-ear { transform-box: fill-box; transform-origin: 50% 100%; animation: hp-ear 6.2s steps(1, end) infinite; } .hp-ear.r { animation-delay: .18s; }
 @keyframes hp-ear { 0%, 84%, 100% { transform: none; } 86%, 90% { transform: rotate(-14deg); } 88%, 92% { transform: rotate(10deg); } }
-.hp-happy-only, .hp-cheeks, .hp-crown, .hp-spark, .hp-lids { opacity: 0; }
+.hp-happy-only, .hp-cheeks, .hp-crown, .hp-spark, .hp-lids { opacity: 0; } .has-hat .hp-crown { display: none; }   /* la couronne d'humeur s'efface sous un chapeau */
 .hp-unit.happy .hp-cheeks, .hp-unit.mood-great .hp-cheeks { opacity: 1; }
 .hp-unit.crowned .hp-crown { opacity: 1; transform-box: fill-box; transform-origin: 50% 100%; animation: hp-crown 3s ease-in-out infinite; } @keyframes hp-crown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.25px); } }
 .hp-unit.mood-great svg { animation: hp-bounce 1.5s steps(3, end) infinite; } @keyframes hp-bounce { 0%, 100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-3px) scaleY(1.04); } }
@@ -810,8 +810,10 @@ function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: 
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
   const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
   const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
-  const layers = opt.only ? { above: opt.only.px && opt.only.layer !== "below" ? opt.only.px(px) : "", below: opt.only.px && opt.only.layer === "below" ? opt.only.px(px) : "" } : (S ? outfitLayers(px) : { above: "", below: "" }), wear = layers.above + (opt.extra ? opt.extra(px) : "");
-  return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-wear-below">${layers.below}</g><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
+  const L = opt.only ? outfitLayers(px, opt.only) : S ? outfitLayers(px) : { above: "", below: "", hat: "", ears: "front" }, wear = L.above + (opt.extra ? opt.extra(px) : "");
+  const hat = L.hat ? `<g class="hp-hat">${L.hat}</g>` : "", front = L.ears === "front";
+  // Ordre : derrière (cape, ailes) → corps → chapeau posé entre les oreilles → oreilles → grand chapeau → visage → devant.
+  return `<svg viewBox="0 -4 14 16" aria-hidden="true"${L.hat ? ' class="has-hat"' : ""}><g class="hp-wear-below">${L.below}</g>${body}${front ? hat : ""}${L.hat && L.ears === "hidden" ? "" : `<g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>`}${front ? "" : hat}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
 // Humeurs, du plus urgent au plus calme. Chaque humeur a sa posture ; l'hippo réagit aussi quand on le touche.
 function hippoMood() {
   const st = streakInfo(), h = new Date().getHours(), todayP = pagesOn(todayKey()), bal = balance(), lost = pref("lastStreak", 0);
@@ -846,59 +848,111 @@ const freezesLeft = () => player().freezesBought - player().freezesUsed.length;
 const K = "var(--hpk)";
 const PLUME_ROWS = ["......GG", ".....GGG", "....GDGG", "...GDGG.", "..GDGG..", "..DGG...", ".DG.....", ".D......", "D......."];
 const PLUME = `<svg class="px" viewBox="0 0 8 9" aria-hidden="true">${PLUME_ROWS.flatMap((row, y) => [...row].map((ch, x) => ch === "." ? "" : `<rect x="${x}" y="${y}" width="1" height="1" fill="${ch === "G" ? "#E3B341" : "#B5862A"}"/>`)).join("")}</svg>`;
+// Cosmétiques en pixel art, calés sur la silhouette de l'hippo. Repères : tête x 1..12 (rangées 2-5), museau x 0..13 (6-8), menton 9,
+// bas du corps 10, pieds 11 ; oreilles rangées 0-1 (x 1-3 et 10-12) ; yeux x 3 et 10 (rangées 4-5). Trois tons par pièce, pas de contour.
+// Chapeaux : ears « front » (posé entre les oreilles, qui restent devant), « hidden » (grand chapeau qui les couvre).
+const RED = ["#C0493A", "#DD6B55", "#8E3328"], GREEN = ["#3E7C5C", "#5E9C74", "#2C5C43"], NAVY = ["#4A4670", "#625D96", "#33305A"];
+const INK = ["#34304A", "#5B5577", "#221F2D"], GOLD = ["#E3B341", "#F6D77A", "#B5862A"], CREAM = ["#F2ECDF", "#FFFFFF", "#D6CCB8"];
+const STRAW = ["#D8B874", "#EBD29A", "#B08E4F"], STEEL = ["#9A96AE", "#C3C0D6", "#6F6B86"], IVORY = ["#F1E9D6", "#FFFFFF", "#CFC3A6"];
+const BROWN = ["#5A3D2B", "#7A553B", "#3E2A1E"], WHITE = ["#F8F7FC", "#FFFFFF", "#C4BEDA"], PINK = "#E79AA8";
 const ITEMS = [
   { id: "skin-lavande", cat: "skin", name: "Lavande", price: 0, colors: null },
   { id: "skin-menthe", cat: "skin", name: "Menthe", price: 90, colors: ["#7FB39C", "#A9D3C0", "#5E8B78"] },
   { id: "skin-peche", cat: "skin", name: "Pêche", price: 90, colors: ["#D9A08C", "#F0C7B8", "#B27A68"] },
   { id: "skin-nuit", cat: "skin", name: "Nuit", price: 150, colors: ["#5C5A85", "#8482AB", "#41405F"] },
   { id: "skin-sable", cat: "skin", name: "Sable", price: 120, colors: ["#C9A97A", "#E4CDA6", "#9E8259"] },
-  { id: "hat-beret", cat: "hat", name: "Béret", price: 60, px: p => p(2, 1, "#B9503F", 10, 1) + p(3, 0, "#B9503F", 8, 1) + p(6, -1, "#7A2F22") },
-  { id: "hat-bonnet", cat: "hat", name: "Bonnet", price: 60, px: p => p(1, 1, "#EDECF3", 12, 1) + p(2, 0, "#3E7C5C", 10, 1) + p(3, -1, "#3E7C5C", 8, 1) + p(4, -2, "#3E7C5C", 6, 1) + p(6, -3, "#EDECF3", 2, 1) },
-  { id: "hat-sorcier", cat: "hat", name: "Sorcier", price: 140, px: p => p(0, 1, "#4A4670", 14, 1) + p(3, 0, "#E3B341", 8, 1) + p(4, -1, "#4A4670", 6, 1) + p(5, -2, "#4A4670", 4, 1) + p(6, -3, "#4A4670", 2, 1) + p(7, -4, "#4A4670") },
-  { id: "hat-haut", cat: "hat", name: "Haut-de-forme", price: 200, px: p => p(1, 1, "#1D1B26", 12, 1) + p(3, -3, "#1D1B26", 8, 3) + p(3, 0, "#B9503F", 8, 1) },
-  { id: "hat-casque", cat: "hat", name: "Casque audio", price: 120, px: p => p(2, 1, "#1D1B26", 10, 1) + p(1, 2, "#1D1B26", 1, 3) + p(12, 2, "#1D1B26", 1, 3) + p(0, 3, "#6B6880", 2, 2) + p(12, 3, "#6B6880", 2, 2) },
-  { id: "hat-pirate", cat: "hat", name: "Tricorne de pirate", price: 180, px: p => p(1, 1, "#B9503F", 12, 1) + p(1, 0, "#1D1B26", 12, 1) + p(2, -1, "#1D1B26", 10, 1) + p(3, -2, "#1D1B26", 8, 1) + p(6, -1, "#EDECF3", 2, 1) + p(5, 0, "#EDECF3") + p(8, 0, "#EDECF3") },
-  { id: "hat-viking", cat: "hat", name: "Casque viking", price: 170, px: p => p(2, 0, "#6B6880", 10, 2) + p(3, -1, "#6B6880", 8, 1) + p(2, 1, "#B9B6CC", 10, 1) + p(1, 0, "#EDECF3") + p(0, -1, "#EDECF3") + p(0, -2, "#EDECF3") + p(12, 0, "#EDECF3") + p(13, -1, "#EDECF3") + p(13, -2, "#EDECF3") },
-  { id: "hat-fete", cat: "hat", name: "Chapeau de fête", price: 70, px: p => p(4, 1, "#4A4670", 6, 1) + p(5, 0, "#4A4670", 4, 1) + p(5, -1, "#E3B341", 4, 1) + p(6, -2, "#4A4670", 2, 1) + p(6, -3, "#E79AA8", 2, 1) + p(5, 1, "#E3B341") + p(8, 1, "#E3B341") },
-  { id: "hat-canard", cat: "hat", name: "Canard sur la tête", price: 220, px: p => p(4, 0, "#E3B341", 5, 2) + p(8, -1, "#E3B341", 2, 2) + p(10, 0, "#B9503F") + p(9, -1, K) + p(3, 1, "#B5862A") },
-  { id: "hat-alien", cat: "hat", name: "Antennes d'alien", price: 150, px: p => p(3, -1, "#3E7C5C", 1, 3) + p(3, -2, "#8CC7A9") + p(10, -1, "#3E7C5C", 1, 3) + p(10, -2, "#8CC7A9") },
-  { id: "hat-aureole", cat: "hat", name: "Auréole", price: 160, px: p => p(4, -2, "#E3B341", 6, 1) + p(3, -1, "#E3B341") + p(10, -1, "#E3B341") },
-  { id: "hat-sombrero", cat: "hat", name: "Sombrero", price: 190, px: p => p(0, 1, "#C9A97A", 14, 1) + p(1, 2, "#C9A97A") + p(12, 2, "#C9A97A") + p(4, 0, "#B9503F", 6, 1) + p(4, -1, "#C9A97A", 6, 1) + p(5, -2, "#C9A97A", 4, 1) },
-  { id: "hat-couronne", cat: "hat", name: "Couronne d'or", unlock: "30 jours d'affilée", when: () => streakDate(30), px: p => p(4, -1, "#E3B341") + p(6, -1, "#E3B341", 2, 1) + p(9, -1, "#E3B341") + p(4, 0, "#E3B341", 6, 1) + p(4, 1, "#B5862A", 6, 1) + p(6, 1, "#E79AA8", 2, 1) },
-  { id: "glass-rondes", cat: "glass", name: "Lunettes rondes", price: 70, px: p => p(2, 4, K, 1, 2) + p(4, 4, K, 1, 2) + p(3, 3, K) + p(3, 6, K) + p(9, 4, K, 1, 2) + p(11, 4, K, 1, 2) + p(10, 3, K) + p(10, 6, K) + p(5, 4, K, 4, 1) },
-  { id: "glass-soleil", cat: "glass", name: "Lunettes de soleil", price: 90, px: p => p(2, 4, "#1D1B26", 3, 2) + p(9, 4, "#1D1B26", 3, 2) + p(5, 4, "#1D1B26", 4, 1) + p(2, 4, "#6B6880") + p(9, 4, "#6B6880") },
-  { id: "glass-monocle", cat: "glass", name: "Monocle", price: 110, px: p => p(9, 4, "#E3B341", 1, 2) + p(11, 4, "#E3B341", 1, 2) + p(10, 3, "#E3B341") + p(10, 6, "#E3B341") + p(12, 6, "#B5862A", 1, 3) },
-  { id: "glass-3d", cat: "glass", name: "Lunettes 3D", price: 90, px: p => p(2, 4, "#B9503F", 3, 2) + p(9, 4, "#2F7A86", 3, 2) + p(5, 4, "#EDECF3", 4, 1) + p(1, 4, "#EDECF3") + p(12, 4, "#EDECF3") },
-  { id: "glass-bandeau", cat: "glass", name: "Cache-œil", price: 80, px: p => p(9, 4, "#1D1B26", 3, 2) + p(2, 3, "#1D1B26", 8, 1) + p(12, 3, "#1D1B26") },
-  { id: "acc-echarpe", cat: "acc", name: "Écharpe", price: 50, px: p => p(1, 9, "#B9503F", 12, 1) + p(2, 10, "#B9503F", 3, 1) + p(2, 11, "#7A2F22", 2, 1) },
-  { id: "acc-livre", cat: "acc", name: "Livre sous le bras", price: 80, px: p => p(11, 8, "#3E7C5C", 3, 3) + p(12, 9, "#EDECF3", 2, 1) },
-  { id: "acc-tasse", cat: "acc", name: "Tasse de thé", price: 80, px: p => p(0, 8, "#EDECF3", 2, 3) + p(2, 9, "#EDECF3") + p(1, 7, "#B4B0CC") + p(0, 9, "#7A3D12", 2, 1) },
-  { id: "acc-noeud", cat: "acc", name: "Nœud papillon", price: 60, px: p => p(4, 10, "#B9503F", 2, 1) + p(8, 10, "#B9503F", 2, 1) + p(6, 10, "#7A2F22", 2, 1) },
-  { id: "acc-moustache", cat: "acc", name: "Moustache", price: 70, px: p => p(4, 8, K, 6, 1) + p(3, 7, K) + p(10, 7, K) },
-  { id: "acc-clown", cat: "acc", name: "Nez de clown", price: 50, px: p => p(6, 7, "#B9503F", 2, 2) + p(6, 7, "#E58B7B") },
-  { id: "acc-cape", cat: "acc", name: "Cape de héros", price: 210, layer: "below", px: p => p(-2, 3, "#B9503F", 3, 8) + p(13, 3, "#B9503F", 3, 8) + p(-3, 8, "#B9503F", 1, 3) + p(16, 8, "#B9503F", 1, 3) + p(-2, 11, "#7A2F22", 18, 1) },
-  { id: "acc-ailes", cat: "acc", name: "Ailes", price: 240, layer: "below", px: p => p(-3, 2, "#8C88A8", 3, 1) + p(-3, 3, "#FFFFFF", 3, 1) + p(-4, 4, "#8C88A8", 3, 1) + p(-3, 5, "#FFFFFF", 3, 1) + p(-2, 6, "#8C88A8", 3, 1) + p(14, 2, "#8C88A8", 3, 1) + p(14, 3, "#FFFFFF", 3, 1) + p(15, 4, "#8C88A8", 3, 1) + p(14, 5, "#FFFFFF", 3, 1) + p(13, 6, "#8C88A8", 3, 1) },
-  { id: "acc-plume", cat: "acc", name: "Plume d'or", unlock: "succès « Plume »", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at, px: p => p(12, 0, "#B5862A") + p(12, -1, "#E3B341") + p(13, -2, "#E3B341") + p(13, -3, "#E3B341") + p(12, -2, "#B5862A") },
-  { id: "acc-toge", cat: "acc", name: "Toge", unlock: "20 livres finis", when: () => nthFinished(20), px: p => p(1, 6, "#EDECF3", 1, 4) + p(2, 8, "#EDECF3", 3, 2) + p(1, 6, "#B9503F", 1, 1) },
+  { id: "hat-beret", cat: "hat", name: "Béret", price: 60, ears: "front", px: p => p(3, -1, RED[0], 7, 1) + p(2, 0, RED[0], 9, 1) + p(3, 1, RED[2], 8, 1) + p(4, -1, RED[1], 2, 1) + p(3, 0, RED[1]) + p(7, -2, RED[2]) },
+  { id: "hat-bonnet", cat: "hat", name: "Bonnet", price: 60, ears: "front", px: p =>
+      p(4, -1, GREEN[0], 6, 1) + p(3, 0, GREEN[0], 8, 1) + p(2, 1, GREEN[0], 10, 1) + p(5, -1, GREEN[1]) + p(4, 0, GREEN[1]) + p(9, 0, GREEN[2]) + p(10, 1, GREEN[2])
+      + p(1, 2, CREAM[0], 12, 1) + [2, 4, 6, 8, 10, 12].map(x => p(x, 2, CREAM[2])).join("") + p(6, -3, CREAM[0], 2, 2) + p(6, -3, CREAM[1]) + p(5, -2, CREAM[2]) + p(8, -2, CREAM[2]) },
+  { id: "hat-sorcier", cat: "hat", name: "Sorcier", price: 140, ears: "hidden", px: p =>
+      p(10, -4, NAVY[0], 2, 1) + p(8, -3, NAVY[0], 3, 1) + p(6, -2, NAVY[0], 4, 1) + p(5, -1, NAVY[0], 5, 1) + p(4, 0, NAVY[0], 7, 1) + p(3, 1, GOLD[0], 9, 1)
+      + p(6, -2, NAVY[1]) + p(5, -1, NAVY[1]) + p(4, 0, NAVY[1]) + p(9, -1, NAVY[2]) + p(10, 0, NAVY[2]) + p(7, -1, GOLD[1]) + p(9, -3, GOLD[1])
+      + p(0, 2, NAVY[0], 14, 1) + p(0, 2, NAVY[2]) + p(13, 2, NAVY[2]) },
+  { id: "hat-haut", cat: "hat", name: "Haut-de-forme", price: 200, ears: "front", px: p =>
+      p(4, -3, INK[0], 6, 3) + p(4, 0, RED[0], 6, 1) + p(3, 1, INK[0], 8, 1) + p(5, -3, INK[1], 1, 3) + p(9, -3, INK[2], 1, 3) + p(4, -3, INK[1], 6, 1) },
+  { id: "hat-casque", cat: "hat", name: "Casque audio", price: 120, ears: "front", px: p =>
+      p(1, -1, INK[1], 12, 1) + p(0, 0, INK[1], 1, 3) + p(13, 0, INK[0], 1, 3) + p(2, -1, "#7A7496", 3, 1)
+      + p(-1, 3, INK[0], 2, 3) + p(13, 3, INK[0], 2, 3) + p(0, 3, "#6E6A86", 1, 3) + p(13, 3, "#6E6A86", 1, 3) + p(-1, 3, INK[1]) + p(14, 3, INK[1]) },
+  { id: "hat-pirate", cat: "hat", name: "Tricorne de pirate", price: 180, ears: "hidden", px: p =>
+      p(0, 1, INK[0], 14, 1) + p(1, 0, INK[0], 12, 1) + p(3, -1, INK[0], 8, 1) + p(5, -2, INK[0], 4, 1) + p(0, 0, INK[0]) + p(13, 0, INK[0]) + p(-1, -1, INK[0], 2, 1) + p(13, -1, INK[0], 2, 1)
+      + p(0, 1, GOLD[2], 14, 1) + p(4, -1, INK[1], 2, 1) + p(5, -2, INK[1], 4, 1) + p(-1, -1, INK[1]) + p(14, -1, INK[1]) + p(6, -1, CREAM[0], 2, 1) + p(6, 0, CREAM[2]) + p(7, 0, CREAM[2]) },
+  { id: "hat-viking", cat: "hat", name: "Casque viking", price: 170, ears: "hidden", px: p =>
+      p(4, -1, STEEL[0], 6, 1) + p(3, 0, STEEL[0], 8, 1) + p(2, 1, STEEL[0], 10, 1) + p(4, -1, STEEL[1], 2, 1) + p(3, 0, STEEL[1]) + p(10, 0, STEEL[2]) + p(11, 1, STEEL[2])
+      + p(1, 2, GOLD[2], 12, 1) + [2, 5, 8, 11].map(x => p(x, 2, GOLD[0])).join("") + p(6, 3, STEEL[2], 2, 1)
+      + p(0, 1, IVORY[0]) + p(-1, 0, IVORY[0]) + p(-1, -1, IVORY[1]) + p(-1, -2, IVORY[2]) + p(13, 1, IVORY[0]) + p(14, 0, IVORY[0]) + p(14, -1, IVORY[1]) + p(14, -2, IVORY[2]) },
+  { id: "hat-fete", cat: "hat", name: "Chapeau de fête", price: 70, ears: "front", px: p =>
+      p(4, 1, RED[0], 6, 1) + p(5, -1, RED[0], 4, 2) + p(6, -3, RED[0], 2, 2)
+      + p(4, 1, GOLD[0], 2, 1) + p(8, 1, GOLD[0]) + p(7, 0, GOLD[0], 2, 1) + p(5, -1, GOLD[0]) + p(7, -2, GOLD[0])
+      + p(9, 1, RED[2]) + p(8, -1, RED[2]) + p(6, -4, CREAM[0], 2, 1) + p(7, -5, CREAM[2]) },
+  { id: "hat-canard", cat: "hat", name: "Canard sur la tête", price: 220, ears: "front", px: p =>
+      p(3, 0, "#F2C94C", 5, 2) + p(4, -1, "#F2C94C", 3, 1) + p(7, -2, "#F2C94C", 3, 2) + p(10, -1, "#E07A3F", 2, 1) + p(8, -2, K) + p(4, 0, "#F8DD85", 2, 1) + p(3, 1, "#D9A92E", 5, 1) + p(8, 0, "#F2C94C") },
+  { id: "hat-alien", cat: "hat", name: "Antennes d'alien", price: 150, ears: "front", px: p =>
+      p(4, -1, GREEN[2], 1, 3) + p(9, -1, GREEN[2], 1, 3) + p(3, -3, "#8CD6A8", 2, 2) + p(9, -3, "#8CD6A8", 2, 2) + p(3, -3, "#C9F0D6") + p(9, -3, "#C9F0D6") },
+  { id: "hat-aureole", cat: "hat", name: "Auréole", price: 160, ears: "front", px: p => p(4, -3, GOLD[1], 6, 1) + p(3, -2, GOLD[0]) + p(10, -2, GOLD[0]) + p(4, -1, GOLD[2], 6, 1) },
+  { id: "hat-sombrero", cat: "hat", name: "Sombrero", price: 190, ears: "hidden", px: p =>
+      p(-2, 1, STRAW[0], 18, 1) + p(-3, 0, STRAW[0]) + p(16, 0, STRAW[0]) + p(-2, 2, STRAW[2], 18, 1) + p(4, -2, STRAW[0], 6, 3) + p(5, -3, STRAW[0], 4, 1)
+      + p(4, 0, RED[0], 6, 1) + [4, 6, 8].map(x => p(x, 0, GREEN[0])).join("") + p(5, -2, STRAW[1]) + p(5, -3, STRAW[1]) + p(9, -2, STRAW[2], 1, 2) },
+  { id: "hat-couronne", cat: "hat", name: "Couronne d'or", unlock: "30 jours d'affilée", when: () => streakDate(30), ears: "front", px: p =>
+      p(4, 0, GOLD[0], 6, 2) + p(4, -1, GOLD[0]) + p(9, -1, GOLD[0]) + p(6, -2, GOLD[0], 2, 2) + p(4, -1, GOLD[1]) + p(6, -2, GOLD[1]) + p(4, 1, GOLD[2], 6, 1) + p(6, 0, RED[0], 2, 1) + p(6, 0, "#F08A7A") },
+  { id: "hat-mortier", cat: "hat", name: "Mortier de diplômé", unlock: "20 livres finis", when: () => nthFinished(20), ears: "hidden", px: p =>
+      p(0, -1, INK[0], 14, 1) + p(0, -1, INK[1], 3, 1) + p(2, -2, INK[1], 10, 1) + p(3, 0, INK[0], 8, 2) + p(4, 0, INK[1], 2, 2) + p(6, -2, GOLD[0], 2, 1)
+      + p(12, -1, GOLD[0]) + p(12, 0, GOLD[0], 1, 2) + p(12, 2, GOLD[1], 1, 2) },
+  { id: "glass-rondes", cat: "glass", name: "Lunettes rondes", price: 70, px: p => ring(p, 3, "#7A4E2D") + ring(p, 10, "#7A4E2D") + p(5, 4, "#7A4E2D", 4, 1) + p(1, 4, "#5C3A21") + p(12, 4, "#5C3A21") + p(4, 4, "#A8743F") + p(11, 4, "#A8743F") },
+  { id: "glass-soleil", cat: "glass", name: "Lunettes de soleil", price: 90, px: p => p(2, 4, "#23213A", 3, 2) + p(9, 4, "#23213A", 3, 2) + p(2, 3, INK[2], 3, 1) + p(9, 3, INK[2], 3, 1) + p(5, 4, INK[2], 4, 1) + p(1, 3, INK[2]) + p(12, 3, INK[2]) + p(2, 4, "#8E8AB0") + p(9, 4, "#8E8AB0") + p(4, 5, "#3A3760") + p(11, 5, "#3A3760") },
+  { id: "glass-monocle", cat: "glass", name: "Monocle", price: 110, px: p => ring(p, 10, GOLD[0]) + p(10, 3, GOLD[1]) + p(12, 6, GOLD[2]) + p(12, 7, GOLD[2]) + p(12, 8, GOLD[2]) + p(11, 9, GOLD[2]) },
+  { id: "glass-3d", cat: "glass", name: "Lunettes 3D", price: 90, px: p => p(1, 3, CREAM[0], 12, 1) + p(1, 4, CREAM[0], 1, 2) + p(12, 4, CREAM[0], 1, 2) + p(5, 4, CREAM[0], 4, 2) + p(2, 4, "#D9534A", 3, 2) + p(9, 4, "#3FB6C6", 3, 2) + p(1, 3, CREAM[2], 12, 1) },
+  { id: "glass-bandeau", cat: "glass", name: "Cache-œil", price: 80, px: p => p(9, 4, INK[0], 3, 2) + p(10, 6, INK[0]) + p(9, 4, INK[1]) + p(1, 3, INK[2], 8, 1) + p(12, 3, INK[2]) + p(8, 3, INK[0]) },
+  { id: "acc-echarpe", cat: "acc", name: "Écharpe", price: 50, px: p => p(0, 9, RED[0], 14, 1) + p(1, 10, RED[2], 12, 1) + [1, 4, 7, 10, 13].map(x => p(x, 9, "#AE4133")).join("") + p(0, 9, RED[1]) + p(9, 10, RED[0], 2, 2) + p(9, 11, CREAM[0]) + p(10, 11, CREAM[2]) },
+  { id: "acc-livre", cat: "acc", name: "Livre sous le bras", price: 80, px: p => p(12, 6, GREEN[0], 3, 5) + p(12, 6, GREEN[2], 1, 5) + p(14, 7, CREAM[0], 1, 3) + p(13, 7, GOLD[0]) + p(13, 9, GREEN[1]) },
+  { id: "acc-tasse", cat: "acc", name: "Tasse de thé", price: 80, px: p => p(-1, 8, CREAM[0], 3, 3) + p(-1, 8, "#8A5A34", 3, 1) + p(-2, 9, CREAM[2]) + p(1, 9, CREAM[2], 1, 2) + p(-1, 11, CREAM[2], 3, 1) + p(0, 6, "#FFFFFF") + p(-1, 5, "#FFFFFF") },
+  { id: "acc-noeud", cat: "acc", name: "Nœud papillon", price: 60, px: p => p(4, 10, RED[0], 2, 1) + p(8, 10, RED[0], 2, 1) + p(6, 10, RED[2], 2, 1) + p(4, 9, RED[0]) + p(9, 9, RED[0]) + p(4, 10, RED[1]) },
+  { id: "acc-moustache", cat: "acc", name: "Moustache", price: 70, px: p => p(4, 7, BROWN[0], 6, 1) + p(3, 8, BROWN[0], 2, 1) + p(9, 8, BROWN[0], 2, 1) + p(5, 7, BROWN[1], 1, 1) + p(8, 7, BROWN[1]) + p(6, 7, BROWN[2], 2, 1) + p(3, 8, BROWN[2]) + p(10, 8, BROWN[2]) },
+  { id: "acc-clown", cat: "acc", name: "Nez de clown", price: 50, px: p => p(6, 6, "#D9412F", 2, 2) + p(6, 6, "#F0826F") },
+  { id: "acc-cape", cat: "acc", name: "Cape de héros", price: 210, layer: "below", px: p => p(0, 2, RED[0], 1, 4) + p(13, 2, RED[0], 1, 4) + p(-1, 5, RED[0], 1, 5) + p(14, 5, RED[0], 1, 5) + p(-2, 8, RED[0], 1, 4) + p(15, 8, RED[0], 1, 4) + p(-1, 10, RED[2], 1, 2) + p(14, 10, RED[2], 1, 2) + p(-2, 11, RED[2]) + p(15, 11, RED[2]) + p(0, 2, RED[1]) + p(13, 2, RED[1]) },
+  { id: "acc-ailes", cat: "acc", name: "Ailes", price: 240, layer: "below", px: p => wing(p, false) + wing(p, true) },
+  { id: "acc-plume", cat: "acc", name: "Plume d'or", unlock: "succès « Plume »", when: () => S.readings.find(r => r.summary.trim().length >= 800)?.created_at, px: p => p(12, 0, GOLD[2]) + p(13, -1, GOLD[2]) + p(13, -2, GOLD[0]) + p(14, -3, GOLD[0]) + p(12, -1, GOLD[1]) + p(14, -2, GOLD[1]) + p(13, -3, GOLD[1]) + p(14, -4, GOLD[1]) },
   { id: "scene-etagere", cat: "scene", name: "Étagère", price: 100 },
   { id: "scene-nuit", cat: "scene", name: "Fenêtre de nuit", price: 130 },
   { id: "scene-jardin", cat: "scene", name: "Jardin", price: 130 },
   // Tes livres finis, rangés sur l'étagère : un dos de plus à chaque livre terminé.
   { id: "scene-mes-livres", cat: "scene", name: "Mes livres finis", unlock: "un livre fini", when: () => nthFinished(1) },
   // Pièces rares : chères et réservées à un niveau, pour qu'il reste toujours quelque chose à viser.
-  { id: "hat-lauriers", cat: "hat", name: "Couronne de lauriers", price: 600, lvl: 5, px: p => p(1, 2, "#3E7C5C") + p(2, 1, "#5E9C74") + p(3, 2, "#3E7C5C") + p(4, 1, "#5E9C74") + p(12, 2, "#3E7C5C") + p(11, 1, "#5E9C74") + p(10, 2, "#3E7C5C") + p(9, 1, "#5E9C74") + p(6, 1, "#E3B341", 2, 1) },
-  { id: "glass-or", cat: "glass", name: "Lunettes d'or", price: 700, lvl: 6, px: p => p(2, 4, "#E3B341", 1, 2) + p(4, 4, "#E3B341", 1, 2) + p(3, 3, "#E3B341") + p(3, 6, "#B5862A") + p(9, 4, "#E3B341", 1, 2) + p(11, 4, "#E3B341", 1, 2) + p(10, 3, "#E3B341") + p(10, 6, "#B5862A") + p(5, 4, "#B5862A", 4, 1) + p(1, 4, "#B5862A") + p(12, 4, "#B5862A") },
-  { id: "acc-medaille", cat: "acc", name: "Médaille du lecteur", price: 900, lvl: 7, px: p => p(5, 9, "#B9503F") + p(8, 9, "#B9503F") + p(6, 9, "#3D4F82", 2, 1) + p(6, 10, "#E3B341", 2, 2) + p(6, 10, "#FBE38E") },
+  { id: "hat-lauriers", cat: "hat", name: "Couronne de lauriers", price: 600, lvl: 5, ears: "front", px: p =>
+      p(0, 2, GREEN[0]) + p(1, 1, GREEN[1]) + p(2, 2, GREEN[0], 3, 1) + p(3, 1, GREEN[1]) + p(4, 1, GREEN[0]) + p(5, 2, GREEN[2])
+      + p(13, 2, GREEN[0]) + p(12, 1, GREEN[1]) + p(9, 2, GREEN[0], 3, 1) + p(10, 1, GREEN[1]) + p(9, 1, GREEN[0]) + p(8, 2, GREEN[2])
+      + p(6, 2, GOLD[0], 2, 1) + p(6, 2, GOLD[1]) },
+  { id: "glass-or", cat: "glass", name: "Lunettes d'or", price: 700, lvl: 6, px: p => ring(p, 3, GOLD[0]) + ring(p, 10, GOLD[0]) + p(3, 3, GOLD[1]) + p(10, 3, GOLD[1]) + p(5, 4, GOLD[2], 4, 1) + p(1, 4, GOLD[2]) + p(12, 4, GOLD[2]) },
+  { id: "acc-medaille", cat: "acc", name: "Médaille du lecteur", price: 900, lvl: 7, px: p => p(5, 9, "#3D4F82") + p(8, 9, "#3D4F82") + p(6, 10, "#3D4F82", 2, 1) + p(6, 11, GOLD[0], 2, 1) + p(6, 11, GOLD[1]) },
   { id: "scene-salle", cat: "scene", name: "Salle de lecture", price: 1200, lvl: 7 },
-  { id: "skin-minuit", cat: "skin", name: "Minuit", price: 1200, lvl: 8, colors: ["#3A3673", "#5F5AA8", "#27244F"] },
+  { id: "skin-minuit", cat: "skin", name: "Minuit", price: 1200, lvl: 8, colors: ["#4A458E", "#6E68B5", "#2E2A5E"] },
   { id: "skin-or", cat: "skin", name: "Or massif", price: 2000, lvl: 10, colors: ["#C99B32", "#E8C66E", "#94701F"] },
-  { id: "hat-bicorne", cat: "hat", name: "Bicorne d'académicien", price: 2500, lvl: 12, px: p => p(0, 1, "#1D1B26", 14, 1) + p(2, 0, "#1D1B26", 10, 1) + p(4, -1, "#1D1B26", 6, 1) + p(1, 1, "#E3B341", 12, 1) + p(6, -1, "#3E7C5C", 2, 1) + p(10, 0, "#E3B341") },
+  { id: "hat-bicorne", cat: "hat", name: "Bicorne d'académicien", price: 2500, lvl: 12, ears: "hidden", px: p =>
+      p(-2, 1, INK[0], 18, 1) + p(-3, 0, INK[0], 2, 1) + p(15, 0, INK[0], 2, 1) + p(-4, -1, INK[0]) + p(17, -1, INK[0]) + p(0, 0, INK[0], 14, 1) + p(2, -1, INK[0], 10, 1) + p(4, -2, INK[0], 6, 1) + p(5, -3, INK[0], 4, 1)
+      + p(-1, 2, GOLD[2], 16, 1) + p(-2, 1, GOLD[0]) + p(15, 1, GOLD[0]) + p(3, -1, INK[1], 3, 1) + p(5, -2, INK[1], 2, 1) + p(5, -3, INK[1], 4, 1) + p(-4, -1, INK[1]) + p(17, -1, INK[1])
+      + p(9, -2, "#3D4F82") + p(9, -1, CREAM[0]) + p(9, 0, RED[0]) },
 ];
+// Anneau de lunette autour d'un œil (colonne x, rangées 4-5).
+function ring(p, x, c) { return p(x - 1, 4, c, 1, 2) + p(x + 1, 4, c, 1, 2) + p(x, 3, c) + p(x, 6, c); }
+// Aile en plumes, dessinée pour le côté gauche puis retournée pour la droite (x → 13 - x).
+function wing(p, right) {
+  const W = WHITE[0], L = WHITE[1], D = WHITE[2], m = x => right ? 13 - x : x;
+  const px = [[-2, 1, L], [-3, 2, W], [-2, 2, W], [-1, 2, W], [0, 2, W], [-4, 3, W], [-3, 3, W], [-2, 3, W], [-1, 3, W], [0, 3, W],
+    [-4, 4, D], [-3, 4, W], [-2, 4, W], [-1, 4, W], [0, 4, W], [-3, 5, D], [-2, 5, W], [-1, 5, W], [0, 5, W], [-2, 6, D], [-1, 6, D]];
+  return px.map(([x, y, c]) => p(m(x), y, c)).join("");
+}
+
 const CATS = { hat: "Chapeaux", glass: "Lunettes", skin: "Pelage", acc: "Accessoires", scene: "Décor", util: "Utile" };
 const item = id => ITEMS.find(i => i.id === id);
 const owns = id => { const it = item(id); return !it || it.price === 0 || player().owned.includes(id) || (it.when && !!it.when()); };
 // Ce que porte l'hippo : ses pixels s'ajoutent au dessin, son pelage remplace les couleurs.
-function outfitLayers(px) { const eq = player().equipped, out = { above: "", below: "" }; for (const cat of ["acc", "glass", "hat"]) { const it = eq[cat] && item(eq[cat]); if (it && it.px && owns(it.id)) out[it.layer === "below" ? "below" : "above"] += it.px(px); } return out; }
+function outfitLayers(px, only) {
+  const eq = player().equipped, out = { above: "", below: "", hat: "", ears: "front" };
+  const list = only ? [only] : ["acc", "glass", "hat"].map(c => eq[c] && item(eq[c])).filter(it => it && owns(it.id));
+  for (const it of list) { if (!it.px) continue; const art = it.px(px);
+    if (it.layer === "below") out.below += art; else if (it.cat === "hat") { out.hat = art; out.ears = it.ears || "front"; } else out.above += art; }
+  return out;
+}
 function skinStyle() { const it = player().equipped.skin && item(player().equipped.skin); return it && it.colors && owns(it.id) ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""; }
 const sceneClass = () => { const s = player().equipped.scene; return s && owns(s) ? "stage-" + s.replace("scene-", "") : ""; };
 // L'étagère « Mes livres finis » se dessine à partir de ta vraie bibliothèque : un dos par livre fini, rangés dans l'ordre où tu les as finis.
@@ -1518,7 +1572,7 @@ async function selfTest() {
     const id = buy.dataset.id, before = plumes(); buy.click(); await wait(400); check(player().owned.includes(id) && plumes() < before, "achat non enregistré");
     closeWardrobe(); await wait(420); check(wardrobeEl.hidden, "placard resté ouvert"); check(player().equipped.hat === id, "chapeau non équipé");
     const m = item(id).px((x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`).match(/x="([^"]+)" y="([^"]+)" width="[^"]+" height="[^"]+" fill="([^"]+)"/);
-    check(m && $(`.hp-home .hp-wear rect[x="${m[1]}"][y="${m[2]}"][fill="${m[3]}"]`, app), "l'accueil ne dessine pas le chapeau acheté"); });
+    check(m && $(`.hp-home .hp-hat rect[x="${m[1]}"][y="${m[2]}"][fill="${m[3]}"]`, app), "l'accueil ne dessine pas le chapeau acheté"); });
   await step("fiche livre", async () => { const b = S.books.find(x => x.status === "en_cours"); openBook = b.id; showBook(); await wait(400); clean("la fiche livre"); click('[data-act="sort-entries"]'); await wait(150); const k = b.kind === "prepa" ? "plaisir" : "prepa"; click(`[data-act="kind"][data-kind="${k}"]`); await wait(300); check(S.books.find(x => x.id === b.id).kind === k, "type de livre non enregistré"); closeBook(); await wait(420); check(bookview.hidden, "fiche restée ouverte"); });
   await step("séance de lecture", async () => { setSession(null); const n = S.readings.length; click('[data-act="read"]'); await wait(400); check(!readingEl.hidden, "mode lecture fermé");
     setSession({ ...session(), start: Date.now() - 12 * 60000 }); click('[data-act="finish-reading"]'); await wait(450); check(dlg.open, "formulaire non ouvert");
