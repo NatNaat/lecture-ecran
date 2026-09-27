@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pages">
 <link rel="manifest" href="manifest.webmanifest">
+<script>try { const a = JSON.parse(localStorage.getItem("pcm:apparence") || "null"); if (a && a.vars) { const dark = a.mode === "sombre" || (a.mode !== "clair" && matchMedia("(prefers-color-scheme: dark)").matches), v = a.vars[dark ? "sombre" : "clair"], r = document.documentElement; for (const k in v) r.style.setProperty(k, v[k]); r.style.colorScheme = dark ? "dark" : "light"; } } catch (e) {}</script>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +21,7 @@
 :root {
   color-scheme: light; --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
   --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
-  --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2F7A86; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
+  --ok: #3A7356; --ok-soft: #E1EFE7; --warn: #886320; --warn-soft: #F5ECD6; --warn-ink: #FFFFFF; --bad: #A64839; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2C717D; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
   --viz-read: #5A50B5; --viz-screen: #0E9C8E;
   --hp: #8C88A8; --hp2: #B4B0CC; --hp3: #6A6686; --hpk: #1A1D1B; --hpp: #E79AA8; --hpg: #E3B341; --hpg2: #B5862A;
   --display: "Bricolage Grotesque", "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
@@ -30,11 +31,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   color-scheme: dark; --viz-read: #8E84EA; --viz-screen: #1FA89A; --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
-  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --warn-ink: #1D1B26; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
 :root[data-theme="dark"] {
   color-scheme: dark; --viz-read: #8E84EA; --viz-screen: #1FA89A; --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
-  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --warn-ink: #1D1B26; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; background: var(--bg); }
@@ -160,7 +161,7 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 .bdg b { font: 600 12.5px/1.2 var(--body); } .bdg small { font: 500 11px var(--body); color: var(--muted); }
 .bdg.locked { border-style: dashed; } .bdg.locked .ic { background: var(--surface-2); color: var(--line-strong); } .bdg.locked b { color: var(--muted); }
 .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; } .cal div { aspect-ratio: 1; border-radius: 8px; background: var(--surface-2); display: grid; place-items: center; font: 600 11px var(--body); color: var(--muted); }
-.cal div.on { background: var(--warn); color: #1D1B26; } .cal div.today { outline: 2px solid var(--accent); outline-offset: -2px; } .cal .lbl { aspect-ratio: auto; background: none; font-size: 10.5px; }
+.cal div.on { background: var(--warn); color: var(--warn-ink); } .cal div.today { outline: 2px solid var(--accent); outline-offset: -2px; } .cal .lbl { aspect-ratio: auto; background: none; font-size: 10.5px; }
 
 /* ───── Profil ───── */
 .figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
@@ -292,6 +293,22 @@ button.hp-unit { display: block; cursor: pointer; }
 .seg2 button { min-height: 34px; padding: 0 12px; border-radius: 9px; font: 600 13.5px var(--body); color: var(--muted); transition: background .2s, color .2s; }
 .seg2 button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(29, 27, 38, .14); }
 
+/* ───── Apparence : un aperçu par thème ───── */
+.setrow.stack { display: grid; gap: 8px; } .setrow.stack .seg2 { display: flex; } .setrow.stack .seg2 button { flex: 1; }
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 4px 0 14px; }
+.theme-card { display: grid; gap: 7px; padding: 7px; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); text-align: left; transition: border-color .15s, transform .15s var(--ease); }
+.theme-card:active { transform: scale(.97); } .theme-card[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.tc-canvas { display: grid; overflow: hidden; border-radius: 9px; background: var(--bg); border: 1px solid var(--line); }
+.tc-band { display: grid; place-items: end center; height: 34px; background: var(--surface-2); } .tc-hp { width: 22px; margin-bottom: -3px; } .tc-hp svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; }
+.tc-sheet { display: grid; gap: 6px; margin-top: -6px; padding: 8px 7px 7px; background: var(--bg); border-radius: 100% 100% 0 0 / 8px 8px 0 0; position: relative; }
+.tc-card { display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); }
+.tc-ring { width: 14px; height: 14px; flex: none; border-radius: 50%; border: 3px solid var(--surface-2); border-top-color: var(--accent); border-right-color: var(--accent); }
+.tc-lines { display: grid; gap: 4px; flex: 1; } .tc-lines i { height: 4px; border-radius: 2px; background: var(--ink); } .tc-lines i.m { width: 70%; background: var(--muted); }
+.tc-foot { display: flex; align-items: center; gap: 6px; } .tc-btn { flex: 1; padding: 3px 0; border-radius: 5px; background: var(--accent); color: var(--accent-ink); font: 700 9.5px/1.2 var(--body); text-align: center; }
+.tc-pill { width: 22px; height: 12px; border-radius: 999px; background: var(--warn-soft); box-shadow: inset 0 0 0 3px var(--warn-soft), inset 0 0 0 6px var(--warn); }
+.tc-name { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; padding: 0 2px 1px; font: 600 13px var(--body); color: var(--ink); } .tc-name small { font: 500 11.5px var(--body); color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { :root.theming, :root.theming * { transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease !important; } }
+
 /* ───── Feuilles (dialog en bas d'écran) ───── */
 dialog { border: 0; margin: auto 0 0; width: 100%; max-width: none; max-height: 92dvh; padding: 0; background: transparent; color: var(--ink); }
 dialog::backdrop { background: rgba(20, 18, 30, .45); } dialog[open]::backdrop { animation: bdin .3s ease both; } dialog.closing::backdrop { animation: bdout .24s ease both; } @keyframes bdin { from { opacity: 0; } } @keyframes bdout { to { opacity: 0; } }
@@ -359,6 +376,57 @@ mark { background: var(--warn-soft); color: inherit; font-weight: 600; text-deco
 <script>
 "use strict";
 const $ = (s, el = document) => el.querySelector(s);
+// ───────────── Apparence : les 7 palettes du Cockpit D2, chacune en clair et en sombre ─────────────
+// Contrastes vérifiés par calcul (texte ≥ 4,5:1). Les couleurs de famille (série, livres, écran, plumes, dette) et celles des graphiques
+// ne dépendent que du mode, pour rester reconnaissables d'un thème à l'autre ; l'hippo garde son pelage.
+const THEMES = {
+  mauve:{ nom:'Mauve',
+    clair:{ bg:'#F4F3F7', surface:'#FFFFFF', surface2:'#E9E7F0', ink:'#1D1B26', ink2:'#514E63', muted:'#65627A', line:'#DCDAE6', lineStrong:'#B9B6CC', accent:'#4A4670', accentInk:'#FFFFFF', pink:'#E79AA8' },
+    sombre:{ bg:'#15141B', surface:'#1D1C25', surface2:'#282633', ink:'#EDECF3', ink2:'#C5C2D6', muted:'#918EA6', line:'#312F3E', lineStrong:'#4B4860', accent:'#B4B0CC', accentInk:'#15141B', pink:'#E79AA8' } },
+  encre:{ nom:'Encre',
+    clair:{ bg:'#F5F5F6', surface:'#FFFFFF', surface2:'#E8E8EB', ink:'#121214', ink2:'#47474F', muted:'#66666F', line:'#DDDDE1', lineStrong:'#B4B4BC', accent:'#1F1F26', accentInk:'#FFFFFF', pink:'#E79AA8' },
+    sombre:{ bg:'#000000', surface:'#0F0F12', surface2:'#1A1A1F', ink:'#F3F3F6', ink2:'#C9C9D2', muted:'#8F8F9A', line:'#25252C', lineStrong:'#45454F', accent:'#D9D6F2', accentInk:'#0B0B0E', pink:'#E79AA8' } },
+  foret:{ nom:'Forêt',
+    clair:{ bg:'#F2F5F1', surface:'#FFFFFF', surface2:'#E2EAE1', ink:'#17211B', ink2:'#43534A', muted:'#58695E', line:'#D4DED3', lineStrong:'#A9BAAC', accent:'#2F5D46', accentInk:'#FFFFFF', pink:'#E3A95F' },
+    sombre:{ bg:'#0F1511', surface:'#161E19', surface2:'#202B24', ink:'#E9F0EA', ink2:'#BDCBC0', muted:'#879A8C', line:'#28342C', lineStrong:'#435347', accent:'#9CCDB0', accentInk:'#0F1511', pink:'#E3A95F' } },
+  ocean:{ nom:'Océan',
+    clair:{ bg:'#F1F4F8', surface:'#FFFFFF', surface2:'#E0E8F2', ink:'#141C26', ink2:'#425066', muted:'#57657A', line:'#D3DCE8', lineStrong:'#A8B7CB', accent:'#23507F', accentInk:'#FFFFFF', pink:'#F0A47C' },
+    sombre:{ bg:'#0D131B', surface:'#141C27', surface2:'#1E2836', ink:'#E8EEF6', ink2:'#BCC8D9', muted:'#8594A9', line:'#263142', lineStrong:'#40506A', accent:'#9CC0EA', accentInk:'#0D131B', pink:'#F0A47C' } },
+  sable:{ nom:'Sable',
+    clair:{ bg:'#F7F3EC', surface:'#FFFDF9', surface2:'#ECE4D6', ink:'#231E17', ink2:'#574E43', muted:'#6B6154', line:'#E2D8C8', lineStrong:'#BFB099', accent:'#8A4B2A', accentInk:'#FFFFFF', pink:'#D9A441' },
+    sombre:{ bg:'#16130E', surface:'#1F1B15', surface2:'#2A251D', ink:'#F1EBE0', ink2:'#CFC5B4', muted:'#9A8F7E', line:'#332D23', lineStrong:'#524938', accent:'#E3A681', accentInk:'#16130E', pink:'#D9A441' } },
+  cerise:{ nom:'Cerise',
+    clair:{ bg:'#F8F3F5', surface:'#FFFFFF', surface2:'#F0E3E8', ink:'#24171C', ink2:'#5A4650', muted:'#77606B', line:'#E6D7DD', lineStrong:'#C6ABB6', accent:'#943A57', accentInk:'#FFFFFF', pink:'#E79AA8' },
+    sombre:{ bg:'#171013', surface:'#20171B', surface2:'#2C2026', ink:'#F4EAEE', ink2:'#D6C2CA', muted:'#A08893', line:'#35272E', lineStrong:'#554049', accent:'#EFA7BB', accentInk:'#171013', pink:'#E79AA8' } },
+  contraste:{ nom:'Contraste',
+    clair:{ bg:'#FFFFFF', surface:'#FFFFFF', surface2:'#EBEBEB', ink:'#000000', ink2:'#1F1F1F', muted:'#454545', line:'#9A9A9A', lineStrong:'#2B2B2B', accent:'#000000', accentInk:'#FFFFFF', pink:'#B3005E' },
+    sombre:{ bg:'#000000', surface:'#000000', surface2:'#1C1C1C', ink:'#FFFFFF', ink2:'#EAEAEA', muted:'#C2C2C2', line:'#707070', lineStrong:'#D6D6D6', accent:'#FFFFFF', accentInk:'#000000', pink:'#FF8CC6' } }
+};
+const MODE_TOKENS = {
+  clair: { "--ok": "#3A7356", "--ok-soft": "#E1EFE7", "--warn": "#886320", "--warn-soft": "#F5ECD6", "--warn-ink": "#FFFFFF", "--bad": "#A64839", "--bad-soft": "#F6E1DD", "--teal": "#2C717D", "--teal-soft": "#DCEEF0", "--plum": "#8A4A7A", "--plum-soft": "#F1E3EE", "--viz-read": "#5A50B5", "--viz-screen": "#0E9C8E" },
+  sombre: { "--ok": "#8CC7A9", "--ok-soft": "#1F3329", "--warn": "#E3B341", "--warn-soft": "#3A2F16", "--warn-ink": "#1D1B26", "--bad": "#E58B7B", "--bad-soft": "#3D211C", "--teal": "#7FC4CE", "--teal-soft": "#17323A", "--plum": "#D69AC6", "--plum-soft": "#3A2436", "--viz-read": "#8E84EA", "--viz-screen": "#1FA89A" },
+};
+const mixHex = (a, b, t) => "#" + [0, 2, 4].map(i => Math.round(parseInt(a.slice(1 + i, 3 + i), 16) * t + parseInt(b.slice(1 + i, 3 + i), 16) * (1 - t)).toString(16).padStart(2, "0")).join("").toUpperCase();
+function themeVars(id, mode) {
+  const p = (THEMES[id] || THEMES.mauve)[mode], soft = id === "mauve" ? (mode === "clair" ? "#E4E1F2" : "#2E2B3F") : mixHex(p.accent, p.surface, mode === "clair" ? .14 : .18);
+  return { "--bg": p.bg, "--surface": p.surface, "--surface-2": p.surface2, "--ink": p.ink, "--ink-2": p.ink2, "--muted": p.muted, "--line": p.line, "--line-strong": p.lineStrong,
+    "--accent": p.accent, "--accent-ink": p.accentInk, "--accent-soft": soft, "--focus": p.accent, "--pink": p.pink, ...MODE_TOKENS[mode] };
+}
+const LS_APP = "pcm:apparence";
+const localApp = () => { try { return JSON.parse(localStorage.getItem(LS_APP) || "null") || {}; } catch { return {}; } };
+let appearance = { theme: THEMES[localApp().theme] ? localApp().theme : "mauve", mode: ["auto", "clair", "sombre"].includes(localApp().mode) ? localApp().mode : "auto" };
+const effectiveMode = mode => mode === "clair" || mode === "sombre" ? mode : matchMedia("(prefers-color-scheme: dark)").matches ? "sombre" : "clair";
+let themeSig = "";
+function applyAppearance(animate = false) {
+  const mode = effectiveMode(appearance.mode), sig = appearance.theme + "|" + mode; if (sig === themeSig) return; themeSig = sig;
+  const root = document.documentElement, vars = themeVars(appearance.theme, mode);
+  if (animate) { root.classList.add("theming"); clearTimeout(applyAppearance.t); applyAppearance.t = setTimeout(() => root.classList.remove("theming"), 420); }
+  for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v); root.style.colorScheme = mode === "sombre" ? "dark" : "light";
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute("content", vars["--bg"]));
+  try { localStorage.setItem(LS_APP, JSON.stringify({ ...appearance, vars: { clair: themeVars(appearance.theme, "clair"), sombre: themeVars(appearance.theme, "sombre") } })); } catch {}
+}
+applyAppearance();
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { applyAppearance(true); if (!settingsEl.hidden) paintAppearance(); }); } catch {}
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const dayKey = d => new Date(d).toLocaleDateString("sv");
 const fmtDate = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
@@ -1326,6 +1394,7 @@ function showSettings() {
       <div class="setrow"><div><b>Max par jour</b><span>minutes d'écran accordées</span></div><input id="cap-d" type="number" inputmode="numeric" min="1" value="${c.daily_cap_min}"></div>
       <label for="apps">Applis bloquées</label><textarea id="apps" style="min-height:90px">${esc(c.apps.join("\n"))}</textarea><p class="note" style="margin-top:6px">Une par ligne, avec le nom exact donné aux automatisations.</p>
       <button class="btn wide" style="margin-top:12px" data-act="save-config">Enregistrer</button><div class="err" id="cfg-err"></div></div>
+    <div class="list" id="apparence"></div>
     <div class="list"><h2 style="font-size:15px;margin:12px 0 6px">Raccourci iPhone</h2><p class="small muted">Le secret se colle dans le Dictionnaire en haut du raccourci « Portier ». Ne le partage pas.</p>
       <label>Adresse</label><code class="copy">${esc(api.url)}</code><label>Clé anon</label><code class="copy">${esc(api.anonKey)}</code><label>Secret</label><code class="copy">${esc(c.secret)}</code>
       <button class="btn sm ghost" style="margin-top:12px" data-act="copy-secret">Copier le secret</button><div class="okmsg" id="copy-ok"></div></div>
@@ -1333,8 +1402,25 @@ function showSettings() {
     <div class="list"><div class="setrow"><div><b>Mes données</b><span>livres, résumés, citations et stats</span></div><button class="btn sm ghost" data-act="export-all">Exporter</button></div></div>
     ${DEMO ? "" : `<button class="btn ghost wide" style="margin-top:14px" data-act="signout">Se déconnecter</button>`}
     </div>`;
-  arrive(settingsEl); settingsEl.scrollTop = 0; paintPush().catch(() => {});
+  arrive(settingsEl); settingsEl.scrollTop = 0; paintPush().catch(() => {}); paintAppearance();
 }
+// Un aperçu par thème, dessiné avec les vraies couleurs du thème (bande de l'hippo, feuille en arc, bouton Lire, pastille de série).
+function paintAppearance() {
+  const box = $("#apparence", settingsEl); if (!box) return; const mode = effectiveMode(appearance.mode), mini = hippoSVG({ only: {} });
+  box.innerHTML = `<h2 style="font-size:15px;margin:12px 0 10px">Apparence</h2>
+    <div class="setrow bare stack"><div><b>Mode</b><span>${appearance.mode === "auto" ? `suit ton iPhone, ${mode} en ce moment` : `toujours ${mode}`}</span></div>
+      <div class="seg2" role="group" aria-label="Mode clair ou sombre">${[["auto", "Auto"], ["clair", "Clair"], ["sombre", "Sombre"]].map(([v, l]) => `<button type="button" data-act="app-mode" data-v="${v}" aria-pressed="${appearance.mode === v}">${l}</button>`).join("")}</div></div>
+    <div class="themes">${Object.entries(THEMES).map(([id, t]) => `<button type="button" class="theme-card" data-act="app-theme" data-v="${id}" aria-pressed="${appearance.theme === id}" aria-label="Thème ${esc(t.nom)}${appearance.theme === id ? ", actif" : ""}">
+      <span class="tc-canvas" aria-hidden="true" style="${Object.entries(themeVars(id, mode)).map(([k, v]) => `${k}:${v}`).join(";")}"><span class="tc-band"><span class="tc-hp">${mini}</span></span>
+        <span class="tc-sheet"><span class="tc-card"><span class="tc-ring"></span><span class="tc-lines"><i></i><i class="m"></i></span></span><span class="tc-foot"><span class="tc-btn">Lire</span><span class="tc-pill"></span></span></span></span>
+      <span class="tc-name">${esc(t.nom)}${appearance.theme === id ? "<small>actif</small>" : ""}</span></button>`).join("")}</div>`;
+}
+async function setAppearance(patch) {
+  appearance = { ...appearance, ...patch }; applyAppearance(true); paintAppearance(); haptic();
+  try { await savePlayer({ apparence: { theme: appearance.theme, mode: appearance.mode } }); } catch {}
+}
+// Le choix suit le compte : appliqué sur un autre appareil dès le chargement.
+function syncAppearance() { const a = player().apparence; if (a && THEMES[a.theme] && (a.theme !== appearance.theme || a.mode !== appearance.mode)) { appearance = { theme: a.theme, mode: a.mode }; applyAppearance(true); } }
 function closeSettings() { leave(settingsEl, () => { settingsEl.hidden = true; settingsEl.innerHTML = ""; }); }
 function updateCountdowns() { document.querySelectorAll("[data-exp]").forEach(el => { const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000)); el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "terminé"; }); }
 function viewLogin(msg = "") {
@@ -1480,6 +1566,8 @@ document.addEventListener("click", async e => {
     else if (act === "goto-entry") { const t = document.getElementById("e-" + el.dataset.id); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1400); } }
     else if (act === "export") exportBook();
     else if (act === "export-all") await exportAll();
+    else if (act === "app-mode") await setAppearance({ mode: el.dataset.v });
+    else if (act === "app-theme") await setAppearance({ theme: el.dataset.v });
     else if (act === "push-on") await pushOn();
     else if (act === "push-off") await pushOff();
     else if (act === "push-test") await pushTest();
@@ -1566,6 +1654,10 @@ async function selfTest() {
   confirm = () => true; navigator.vibrate = () => true;
   await step("onglets", async () => { for (const t of ["home", "books", "goals", "me"]) { tab = t; render(); await wait(350); check($("section.view", app), `vue ${t}`); clean(`l'onglet ${t}`); } check($(".trend svg", app), "tendances absentes"); tab = "home"; render(); await wait(300); });
   await step("réglages", async () => { click('[data-act="settings"]'); await wait(400); check(!settingsEl.hidden, "réglages fermés"); clean("les réglages"); closeSettings(); await wait(420); check(settingsEl.hidden, "réglages restés ouverts"); });
+  await step("apparence", async () => { const before = { ...appearance }; click('[data-act="settings"]'); await wait(400); check($(".theme-card", settingsEl), "thèmes absents");
+    click('[data-act="app-theme"][data-v="foret"]'); await wait(200); check(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim().toUpperCase() === (THEMES.foret[effectiveMode(appearance.mode)].accent), "le thème ne s'applique pas");
+    click('[data-act="app-mode"][data-v="sombre"]'); await wait(200); check(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim().toUpperCase() === THEMES.foret.sombre.bg, "le mode sombre ne s'applique pas");
+    await setAppearance(before); closeSettings(); await wait(420); });
   await step("placard", async () => { click('[data-act="wardrobe"]'); await wait(400);
     for (const c of Object.keys(CATS)) { click(`#wardrobe [data-act="ward-cat"][data-v="${c}"]`); await wait(150); clean(`le placard (${c})`); }
     click('#wardrobe [data-act="ward-cat"][data-v="hat"]'); await wait(150); const buy = $('#wardrobe [data-act="buy"]'); check(buy, "rien à acheter");
@@ -1591,7 +1683,7 @@ async function selfTest() {
   const ok = log.every(l => l[0] === "ok"); document.body.dataset.selftest = ok ? "ok" : "fail";
   const pre = document.createElement("pre"); pre.id = "selftest"; pre.textContent = log.map(l => `${l[0]}  ${l[1]}`).join("\n"); document.body.append(pre); console.log(pre.textContent);
 }
-async function reload() { S = await api.load(); try { S.pushLog = await api.pushLog(); } catch { S.pushLog = []; } const st = streakInfo(); if (st.cur > 0) setPref("lastStreak", st.cur); render(); if (openBook) showBook(); }
+async function reload() { S = await api.load(); try { S.pushLog = await api.pushLog(); } catch { S.pushLog = []; } syncAppearance(); const st = streakInfo(); if (st.cur > 0) setPref("lastStreak", st.cur); render(); if (openBook) showBook(); }
 async function start() {
   if (api.unconfigured) { app.innerHTML = `<div class="login"><h1>Pages contre minutes</h1><p class="muted">Il manque l'adresse et la clé Supabase dans <code>config.js</code>. En attendant, tu peux <a href="?demo" style="color:var(--accent)">voir la démonstration</a>.</p></div>`; return; }
   if (!(await api.session())) return viewLogin();
