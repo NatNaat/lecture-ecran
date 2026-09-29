@@ -103,7 +103,7 @@ nav.tabs button[aria-current="page"] svg.i { animation: tabpop .35s var(--ease);
 .chip { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: 600 13.5px var(--body); color: var(--ink-2); }
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font: 600 12px var(--body); background: var(--surface-2); color: var(--ink-2); }
-.tag.ok { background: var(--ok-soft); color: var(--ok); } .tag.teal { background: var(--teal-soft); color: var(--teal); }
+.tag.ok { background: var(--ok-soft); color: var(--ok); } .tag.teal { background: var(--teal-soft); color: var(--teal); } .lead .tag { flex: none; white-space: nowrap; }
 .tint-warn { background: var(--warn-soft) !important; color: var(--warn) !important; } .tint-ok { background: var(--ok-soft) !important; color: var(--ok) !important; } .tint-teal { background: var(--teal-soft) !important; color: var(--teal) !important; } .tint-bad { background: var(--bad-soft) !important; color: var(--bad) !important; } .tint-plum { background: var(--plum-soft) !important; color: var(--plum) !important; }
 .bar.teal i { background: var(--teal); } .bar.plum i { background: var(--plum); } .bar.bad i { background: var(--bad); } .tag.warn { background: var(--warn-soft); color: var(--warn); } .tag.bad { background: var(--bad-soft); color: var(--bad); }
 .bar { height: 14px; background: var(--surface-2); border-radius: 999px; overflow: hidden; } .bar i { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px; transform-origin: left; transform: scaleX(0); transition: transform .5s var(--ease); }
@@ -171,6 +171,11 @@ code.copy { display: block; background: var(--surface-2); border-radius: 10px; p
 .chart .tap { fill: transparent; outline: none; } .chart .tap.on { fill: var(--ink); fill-opacity: .06; } .chart .real { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
 .viz { position: relative; } .viztip { position: absolute; top: -6px; z-index: 3; transform: translateY(-100%); display: grid; gap: 1px; padding: 7px 10px; border-radius: 10px; background: var(--ink); color: var(--bg); font: 500 12px/1.35 var(--body); white-space: nowrap; pointer-events: none; box-shadow: 0 6px 16px rgba(20, 18, 30, .2); animation: msgin .18s var(--ease) both; } .viztip b { font-weight: 700; }
 .trend h3 { font: 600 13px var(--body); color: var(--ink-2); margin: 14px 0 6px; letter-spacing: 0; }
+.seg2.sm { padding: 2px; border-radius: 10px; } .seg2.sm button { min-height: 30px; padding: 0 10px; font-size: 12.5px; border-radius: 8px; }
+details.more > summary { display: flex; align-items: center; gap: 10px; min-height: 28px; list-style: none; cursor: pointer; } details.more > summary::-webkit-details-marker { display: none; }
+details.more > summary h2 { margin: 0; } details.more > summary span { margin-left: auto; font: 500 12.5px var(--body); color: var(--muted); }
+details.more > summary svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s var(--ease); } details.more[open] > summary svg { transform: rotate(180deg); }
+details.more table { margin-top: 8px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 6px; font: 500 12px var(--body); color: var(--ink-2); } .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend .sw { width: 10px; height: 10px; border-radius: 3px; } .legend .ln { width: 14px; height: 2px; border-radius: 1px; background: var(--ink); }
 .vtable { margin-top: 12px; } .vtable td, .vtable th { white-space: nowrap; } .vtable tr:nth-child(2) th { padding-top: 0; font-weight: 500; } .vtable summary { font: 600 13px var(--body); color: var(--accent); cursor: pointer; min-height: 36px; display: flex; align-items: center; } .vtable table { margin-top: 4px; }
@@ -232,6 +237,16 @@ button.hp-unit { display: block; cursor: pointer; }
 .stage { position: relative; } .stage > * { position: relative; }
 .stage.big, .stage:has(.hp-unit.big) { width: 100%; height: 190px; border-radius: var(--r); margin: 10px 0 14px; border: 2px solid var(--line); } .hp-unit.big { width: 120px; }
 .stage.mini { width: 100%; height: 88px; border-radius: 12px; } .stage.mini .hp-unit { width: 56px; }
+button.stage.mini { transition: transform .15s var(--ease), outline-color .15s; } button.stage.mini:active { transform: scale(.96); } .stage.mini[aria-pressed="true"] { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.wsent { display: block; height: 0; }
+.wtop { position: sticky; top: env(safe-area-inset-top); z-index: 3; margin: 0 -16px; padding: 0 16px; background: var(--bg); }
+.wtop .stage.big { height: 164px; margin: 6px 0 8px; } .wtop .chips { margin-bottom: 0; padding-bottom: 10px; }
+.wtop.stuck { box-shadow: 0 1px 0 var(--line); } .wtop.stuck::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: calc(env(safe-area-inset-top) + 12px); background: var(--bg); }
+.trywrap { min-height: 44px; margin-bottom: 8px; }
+.trybar { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 3px 4px 3px 12px; border-radius: 12px; background: var(--surface); border: 2px solid var(--line); font: 500 13.5px var(--body); animation: msgin .2s var(--ease) both; }
+.trybar > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .trybar b { font-weight: 700; margin-right: 6px; }
+.trybar .btn.sm { min-height: 34px; padding: 0 12px; } .trybar small { display: inline-flex; align-items: center; gap: 4px; flex: none; font: 500 12px var(--body); color: var(--muted); } .trybar small svg.i { width: 14px; height: 14px; } .trybar .iconbtn { margin: 0; }
+.trybar.idle { display: grid; place-items: center; padding: 0 12px; border: 2px dashed var(--line); background: none; color: var(--muted); animation: none; }
 #wardrobe { position: fixed; inset: 0; z-index: 40; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 30px); animation: slidein .28s var(--ease) both; } #wardrobe .inner { max-width: 620px; margin: 0 auto; }
 .ward { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .witem { display: grid; gap: 8px; padding: 10px; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); text-align: center; } .witem.on { border-color: var(--plum); }
@@ -264,9 +279,20 @@ button.hp-unit { display: block; cursor: pointer; }
 .entry .no { position: absolute; left: 12px; top: 14px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 12px var(--display); color: var(--accent-ink); background: var(--accent); font-variant-numeric: tabular-nums; }
 .entry .fol { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .entry .rg { font: 700 14.5px var(--body); font-variant-numeric: tabular-nums; } .entry .rg small { display: block; font: 500 12px var(--body); color: var(--muted); } .entry .fol time { margin-left: auto; font: 500 12px var(--body); color: var(--muted); text-align: right; }
 .cov .pace { display: block; font: 600 11px/1.3 var(--body); color: var(--muted); margin-top: 3px; } .cov .pace.late { color: var(--bad); }
-.remember .btn, .bilan .figures { margin-top: 10px; }
-.entry blockquote, .rtxt blockquote, .quotes blockquote { margin: 8px 0 0; padding: 6px 12px; background: var(--plum-soft); color: var(--plum); border-radius: 10px; font-style: italic; quotes: "« " " »"; } .entry blockquote::before, .rtxt blockquote::before, .quotes blockquote::before { content: open-quote; } .entry blockquote::after, .rtxt blockquote::after, .quotes blockquote::after { content: close-quote; }
-.rtxt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; margin: 12px 0 16px; } .quotes { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 8px; } .quotes blockquote { margin: 0; } .quotes small { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; } textarea.short { min-height: 56px; }
+.memo .btn, .souv > .btn, .bilan .figures { margin-top: 10px; }
+.tag.plum { background: var(--plum-soft); color: var(--plum); }
+.souvq { display: grid; gap: 4px; width: 100%; text-align: left; margin-top: 2px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); transition: transform .15s var(--ease); } .souvq:active { transform: scale(.98); }
+.souvq small { font: 600 12px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; } .souvq span { font: 15px/1.5 var(--body); color: var(--ink); } .souvq i { font: normal 600 12.5px var(--body); color: var(--accent); }
+.card.gone { opacity: 0; transform: scale(.97); transition: opacity .22s, transform .22s var(--ease-in); }
+.mcard { margin: 12px 0 14px; padding: 16px; border-radius: 16px; background: var(--bg); border: 2px solid var(--line); }
+.mcard > b { display: block; font: 700 17px/1.25 var(--display); } .mcard > small { display: block; margin-top: 3px; font: 500 12.5px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; }
+.mq { font: 700 21px/1.25 var(--display); margin: 26px 0 6px; text-wrap: balance; }
+.mtext { font: 15px/1.55 var(--body); white-space: pre-wrap; hyphens: auto; margin-top: 12px; max-height: 13.5em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); }
+.mtext.full { max-height: none; -webkit-mask-image: none; mask-image: none; } #mmore { min-height: 36px; margin-top: 4px; font-weight: 600; font-size: 13.5px; }
+.mqa { font: 600 14px var(--body); color: var(--ink-2); text-align: center; margin: 2px 0 8px; }
+.mgrades { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .mgrades .btn { flex-direction: column; gap: 1px; min-height: 58px; padding: 6px 4px; } .mgrades small { font: 500 11.5px var(--body); color: var(--muted); }
+.entry blockquote, .mtext blockquote, .quotes blockquote { margin: 8px 0 0; padding: 6px 12px; background: var(--plum-soft); color: var(--plum); border-radius: 10px; font-style: italic; quotes: "« " " »"; } .entry blockquote::before, .mtext blockquote::before, .quotes blockquote::before { content: open-quote; } .entry blockquote::after, .mtext blockquote::after, .quotes blockquote::after { content: close-quote; }
+.quotes { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 8px; } .quotes blockquote { margin: 0; } .quotes small { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; } textarea.short { min-height: 56px; }
 .entry .txt { font: 15.5px/1.55 var(--body); white-space: pre-wrap; hyphens: auto; }
 .iconbtn { display: grid; place-items: center; width: 36px; height: 36px; margin: -8px -8px -8px 0; border-radius: 18px; color: var(--muted); } .iconbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .inkrow { display: flex; gap: 10px; margin: 12px 0 6px; flex-wrap: wrap; } .inkrow > * { flex: 1 1 46%; } .inkrow.tidy { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); } .inkrow.tidy .btn { padding: 0 8px; }
@@ -329,6 +355,9 @@ dialog[open] .sheet { animation: sheetin .38s var(--ease); } @keyframes sheetin 
 .pagerow { display: flex; align-items: baseline; gap: 8px; margin-top: 14px; } .pagerow label { margin: 0; font: 500 14.5px var(--body); color: var(--ink); white-space: nowrap; } .pagerow label b { font-variant-numeric: tabular-nums; }
 .pagerow input { width: 84px; flex: none; text-align: center; font: 700 18px var(--body); font-variant-numeric: tabular-nums; padding: 6px; }
 .gain { margin-left: auto; font: 700 13px var(--display); color: var(--ok); white-space: nowrap; } .gain:empty { display: none; }
+.quickp { display: flex; gap: 6px; margin-top: 8px; }
+.quickp button { flex: 1; min-height: 36px; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); font: 600 13.5px var(--body); color: var(--ink-2); font-variant-numeric: tabular-nums; transition: transform .15s var(--ease), background-color .15s, border-color .15s, color .15s; }
+.quickp button:active { transform: scale(.95); } .quickp button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); } .quickp button:disabled { opacity: .4; }
 .meter { height: 8px; margin-top: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; } .meter i { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform .25s; }
 .meterlbl { font: 500 12px/1.4 var(--body); color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
 .searchbox { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 0 12px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); } .searchbox:focus-within { border-color: var(--accent); }
@@ -709,16 +738,21 @@ function readingForm(list, sel, submitLabel, sub) {
   return `<header class="jhead"><h1>J'ai lu</h1><span>${sub ? esc(sub) : new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}</span></header>
     ${bookPicker(list, sel)}
     <div class="pagerow"><label for="lp">De la p. <b id="pfrom">${sel.current_page}</b> à la p.</label><input id="lp" type="number" inputmode="numeric" required min="1" aria-describedby="lgain"><span class="gain" id="lgain"></span></div>
-    <label for="ls">Ce que je retiens</label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens…"></textarea>
+    <div class="quickp" role="group" aria-label="Pages lues">${[5, 10, 15, 20].map(n => `<button type="button" data-n="${n}" aria-pressed="false">+${n} p.</button>`).join("")}</div>
+    <label for="ls">Ce que je retiens</label><textarea id="ls" required placeholder="Ce qui se passe, les idées, ce que tu en retiens… Le micro du clavier marche très bien pour dicter."></textarea>
     <div class="meter" aria-hidden="true"><i id="lbar"></i></div><div class="meterlbl" id="lcount" role="status"></div>
     <label for="lq">Une citation à garder <small>(facultatif)</small></label><textarea id="lq" class="short" placeholder="Une phrase du texte, mot pour mot"></textarea>
     <div class="err" id="lerr"></div><button class="btn wide">${submitLabel}</button>`;
 }
 function wireReadingForm(form, list, sel, done) {
-  let cur = sel; const upd = () => { const n = Math.max(0, (+$("#lp", form).value || 0) - cur.current_page), need = needChars(n), len = $("#ls", form).value.trim().length;
+  let cur = sel, qn = 0; const lp = $("#lp", form), upd = () => { const n = Math.max(0, (+lp.value || 0) - cur.current_page), need = needChars(n), len = $("#ls", form).value.trim().length;
+    form.querySelectorAll(".quickp [data-n]").forEach(b => { const v = cur.current_page + +b.dataset.n; b.disabled = !!cur.total_pages && v > cur.total_pages; b.setAttribute("aria-pressed", +lp.value === v); });
     $("#pfrom", form).textContent = cur.current_page; $("#lgain", form).textContent = n ? `+${creditOf(cur, n)} min` : "";
     $("#lbar", form).style.transform = `scaleX(${Math.min(1, len / need)})`; $("#lcount", form).textContent = len >= need ? `${len} caractères, c'est assez` : n && n <= 5 ? `${len} / ${need} caractères : une phrase suffit` : `${len} / ${need} caractères${n ? ` pour ${plural(n, "page")}` : ""}`; };
-  wirePicker(form, list, b => { cur = b; upd(); }); ["input", "change"].forEach(ev => form.addEventListener(ev, upd)); upd();
+  // Les raccourcis de pages suivent le livre choisi ; taper un nombre à la main les oublie.
+  wirePicker(form, list, b => { cur = b; if (qn) lp.value = cur.current_page + qn; upd(); }); lp.addEventListener("input", () => { qn = 0; });
+  $(".quickp", form).onclick = e => { const b = e.target.closest("[data-n]"); if (!b || b.disabled) return; qn = +b.dataset.n; lp.value = cur.current_page + qn; haptic(); upd(); };
+  ["input", "change"].forEach(ev => form.addEventListener(ev, upd)); upd();
   form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector("button.btn:not(.ghost)"); btn.disabled = true;
     try { const r = await api.logReading(S.config.secret, bookLabel(cur), +$("#lp", form).value, withQuote(form));
       if (!r.ok) { $("#lerr", form).textContent = r.error; btn.disabled = false; return; } haptic(); await done(r); } catch (err) { $("#lerr", form).textContent = err.message; btn.disabled = false; } };
@@ -878,7 +912,7 @@ function hippoSVG(opt = {}) { const col = { B: "var(--hp)", S: "var(--hp2)", F: 
   const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
   const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);   // sourcils froncés, bouche serrée
   const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
-  const L = opt.only ? outfitLayers(px, opt.only) : S ? outfitLayers(px) : { above: "", below: "", hat: "", ears: "front" }, wear = L.above + (opt.extra ? opt.extra(px) : "");
+  const L = opt.only ? outfitLayers(px, opt.only) : S ? outfitLayers(px, null, opt.eq) : { above: "", below: "", hat: "", ears: "front" }, wear = L.above + (opt.extra ? opt.extra(px) : "");
   const hat = L.hat ? `<g class="hp-hat">${L.hat}</g>` : "", front = L.ears === "front";
   // Ordre : derrière (cape, ailes) → corps → chapeau posé entre les oreilles → oreilles → grand chapeau → visage → devant.
   return `<svg viewBox="0 -4 14 16" aria-hidden="true"${L.hat ? ' class="has-hat"' : ""}><g class="hp-wear-below">${L.below}</g>${body}${front ? hat : ""}${L.hat && L.ears === "hidden" ? "" : `<g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>`}${front ? "" : hat}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g>${spark}<g class="hp-wear">${wear}</g></svg>`; }
@@ -902,9 +936,9 @@ function hippoCheer() { const h = $(".hp-unit"); if (!h) return; h.classList.rem
 
 // ───────────── Plumes, placard et gel de série ─────────────
 // Les plumes gagnées se recalculent depuis les lectures ; seuls les achats, l'équipement, les gels et les cadeaux sont enregistrés (app_config.player).
-const player = () => Object.assign({ spent: 0, owned: [], equipped: {}, freezesBought: 0, freezesUsed: [], gifts: 0, lastGift: null, reviews: {} }, S.config.player || {});
+const player = () => Object.assign({ spent: 0, owned: [], equipped: {}, freezesBought: 0, freezesUsed: [], gifts: 0, lastGift: null, reviews: {}, memo: {}, souv: {} }, S.config.player || {});
 async function savePlayer(patch) { const p = { ...player(), ...patch }; S.config.player = p; await api.updateConfig({ player: p }); }
-const plumesEarned = () => S.readings.reduce((a, r) => a + r.pages, 0) + Object.keys(byDayPages()).filter(k => byDayPages()[k] >= goalPages()).length * 10 + allWeeklyQuests().filter(q => q.done).reduce((a, q) => a + q.xp, 0) + badges().filter(b => b.at).length * 25 + player().gifts + Object.values(player().reviews).reduce((a, l) => a + l.length, 0) * 5;
+const plumesEarned = () => S.readings.reduce((a, r) => a + r.pages, 0) + Object.keys(byDayPages()).filter(k => byDayPages()[k] >= goalPages()).length * 10 + allWeeklyQuests().filter(q => q.done).reduce((a, q) => a + q.xp, 0) + badges().filter(b => b.at).length * 25 + player().gifts + Object.values(player().reviews).reduce((a, l) => a + l.length, 0) * 5 + memoPlumes();
 function byDayPages() { if (byDayPages.k === S) return byDayPages.v; const v = {}; for (const r of S.readings) { const k = dayKey(r.created_at); v[k] = (v[k] || 0) + r.pages; } byDayPages.k = S; byDayPages.v = v; return v; }
 const plumes = () => plumesEarned() - player().spent;
 // Rendez-vous de lecture : l'heure fixée dans Réglages (la même que l'automatisation « Rappel »).
@@ -1014,15 +1048,16 @@ const CATS = { hat: "Chapeaux", glass: "Lunettes", skin: "Pelage", acc: "Accesso
 const item = id => ITEMS.find(i => i.id === id);
 const owns = id => { const it = item(id); return !it || it.price === 0 || player().owned.includes(id) || (it.when && !!it.when()); };
 // Ce que porte l'hippo : ses pixels s'ajoutent au dessin, son pelage remplace les couleurs.
-function outfitLayers(px, only) {
-  const eq = player().equipped, out = { above: "", below: "", hat: "", ears: "front" };
-  const list = only ? [only] : ["acc", "glass", "hat"].map(c => eq[c] && item(eq[c])).filter(it => it && owns(it.id));
+// `eq` : une tenue d'essayage (le placard) ; la pièce essayée s'affiche même si elle n'est pas achetée.
+function outfitLayers(px, only, eq) {
+  const e = eq || player().equipped, trial = eq ? tryOn : null, out = { above: "", below: "", hat: "", ears: "front" };
+  const list = only ? [only] : ["acc", "glass", "hat"].map(c => e[c] && item(e[c])).filter(it => it && (owns(it.id) || it.id === trial));
   for (const it of list) { if (!it.px) continue; const art = it.px(px);
     if (it.layer === "below") out.below += art; else if (it.cat === "hat") { out.hat = art; out.ears = it.ears || "front"; } else out.above += art; }
   return out;
 }
-function skinStyle() { const it = player().equipped.skin && item(player().equipped.skin); return it && it.colors && owns(it.id) ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""; }
-const sceneClass = () => { const s = player().equipped.scene; return s && owns(s) ? "stage-" + s.replace("scene-", "") : ""; };
+function skinStyle(eq) { const e = eq || player().equipped, it = e.skin && item(e.skin); return it && it.colors && (owns(it.id) || (eq && it.id === tryOn)) ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""; }
+const sceneClass = eq => { const s = (eq || player().equipped).scene; return s && (owns(s) || (eq && s === tryOn)) ? "stage-" + s.replace("scene-", "") : ""; };
 // L'étagère « Mes livres finis » se dessine à partir de ta vraie bibliothèque : un dos par livre fini, rangés dans l'ordre où tu les as finis.
 const SPINES = ["#8C3B3B", "#3E6B52", "#3D4F82", "#8A5A2B", "#5B4A72", "#2F6E73", "#A0763A", "#7A2F45", "#4F6B3A", "#6B6880"];
 function shelfBg(startRow = 0) {
@@ -1036,7 +1071,7 @@ function shelfBg(startRow = 0) {
       out += `<rect x="${x}" y="${base - bh}" width="${bw}" height="${bh}" fill="${c}"/><rect x="${x}" y="${base - bh + 3}" width="${bw}" height="1" fill="#E3B341" fill-opacity=".75"/>`; x += bw + 1; } });
   return `url('data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" shape-rendering="crispEdges">${out}</svg>`)}')`;
 }
-const sceneStyle = (id, home) => (id || player().equipped.scene) === "scene-mes-livres" && owns("scene-mes-livres") ? `background:#C9A97A ${shelfBg(home ? 2 : 0)} center ${home ? "calc(env(safe-area-inset-top) + 100px)" : "top"} / 440px auto no-repeat` : "";
+const sceneStyle = (id, home, eq) => (id || (eq || player().equipped).scene) === "scene-mes-livres" && (owns("scene-mes-livres") || (eq && tryOn === "scene-mes-livres")) ? `background:#C9A97A ${shelfBg(home ? 2 : 0)} center ${home ? "calc(env(safe-area-inset-top) + 100px)" : "top"} / 440px auto no-repeat` : "";
 // Le prochain objet à viser : le moins cher qui reste hors de portée, sinon celui que débloque le prochain niveau.
 function nextGoal() {
   const bal = plumes(), lv = levelInfo().n, left = ITEMS.filter(i => i.price > 0 && !i.unlock && !owns(i.id));
@@ -1057,32 +1092,51 @@ async function dailyGift() {
 }
 
 // ───────────── Le placard ─────────────
-let wardCat = "hat";
+let wardCat = "hat", tryOn = null;
 const lvLock = it => it.lvl && levelInfo().n < it.lvl;
+// L'essayage : toucher une vignette habille le grand hippo sans rien acheter. La tenue essayée ne vaut que dans le placard.
+const tryEq = () => { const it = tryOn && item(tryOn); return it ? { ...player().equipped, [it.cat]: it.id } : player().equipped; };
+function wardStage() { const eq = tryEq(); return `<div class="stage big ${sceneClass(eq)}" id="wstage" style="${sceneStyle(null, false, eq)}"><div class="hp-unit big ${hippoMood().cls}" style="${skinStyle(eq)}">${hippoSVG({ eq })}</div></div>`; }
+function tryBar() {
+  const it = tryOn && item(tryOn); if (!it) return `<p class="trybar idle">Touche un objet pour l'essayer.</p>`;
+  const bal = plumes(), act = owns(it.id) ? (player().equipped[it.cat] === it.id ? `<small>déjà porté</small>` : `<button class="btn sm" data-act="equip" data-id="${it.id}">Porter</button>`)
+    : it.unlock ? `<small>${ICONS.lock}${esc(it.unlock)}</small>` : lvLock(it) ? `<small>${ICONS.lock}niveau ${it.lvl}</small>`
+    : bal >= it.price ? `<button class="btn sm ok" data-act="buy" data-id="${it.id}">${PLUME}${it.price}</button>` : `<small>${PLUME}${it.price} · manque ${it.price - bal}</small>`;
+  return `<div class="trybar"><span><b>Essai</b>${esc(it.name)}</span>${act}<button class="iconbtn" data-act="try-off" aria-label="Arrêter l'essai"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>`;
+}
+function paintTry() {
+  const st = $("#wstage", wardrobeEl); if (!st) return; st.outerHTML = wardStage(); $(".trywrap", wardrobeEl).innerHTML = tryBar();
+  wardrobeEl.querySelectorAll('[data-act="try"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.id === tryOn)); if (tryOn) wardCheer();
+}
+// L'en-tête (hippo, essai, catégories) reste en haut pendant qu'on parcourt les vignettes ; une bande couvre alors la barre d'état.
+const wardPin = () => { const w = $(".wtop", wardrobeEl), p = $(".wsent", wardrobeEl); return w && p ? p.offsetTop - parseFloat(getComputedStyle(w).top) : 0; };
+function wardStuck() { const w = $(".wtop", wardrobeEl); if (w) w.classList.toggle("stuck", wardrobeEl.scrollTop > 0 && wardrobeEl.scrollTop >= wardPin() - .5); }
+wardrobeEl.addEventListener("scroll", wardStuck, { passive: true });
 function showWardrobe() {
-  const bal = plumes(), eq = player().equipped, list = ITEMS.filter(i => i.cat === wardCat), chipsX = $(".chips", wardrobeEl)?.scrollLeft || 0;
+  const bal = plumes(), eq = player().equipped, list = ITEMS.filter(i => i.cat === wardCat), chipsX = $(".chips", wardrobeEl)?.scrollLeft || 0, pinned = !!$(".wtop.stuck", wardrobeEl);
   wardrobeEl.innerHTML = `<div class="inner"><button class="back" data-act="close-wardrobe"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
     <div class="topbar"><h1>Le placard</h1><span class="plumes num">${PLUME}${bal}</span></div>
-    <div class="stage ${sceneClass()}" style="${sceneStyle()}"><div class="hp-unit big ${hippoMood().cls}" style="${skinStyle()}">${hippoSVG()}</div></div>
-    ${nextGoal() ? `<p class="note goal-next">${esc(nextGoal())}</p>` : ""}
-    <div class="chips">${Object.entries(CATS).map(([k, v]) => `<button class="chip" data-act="ward-cat" data-v="${k}" aria-pressed="${k === wardCat}">${v}</button>`).join("")}</div>
+    ${nextGoal() ? `<p class="note goal-next">${esc(nextGoal())}</p>` : ""}<i class="wsent" aria-hidden="true"></i>
+    <div class="wtop">${wardStage()}<div class="trywrap" aria-live="polite">${tryBar()}</div>
+      <div class="chips">${Object.entries(CATS).map(([k, v]) => `<button class="chip" data-act="ward-cat" data-v="${k}" aria-pressed="${k === wardCat}">${v}</button>`).join("")}</div></div>
     ${wardCat === "util" ? `<div class="card"><div class="lead"><h2>Gel de série</h2><span class="tag ${freezesLeft() ? "teal" : ""}">${freezesLeft()} en réserve</span></div><p class="small muted">Un jour sans lecture ne casse pas la série. Il s'applique tout seul au premier jour manqué, au plus un par semaine.</p>
         <button class="btn wide" style="margin-top:12px" data-act="buy" data-id="freeze" ${bal < 100 ? "disabled" : ""}>${PLUME}Acheter un gel · 100</button></div>
-      <div class="card"><h2>Comment gagner des plumes</h2><p class="small muted">1 page résumée = 1 plume. Objectif du jour : +10. Quête finie : sa valeur en XP. Succès : +25. Relecture d'un ancien résumé : +5. Et un petit cadeau à la première ouverture chaque jour. Les pièces rares se débloquent en montant de niveau ; chaque livre fini rejoint ton étagère.</p></div>`
+      <div class="card"><h2>Comment gagner des plumes</h2><p class="small muted">1 page résumée = 1 plume. Objectif du jour : +10. Quête finie : sa valeur en XP. Succès : +25. Révision prépa : +3 par carte ; souvenir de lecture : +2. Et un petit cadeau à la première ouverture chaque jour. Les pièces rares se débloquent en montant de niveau ; chaque livre fini rejoint ton étagère.</p></div>`
     : `<div class="ward">${list.map(it => { const own = owns(it.id), on = eq[it.cat] === it.id || (it.cat === "skin" && !eq.skin && it.price === 0);
-        return `<div class="witem ${on ? "on" : ""} ${own ? "" : it.unlock || lvLock(it) ? "locked" : bal >= it.price ? "buyable" : "poor"}"><div class="stage mini ${it.cat === "scene" ? "stage-" + it.id.replace("scene-", "") : ""}" style="${it.cat === "scene" ? sceneStyle(it.id) : ""}"><div class="hp-unit" style="${it.colors ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""}">${hippoSVG(it.px ? { only: it } : {})}</div></div>
+        return `<div class="witem ${on ? "on" : ""} ${own ? "" : it.unlock || lvLock(it) ? "locked" : bal >= it.price ? "buyable" : "poor"}"><button type="button" class="stage mini ${it.cat === "scene" ? "stage-" + it.id.replace("scene-", "") : ""}" style="${it.cat === "scene" ? sceneStyle(it.id) : ""}" data-act="try" data-id="${it.id}" aria-pressed="${tryOn === it.id}" aria-label="Essayer ${esc(it.name)}"><span class="hp-unit" style="${it.colors ? `--hp:${it.colors[0]};--hp2:${it.colors[1]};--hp3:${it.colors[2]}` : ""}">${hippoSVG(it.px ? { only: it } : {})}</span></button>
           <b>${esc(it.name)}</b>${own ? `<button class="btn sm ${on ? "ghost" : ""}" data-act="equip" data-id="${it.id}">${on ? (it.cat === "skin" || it.price === 0 ? "Porté" : "Retirer") : "Porter"}</button>`
           : it.unlock ? `<small>${ICONS.lock}${esc(it.unlock)}</small>` : lvLock(it) ? `<small>${ICONS.lock}niveau ${it.lvl} · ${PLUME}${it.price}</small>` : bal >= it.price ? `<button class="btn sm ok" data-act="buy" data-id="${it.id}">${PLUME}${it.price}</button>` : `<small class="poorlbl">${PLUME}${it.price} · manque ${it.price - bal}</small>`}</div>`; }).join("")}</div>`}</div>`;
   arrive(wardrobeEl); const ch = $(".chips", wardrobeEl); if (ch) ch.scrollLeft = chipsX;
+  if (pinned) wardrobeEl.scrollTop = Math.max(wardrobeEl.scrollTop, wardPin()); wardStuck();
 }
-function closeWardrobe() { if (wardrobeEl.hidden || wardrobeEl._leaving) return; render(); leave(wardrobeEl, () => { wardrobeEl.hidden = true; wardrobeEl.innerHTML = ""; }); }
+function closeWardrobe() { if (wardrobeEl.hidden || wardrobeEl._leaving) return; tryOn = null; render(); leave(wardrobeEl, () => { wardrobeEl.hidden = true; wardrobeEl.innerHTML = ""; }); }
 async function buyItem(id) {
   const bal = plumes(), it = id === "freeze" ? { name: "un gel de série", price: 100 } : item(id); if (it && lvLock(it)) return toast(`Disponible au niveau ${it.lvl}.`); if (!it || bal < it.price) return toast("Pas assez de plumes.");
   if (!confirm(`Acheter ${it.name} pour ${it.price} plumes ?`)) return;
   const p = player(); await savePlayer(id === "freeze" ? { spent: p.spent + 100, freezesBought: p.freezesBought + 1 } : { spent: p.spent + it.price, owned: [...p.owned, id], equipped: { ...p.equipped, [it.cat]: id } });
-  haptic(); toast(id === "freeze" ? "Gel de série ajouté à ta réserve." : `${it.name} : c'est à toi.`); showWardrobe(); wardCheer();
+  if (tryOn === id) tryOn = null; haptic(); toast(id === "freeze" ? "Gel de série ajouté à ta réserve." : `${it.name} : c'est à toi.`); showWardrobe(); wardCheer();
 }
-async function equipItem(id) { const it = item(id), eq = { ...player().equipped }; if (eq[it.cat] === id && it.cat !== "skin") delete eq[it.cat]; else eq[it.cat] = id; await savePlayer({ equipped: eq }); haptic(); showWardrobe(); wardCheer(); }
+async function equipItem(id) { const it = item(id), eq = { ...player().equipped }; if (tryOn === id) tryOn = null; if (eq[it.cat] === id && it.cat !== "skin") delete eq[it.cat]; else eq[it.cat] = id; await savePlayer({ equipped: eq }); haptic(); showWardrobe(); wardCheer(); }
 // Amène la puce choisie au centre de la rangée quand elle dépasse du bord.
 function centerChip(row, chip) {
   if (!row || !chip) return; const r = row.getBoundingClientRect(), c = chip.getBoundingClientRect(), from = row.scrollLeft;
@@ -1115,23 +1169,82 @@ function bilanCard() {   // visible le dimanche seulement (en démo : ?bilan)
   return `<div class="card bilan"><div class="lead"><h2>Bilan de la semaine</h2><span class="small muted">dimanche</span></div>
     <div class="figures"><div class="accent"><b class="num">${w.pages}</b><span>pages</span></div><div class="teal"><b class="num">${w.minutes}</b><span>min gagnées</span></div><div class="warn"><b class="num">${w.days} / 7</b><span>jours lus</span></div></div><p class="small" style="margin-top:10px">${say.join(" ")}</p></div>`;
 }
-// Répétition espacée : un résumé vieux de 7 puis de 30 jours revient sur l'accueil pour être relu.
-const REVIEW_STAGES = [30, 7];
-function reviewDue() {
-  const rv = player().reviews, now = Date.now(), age = r => (now - new Date(r.created_at)) / 864e5;
-  for (const st of REVIEW_STAGES) { const c = S.readings.filter(r => age(r) >= st && age(r) < st * 2 && !(rv[r.id] || []).includes(st) && r.summary.trim().length >= 80).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0]; if (c) return { r: c, stage: st, age: Math.round(age(c)) }; }
-  return null;
+// ───── Mémoire : ne pas oublier ce qu'on a lu ─────
+// Livres prépa : rappel espacé façon Anki, sans rien écrire. On se rappelle l'essentiel, on révèle son résumé, on dit si c'était revenu.
+// Boîtes de Leitner : 3 jours → 2 semaines → 45 jours → 4 mois, puis la carte est acquise. « Non » la renvoie à 3 jours ;
+// « En partie » la garde dans sa boîte, avec une attente une fois et demie plus longue. Au plus 4 cartes par jour.
+// Livres plaisir : au plus un souvenir par jour, le début d'un ancien résumé qui ressurgit sur l'accueil. Rien à faire.
+// (player.reviews garde les plumes de l'ancienne relecture « Tu te souviens ? ».)
+const MEMO_GAPS = [3, 14, 45, 120], MEMO_CAP = 4, MEMO_XP = 3, SOUV_XP = 2;
+const memoPlumes = () => Object.values(player().memo).reduce((a, m) => a + (m.n || 0), 0) * MEMO_XP + (player().souv.n || 0) * SOUV_XP;
+const isPrepa = r => S.books.find(b => b.id === r.book_id)?.kind === "prepa";
+const bodyOf = s => s.split("\n").filter(l => !isQuote(l)).join("\n").trim();   // le résumé sans ses citations
+const memoOf = r => player().memo[r.id] || { b: 0, d: addDays(dayKey(r.created_at), MEMO_GAPS[0]), n: 0 };
+const gapLbl = (d, long) => d >= 60 ? `${Math.round(d / 30)} mois` : d >= 14 ? (long ? `${Math.round(d / 7)} semaines` : `${Math.round(d / 7)} sem.`) : long ? `${d} jours` : `${d} j`;
+const agoLbl = d => { const n = Math.round((new Date(todayKey() + "T12:00:00") - new Date(dayKey(d) + "T12:00:00")) / 864e5);
+  return n < 1 ? "aujourd'hui" : n < 2 ? "hier" : n < 14 ? `il y a ${n} jours` : n < 60 ? `il y a ${Math.round(n / 7)} semaines` : n < 365 ? `il y a ${Math.round(n / 30)} mois` : `il y a ${plural(Math.round(n / 365), "an")}`; };
+function memoBatch() {   // les cartes du jour, les plus en retard d'abord
+  const t = todayKey(), left = MEMO_CAP - Object.values(player().memo).filter(m => m.l === t).length; if (left <= 0) return [];
+  return S.readings.filter(r => isPrepa(r) && bodyOf(r.summary).length >= 40).map(r => ({ r, m: memoOf(r) })).filter(x => !x.m.ok && x.m.d <= t && x.m.l !== t)
+    .sort((a, b) => a.m.d.localeCompare(b.m.d) || a.r.created_at.localeCompare(b.r.created_at)).slice(0, left).map(x => x.r);
 }
-function rememberCard() {
-  const d = reviewDue(); if (!d) return ""; const b = S.books.find(x => x.id === d.r.book_id);
-  return `<div class="card remember"><div class="lead"><h2>Tu te souviens ?</h2><span class="small muted">il y a ${d.age} jours</span></div><p class="small"><b>${esc(b ? b.title : "")}</b> · p. ${d.r.page_start} → ${d.r.page_end}</p>
-    <button class="btn sm" data-act="review" data-id="${esc(d.r.id)}">Relire · +5 ${PLUME}</button></div>`;
+// Le souvenir du jour : le même toute la journée, en passant d'abord par les résumés jamais ressortis.
+function souvenir() {
+  const sv = player().souv, t = todayKey(), seen = sv.seen || {}; if (sv.day === t) return null;
+  const c = S.readings.filter(r => !isPrepa(r) && dayKey(r.created_at) <= addDays(t, -10) && bodyOf(r.summary).length >= 40); if (!c.length) return null;
+  const least = Math.min(...c.map(r => seen[r.id] || 0)), pool = c.filter(r => (seen[r.id] || 0) === least).sort((a, b) => a.created_at.localeCompare(b.created_at));
+  return pool[hash(t) % pool.length];
 }
-function dlgReview(id) {
-  const r = S.readings.find(x => x.id === id); if (!r) return; const b = S.books.find(x => x.id === r.book_id), d = reviewDue(), stage = d && d.r.id === id ? d.stage : 0;
-  openDlg(`<h1>Tu te souviens ?</h1><p class="small muted">${esc(b ? b.title : "")} · p. ${r.page_start} → ${r.page_end} · ${fmtDate(r.created_at)}</p><div class="rtxt">${fmtSummary(r.summary)}</div>
-    <button class="btn wide" id="reviewed">J'ai relu · +5 plumes</button><button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Plus tard</button>`);
-  $("#reviewed").onclick = async () => { if (!stage) return closeDlg(); const rv = { ...player().reviews }; rv[id] = [...(rv[id] || []), stage]; await savePlayer({ reviews: rv }); closeDlg(); render(); hippoCheer(); toast("+5 plumes : la mémoire, ça se cultive."); };
+function excerpt(s, max = 170) {   // le début du résumé, coupé à la fin d'une phrase quand c'est possible
+  const t = s.replace(/\s+/g, " ").trim(); if (t.length <= max) return t;
+  const cut = t.slice(0, max), end = Math.max(...[". ", "! ", "? ", "… "].map(p => cut.lastIndexOf(p)));
+  return end >= 60 ? cut.slice(0, end + 1) : cut.slice(0, cut.lastIndexOf(" ")) + "…";
+}
+// Sur l'accueil : la révision prépa quand des cartes attendent, sinon le souvenir. Un seul moment de mémoire par jour.
+function memoryCard() {
+  const batch = memoBatch();
+  if (batch.length) return `<div class="card memo"><div class="lead"><h2>Révision prépa</h2><span class="tag plum">${plural(batch.length, "carte")}</span></div>
+    <p class="small muted">Retrouver de tête ce que tu as lu, sans rien écrire. Environ ${plural(Math.ceil(batch.length / 2), "minute")}.</p>
+    <button class="btn sm" data-act="memo">Commencer · +${MEMO_XP} ${PLUME} par carte</button></div>`;
+  if (Object.values(player().memo).some(m => m.l === todayKey())) return "";
+  const r = souvenir(); return r ? souvCard(r) : "";
+}
+function souvCard(r) {
+  const b = S.books.find(x => x.id === r.book_id);
+  return `<div class="card souv"><div class="lead"><h2>Souvenir</h2><span class="small muted">${agoLbl(r.created_at)}</span></div>
+    <button class="souvq" data-act="open-entry" data-b="${esc(r.book_id)}" data-id="${esc(r.id)}"><small>${esc(b ? b.title : "")} · p. ${r.page_start} → ${r.page_end}</small><span>${esc(excerpt(bodyOf(r.summary)))}</span><i>Relire en entier ›</i></button>
+    <button class="btn sm ghost" data-act="souv-ok" data-id="${esc(r.id)}">Ça me revient · +${SOUV_XP} ${PLUME}</button></div>`;
+}
+async function souvenirOk(id) {
+  const sv = player().souv, seen = { ...(sv.seen || {}) }; seen[id] = (seen[id] || 0) + 1;
+  await savePlayer({ souv: { day: todayKey(), n: (sv.n || 0) + 1, seen } }); haptic();
+  const c = $(".card.souv", app); if (c) { c.classList.add("gone"); await new Promise(r => setTimeout(r, 240)); }
+  render(); hippoCheer(); toast(`+${SOUV_XP} plumes. Un autre souvenir demain.`);
+}
+// La révision se joue dans la feuille du bas : la question, puis le résumé et trois réponses. Chaque réponse est enregistrée aussitôt.
+let memoRun = null;
+function dlgMemo() { const list = memoBatch(); if (!list.length) return toast("Rien à revoir aujourd'hui."); memoRun = { list, i: 0, done: 0 }; memoStep(false); }
+function memoStep(shown) {
+  const run = memoRun, r = run.list[run.i], b = S.books.find(x => x.id === r.book_id), m = memoOf(r), next = [MEMO_GAPS[0], Math.round(MEMO_GAPS[m.b] * 1.5), MEMO_GAPS[m.b + 1] ?? null];
+  const html = `<header class="jhead"><h1>Révision prépa</h1><span class="num">${run.i + 1} / ${run.list.length}</span></header>
+    <div class="mcard${shown ? "" : " enter"}"><b>${esc(b ? b.title : "")}</b><small>p. ${r.page_start} → ${r.page_end} · lu ${agoLbl(r.created_at)}${m.n ? ` · ${m.n + 1}e rappel` : ""}</small>
+      ${shown ? `<div class="mtext">${fmtSummary(r.summary)}</div><button type="button" class="textlink" id="mmore" data-act="memo-more" hidden>Tout lire</button>`
+        : `<p class="mq">Qu'est-ce que tu en retiens ?</p><p class="small muted">Prends quelques secondes pour te le rappeler, dans ta tête. Rien à écrire.</p>`}</div>
+    ${shown ? `<p class="mqa">Tu t'en souvenais ?</p><div class="mgrades">${[["Non", 0], ["En partie", 1], ["Oui", 2]].map(([l, g]) => `<button type="button" class="btn ghost" data-act="memo-grade" data-g="${g}" aria-label="${l}, ${next[g] === null ? "carte acquise" : "revient dans " + gapLbl(next[g], true)}">${l}<small>${next[g] === null ? "acquise" : "dans " + gapLbl(next[g])}</small></button>`).join("")}</div>`
+      : `<button class="btn wide" data-act="memo-show">Voir mon résumé</button><button type="button" class="btn ghost wide" style="margin-top:8px" data-close>Plus tard</button>`}`;
+  const sh = dlg.open && dlg.querySelector(".sheet"); if (sh) { sh.innerHTML = html; sh.scrollTop = 0; } else openDlg(html);
+  const mt = $(".mtext", dlg); if (mt && mt.scrollHeight > mt.clientHeight + 4) $("#mmore", dlg).hidden = false; else mt?.classList.add("full");
+}
+async function memoGrade(g) {
+  const run = memoRun; if (!run) return; const r = run.list[run.i], m = memoOf(r), t = todayKey(), k = g === 0 ? 0 : g === 1 ? m.b : m.b + 1, ok = k >= MEMO_GAPS.length, wait = g === 1 ? Math.round(MEMO_GAPS[k] * 1.5) : MEMO_GAPS[k];
+  dlg.querySelectorAll(".mgrades button").forEach(x => { x.disabled = true; });
+  try { await savePlayer({ memo: { ...player().memo, [r.id]: ok ? { b: m.b, d: null, n: m.n + 1, l: t, ok: 1 } : { b: k, d: addDays(t, wait), n: m.n + 1, l: t } } }); }
+  catch (err) { dlg.querySelectorAll(".mgrades button").forEach(x => { x.disabled = false; }); throw err; }
+  haptic(); run.done++; run.i++; if (run.i < run.list.length) memoStep(false); else closeDlg();
+}
+function memoEnd() {   // à la fermeture de la feuille, finie ou non
+  const run = memoRun; memoRun = null; if (tab === "home") render(); if (!run.done) return; hippoCheer();
+  toast(run.i >= run.list.length ? `Révision faite : ${plural(run.done, "carte")}, +${run.done * MEMO_XP} plumes.` : `+${run.done * MEMO_XP} plumes. La suite quand tu veux.`, 2800);
 }
 // Une ligne qui commence par « > » dans un résumé est une citation (convention Markdown, conservée à l'export).
 const isQuote = l => /^>\s?/.test(l), unquote = l => l.replace(/^>\s?/, "");
@@ -1215,7 +1328,7 @@ function viewHome() {
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
     <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${ses ? `Séance en cours depuis ${plural(Math.max(1, sessionMin(ses)), "minute")}.` : pct >= 1 ? "Chaque page en plus compte quand même." : tp ? `Encore ${plural(goal - tp, "page")} à lire et résumer.` : pastRdv() ? "Cinq pages suffisent pour commencer." : `Rendez-vous à ${rdvLabel()}. Cinq pages suffisent.`}</p>
     ${cur.length ? `<button class="btn wide" data-act="read">${ICONS.read}${ses ? "Reprendre" : "Lire"}</button><button class="link inl declare" data-act="log">J'ai déjà lu</button>` : `<button class="btn wide" data-act="add-book">${ICONS.plus}Ajouter un livre</button>`}</div></div></div>
-  ${bilanCard()}${rememberCard()}
+  ${bilanCard()}${memoryCard()}
   <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link inl" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
     ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
   <div class="section"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
@@ -1321,11 +1434,11 @@ function weekly(n = 8) {
 }
 const weekLbl = k => { const d = new Date(k + "T12:00:00"); return `${d.getDate()}/${d.getMonth() + 1}`; };
 const weekName = k => `Semaine du ${fmtDate(k + "T12:00:00")}`;
-function trendCard() {
+function trendBody() {
   const ws = weekly(), cur = ws[ws.length - 1], prev4 = ws.slice(-5, -1), dow = (new Date().getDay() + 6) % 7;
   const upto = w => S.readings.reduce((a, r) => { const k = dayKey(r.created_at); return k >= w.key && k <= addDays(w.key, dow) ? a + r.pages : a; }, 0);
   const avg = Math.round(prev4.reduce((a, w) => a + upto(w), 0) / 4);   // à ce stade de la semaine, pour ne pas comparer un lundi à une semaine pleine
-  if (!ws.some(w => w.pages || w.screen)) return "";
+  if (!ws.some(w => w.pages || w.screen)) return `<p class="quiet">Rien sur les 8 dernières semaines : les graphiques se remplissent avec tes lectures.</p>`;
   const W = 340, H = 150, pad = 20, band = (W - 8) / ws.length, last = ws.length - 1;
   const pmax = Math.max(1, ...ws.map(w => w.pages)), pI = ws.findIndex(w => w.pages === pmax), pw = 22;
   const pages = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Pages par semaine sur 8 semaines"><line x1="0" x2="${W}" y1="${H - pad}" y2="${H - pad}" stroke="var(--line)"/>
@@ -1340,15 +1453,21 @@ function trendCard() {
       <text x="${4 + i * band + band / 2}" y="${H - 4}" text-anchor="middle">${i === last ? "en cours" : weekLbl(w.key)}</text>
       <rect class="tap" x="${4 + i * band}" y="0" width="${band}" height="${H - pad}" ${tipAttr(weekName(w.key), [`${w.read} min de lecture`, `${w.screen} min d'écran accordées`, ...(w.real != null ? [`${w.real} min relevées dans iOS`] : [])])}/>`; }).join("")}</svg>`;
   const delta = avg ? Math.round(100 * (cur.pages - avg) / avg) : null, lastReal = [...ws].reverse().find(w => w.real != null);
-  return `<div class="card trend"><div class="lead"><h2>8 dernières semaines</h2></div>
-    <p class="small muted">${cur.pages ? `${plural(cur.pages, "page")} depuis lundi` : "Pas encore de page cette semaine"}${avg ? ` · ${avg} en moyenne au même stade les 4 semaines d'avant${cur.pages && delta ? ` (${delta > 0 ? "+" : "−"}${Math.abs(delta)} %)` : ""}` : ""}.</p>
+  return `<p class="small muted">${cur.pages ? `${plural(cur.pages, "page")} depuis lundi` : "Pas encore de page cette semaine"}${avg ? ` · ${avg} en moyenne au même stade les 4 semaines d'avant${cur.pages && delta ? ` (${delta > 0 ? "+" : "−"}${Math.abs(delta)} %)` : ""}` : ""}.</p>
     <h3>Pages par semaine</h3><div class="viz">${pages}</div>
     <h3>Lecture et écran, en minutes</h3>
     <div class="legend"><span><i class="sw" style="background:var(--viz-read)"></i>lecture</span><span><i class="sw" style="background:var(--viz-screen)"></i>écran accordé</span><span><i class="ln"></i>écran relevé (contrôle)</span></div>
     <div class="viz">${mins}</div>
     ${ws.some(w => w.read) ? "" : `<p class="note">Les minutes de lecture se remplissent avec le bouton Lire (le chrono des séances).</p>`}
     ${lastReal ? "" : `<p class="note">Le trait « écran relevé » apparaît après ton premier contrôle hebdo.</p>`}
-    <details class="vtable"><summary>Voir les chiffres</summary><table><tr><th>Semaine</th><th class="n">Pages</th><th class="n">Lecture</th><th class="n">Écran</th><th class="n">Relevé</th></tr><tr><th></th><th></th><th class="n">min</th><th class="n">min</th><th class="n">min</th></tr>${[...ws].reverse().map(w => `<tr><td>${w === cur ? "en cours" : weekLbl(w.key)}</td><td class="n">${w.pages}</td><td class="n">${w.read || "—"}</td><td class="n">${w.screen || "—"}</td><td class="n">${w.real != null ? w.real : "—"}</td></tr>`).join("")}</table></details></div>`;
+    <details class="vtable"><summary>Voir les chiffres</summary><table><tr><th>Semaine</th><th class="n">Pages</th><th class="n">Lecture</th><th class="n">Écran</th><th class="n">Relevé</th></tr><tr><th></th><th></th><th class="n">min</th><th class="n">min</th><th class="n">min</th></tr>${[...ws].reverse().map(w => `<tr><td>${w === cur ? "en cours" : weekLbl(w.key)}</td><td class="n">${w.pages}</td><td class="n">${w.read || "—"}</td><td class="n">${w.screen || "—"}</td><td class="n">${w.real != null ? w.real : "—"}</td></tr>`).join("")}</table></details>`;
+}
+// Le graphique du profil : 14 jours ou 8 semaines, au choix (mémorisé sur l'appareil).
+let meView = pref("meView", "semaines");
+function chartsBody(d14 = byDay(14)) {
+  if (meView !== "jours") return trendBody();
+  const p = d14.reduce((a, d) => a + d.pages, 0), m = d14.reduce((a, d) => a + d.minutes, 0);
+  return `<p class="small muted">Sur 14 jours : ${plural(p, "page")}, ${m} min d'écran.</p><h3>Pages lues par jour</h3>${barChart(d14, "pages", "Pages")}<h3>Minutes d'écran par jour</h3>${barChart(d14, "minutes", "Minutes")}`;
 }
 // Une seule bulle par graphique : au toucher, au survol ou au clavier.
 function wireTips(root) {
@@ -1368,18 +1487,20 @@ document.addEventListener("pointerdown", e => { if (!e.target.closest(".viz")) d
 function viewMe() {
   const d14 = byDay(14), d7 = d14.slice(7), sum = (a, k) => a.reduce((x, y) => x + y[k], 0), p7 = sum(d7, "pages"), m7 = sum(d7, "minutes"), totalP = S.readings.reduce((a, r) => a + r.pages, 0), over = S.sessions.reduce((a, s) => a + (s.overtime_min || 0), 0);
   const perApp = {}; S.sessions.forEach(s => { const o = perApp[s.app] ??= { n: 0, m: 0, o: 0 }; o.n++; o.m += s.minutes_granted; o.o += s.overtime_min || 0; });
-  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a)), lv = levelInfo(), st = streakInfo();
-  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">${plural(S.books.length, "livre")}${S.readings.length ? ` · lecteur depuis le ${fmtDate(earliest(S.readings))}` : ""}</span></h1>${GEAR}</div>
-  <div class="figures"><div class="accent"><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div class="teal"><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
-  ${trendCard()}
-  <div class="card"><h2>Pages lues par jour</h2>${barChart(d14, "pages", "Pages")}</div>
-  <div class="card"><h2>Minutes d'écran par jour</h2>${barChart(d14, "minutes", "Minutes")}</div>
-  <div class="section"><h2>Par appli</h2>${Object.keys(perApp).length ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépass.</th></tr>${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="quiet">Aucune session pour l'instant.</p>`}</div>
-  <div class="figures"><div class="accent"><b class="num">${totalP}</b><span>pages résumées</span></div><div class="ok"><b class="num">${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div class="${over ? "bad" : ""}"><b class="num">${over}</b><span>min de dépassement</span></div></div>
-  <div class="card" id="audit"><div class="lead"><h2>Contrôle de la semaine du ${fmtDate(wk)}</h2>${todo.length ? "" : `<span class="tag ok">${ICONS.check}fait</span>`}</div>
+  const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a)), due = todo.length > 0 && S.sessions.length > 0, nApps = Object.keys(perApp).length;
+  // Le contrôle hebdo passe en tête tant qu'il reste à faire ; fait, il rejoint le bas de la page avec son historique.
+  const audit = `<div class="card" id="audit"><div class="lead"><h2>Contrôle de la semaine du ${fmtDate(wk)}</h2>${todo.length ? (due ? `<span class="tag warn">à faire</span>` : "") : `<span class="tag ok">${ICONS.check}fait</span>`}</div>
     ${todo.length ? `<p class="small muted">Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière : relève le temps de chaque appli. Un écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
     ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="btn sm ghost" style="flex:0 0 100px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}<div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p class="small muted">Toutes les applis sont contrôlées pour cette semaine.</p>`}
-    ${S.audits.length ? `<details style="margin-top:10px"><summary class="small muted">Historique</summary><table style="margin-top:8px"><tr><th>Semaine</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></details>` : ""}</div>
+    ${S.audits.length ? `<details style="margin-top:10px"><summary class="small muted">Historique</summary><table style="margin-top:8px"><tr><th>Semaine</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></details>` : ""}</div>`;
+  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">${plural(S.books.length, "livre")}${S.readings.length ? ` · lecteur depuis le ${fmtDate(earliest(S.readings))}` : ""}</span></h1>${GEAR}</div>
+  ${due ? audit : ""}
+  <div class="figures"><div class="accent"><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div class="teal"><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
+  <div class="card trend" id="charts"><div class="lead"><h2>Évolution</h2><div class="seg2 sm" role="group" aria-label="Période du graphique">${[["jours", "14 jours"], ["semaines", "8 semaines"]].map(([v, l]) => `<button type="button" data-act="me-view" data-v="${v}" aria-pressed="${meView === v}">${l}</button>`).join("")}</div></div><div class="cbody">${chartsBody(d14)}</div></div>
+  <div class="figures"><div class="accent"><b class="num">${totalP}</b><span>pages résumées</span></div><div class="ok"><b class="num">${S.books.filter(b => b.status === "fini").length}</b><span>livres finis</span></div><div class="${over ? "bad" : ""}"><b class="num">${over}</b><span>min de dépassement</span></div></div>
+  <details class="card more"><summary><h2>Par appli</h2><span>${nApps ? `${plural(nApps, "appli")} · ${plural(S.sessions.length, "session")}` : "aucune session"}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    ${nApps ? `<table><tr><th>Appli</th><th class="n">Sessions</th><th class="n">Minutes</th><th class="n">Dépass.</th></tr>${Object.entries(perApp).sort((a, b) => b[1].m - a[1].m).map(([a, o]) => `<tr><td>${esc(a)}</td><td class="n">${o.n}</td><td class="n">${o.m}</td><td class="n">${o.o ? o.o + " min" : "—"}</td></tr>`).join("")}</table>` : `<p class="quiet">Aucune session pour l'instant.</p>`}</details>
+  ${due ? "" : audit}
   </section>`;
 }
 const HP_MOODS = [["", "Tranquille", "au repos"], ["crowned", "Fier", "série de 7 jours ou plus"], ["mood-great crowned", "Ravi", "objectif du jour atteint"], ["happy", "Content", "lecture enregistrée, ou chatouilles"], ["mood-down", "Boudeur", "aucun livre en cours"], ["mood-angry", "Fâché", "rendez-vous passé sans lecture, série en danger"], ["mood-cry", "En larmes", "série perdue"], ["mood-worried", "Inquiet", "dette d'écran"], ["sleepy", "Endormi", "après 23 h"]];
@@ -1458,9 +1579,9 @@ function openDlg(html) { clearTimeout(dlg._t); dlg.classList.remove("closing"); 
 function closeDlg() {
   if (!dlg.open || dlg.classList.contains("closing")) return; const sh = dlg.querySelector(".sheet"); dlg.classList.add("closing");
   if (sh) { sh.style.transition = "transform .24s var(--ease-in)"; sh.style.transform = "translateY(105%)"; }
-  dlg._t = setTimeout(() => { dlg.classList.remove("closing"); dlg.close(); }, 240);
+  dlg._t = setTimeout(() => { dlg.classList.remove("closing"); dlg.close(); if (memoRun) memoEnd(); }, 240);   // l'événement « close » n'arrive qu'à l'image suivante
 }
-dlg.addEventListener("close", () => { unlockScroll(dlg); const s = session(); if (s?.end && !readingEl.hidden) setSession({ ...s, end: undefined }); });   // formulaire fermé sans valider : la séance reprend
+dlg.addEventListener("close", () => { unlockScroll(dlg); if (memoRun) memoEnd(); const s = session(); if (s?.end && !readingEl.hidden) setSession({ ...s, end: undefined }); });   // formulaire fermé sans valider : la séance reprend
 dlg.addEventListener("cancel", e => { e.preventDefault(); closeDlg(); });
 dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest("[data-close]")) closeDlg(); });
 // ───────────── Gestes ─────────────
@@ -1548,9 +1669,11 @@ document.addEventListener("click", async e => {
     else if (act === "settings") showSettings();
     else if (act === "wardrobe") showWardrobe();
     else if (act === "close-wardrobe") closeWardrobe();
-    else if (act === "ward-cat") { wardCat = el.dataset.v; showWardrobe(); $(".ward, .chips + .card", wardrobeEl)?.classList.add("enter"); centerChip($(".chips", wardrobeEl), $(`.chip[data-v="${wardCat}"]`, wardrobeEl)); }
+    else if (act === "ward-cat") { const pinned = !!$(".wtop.stuck", wardrobeEl); wardCat = el.dataset.v; showWardrobe(); if (pinned) { wardrobeEl.scrollTop = wardPin(); wardStuck(); } $(".ward, .wtop + .card", wardrobeEl)?.classList.add("enter"); centerChip($(".chips", wardrobeEl), $(`.chip[data-v="${wardCat}"]`, wardrobeEl)); }
     else if (act === "buy") await buyItem(el.dataset.id);
     else if (act === "equip") await equipItem(el.dataset.id);
+    else if (act === "try") { tryOn = tryOn === el.dataset.id ? null : el.dataset.id; haptic(); paintTry(); }
+    else if (act === "try-off") { tryOn = null; paintTry(); }
     else if (act === "close-settings") closeSettings();
     else if (act === "log") dlgLog(el.dataset.id || openBook || suggestedBook()?.id);
     else if (act === "read") startReading(el.dataset.id);
@@ -1575,9 +1698,16 @@ document.addEventListener("click", async e => {
     else if (act === "copy-all-quotes") await copyAllQuotes();
     else if (act === "open-book") { openBook = el.dataset.b; showBook(); }
     else if (act === "open-entry") { openBook = el.dataset.b; showBook(); requestAnimationFrame(() => { const t = document.getElementById("e-" + el.dataset.id); if (t) { t.scrollIntoView({ block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1400); } }); }
-    else if (act === "review") dlgReview(el.dataset.id);
+    else if (act === "memo") dlgMemo();
+    else if (act === "memo-show") memoStep(true);
+    else if (act === "memo-grade") await memoGrade(+el.dataset.g);
+    else if (act === "memo-more") { $(".mtext", dlg)?.classList.add("full"); el.hidden = true; }
+    else if (act === "souv-ok") await souvenirOk(el.dataset.id);
     else if (act === "status") { const v = el.dataset.v; await api.updateBook(openBook, { status: v, finished_at: v === "fini" ? new Date().toISOString() : null }); await reload(); if (v === "fini") { toast("Livre terminé, bravo."); } }
     else if (act === "del-book") { if (confirm("Retirer ce livre de la bibliothèque ?")) { await api.deleteBook(openBook); closeBook(); await reload(); } }
+    else if (act === "me-view") { meView = el.dataset.v; setPref("meView", meView); const card = $("#charts", app), body = $(".cbody", card);
+      card.querySelectorAll('[data-act="me-view"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.v === meView)); body.innerHTML = chartsBody(); wireTips(body);
+      body.classList.remove("enter"); void body.offsetWidth; body.classList.add("enter"); haptic(); }
     else if (act === "goto-audit") { tab = "me"; render(); $("#audit")?.scrollIntoView({ behavior: "smooth" }); }
     else if (act === "audit") { const v = $(`#au-${CSS.escape(el.dataset.app)}`).value; $("#audit-err").textContent = "";
       if (v === "") return void ($("#audit-err").textContent = "Indique un nombre de minutes.");
@@ -1650,6 +1780,7 @@ async function selfTest() {
   addEventListener("error", e => errors.push(String(e.message))); addEventListener("unhandledrejection", e => errors.push(String(e.reason?.message || e.reason)));
   const clean = where => { const t = document.body.innerText; check(!/\b(undefined|NaN|null)\b|\[object /.test(t), `texte suspect dans ${where}`); };
   const click = sel => { const el = typeof sel === "string" ? $(sel) : sel; check(el, `introuvable : ${sel}`); el.click(); };
+  const until = async (cond, ms = 5000) => { const t0 = Date.now(); while (!cond() && Date.now() - t0 < ms) await wait(50); return cond(); };
   const step = async (name, fn) => { try { await fn(); log.push(["ok", name]); } catch (e) { log.push(["ÉCHEC", `${name} — ${e.message}`]); } };
   confirm = () => true; navigator.vibrate = () => true;
   await step("onglets", async () => { for (const t of ["home", "books", "goals", "me"]) { tab = t; render(); await wait(350); check($("section.view", app), `vue ${t}`); clean(`l'onglet ${t}`); } check($(".trend svg", app), "tendances absentes"); tab = "home"; render(); await wait(300); });
@@ -1665,10 +1796,29 @@ async function selfTest() {
     closeWardrobe(); await wait(420); check(wardrobeEl.hidden, "placard resté ouvert"); check(player().equipped.hat === id, "chapeau non équipé");
     const m = item(id).px((x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`).match(/x="([^"]+)" y="([^"]+)" width="[^"]+" height="[^"]+" fill="([^"]+)"/);
     check(m && $(`.hp-home .hp-hat rect[x="${m[1]}"][y="${m[2]}"][fill="${m[3]}"]`, app), "l'accueil ne dessine pas le chapeau acheté"); });
+  await step("essayage", async () => { click('[data-act="wardrobe"]'); await wait(400); click('#wardrobe [data-act="ward-cat"][data-v="hat"]'); await wait(150);
+    const it = ITEMS.find(i => i.cat === "hat" && i.px && !owns(i.id)); click(`#wardrobe [data-act="try"][data-id="${it.id}"]`); await wait(200);
+    check($("#wardrobe .trybar:not(.idle)")?.textContent.includes(it.name), "barre d'essai absente");
+    const m = it.px((x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`).match(/x="([^"]+)" y="([^"]+)" width="[^"]+" height="[^"]+" fill="([^"]+)"/);
+    check($(`#wstage .hp-hat rect[x="${m[1]}"][y="${m[2]}"][fill="${m[3]}"]`), "le grand hippo ne porte pas l'essai"); check(!owns(it.id) && player().equipped.hat !== it.id, "l'essai a acheté ou équipé");
+    click('#wardrobe [data-act="try-off"]'); await wait(150); check($("#wardrobe .trybar.idle"), "essai non retiré");
+    click(`#wardrobe [data-act="try"][data-id="${it.id}"]`); await wait(150); closeWardrobe(); await wait(420); check(tryOn === null && !$(`.hp-home .hp-hat rect[x="${m[1]}"][y="${m[2]}"][fill="${m[3]}"]`, app), "l'essai déborde sur l'accueil"); });
+  await step("mémoire", async () => { tab = "home"; render(); await wait(300);
+    const sv = souvenir(); check(sv && !isPrepa(sv), "pas de souvenir plaisir"); check(excerpt(bodyOf(sv.summary)).length <= 171, "extrait trop long");
+    const list = memoBatch(), n = list.length; check(n > 0 && n <= MEMO_CAP, "aucune carte prépa"); check($(".card.memo", app) && !$(".card.souv", app), "carte de mémoire incorrecte");
+    const before = plumes(); click('[data-act="memo"]'); await wait(450); check(dlg.open && $('[data-act="memo-show"]', dlg), "révision non ouverte"); clean("la révision");
+    for (let i = 0; i < n; i++) { click('[data-act="memo-show"]'); await wait(150); check($(".mtext", dlg), "résumé non révélé"); clean("le verso"); click(`[data-act="memo-grade"][data-g="${i % 3}"]`); await wait(300); }
+    check(await until(() => !dlg.open && !memoRun), "révision restée ouverte"); check(plumes() === before + n * MEMO_XP, "plumes de révision");
+    const t = todayKey(), got = player().memo; check(list.every(r => got[r.id]?.l === t), "réponses non enregistrées");
+    if (n > 2) check(got[list[2].id].b === 1 && got[list[2].id].d === addDays(t, 14), "« Oui » ne repousse pas à deux semaines");
+    check(got[list[0].id].b === 0 && got[list[0].id].d === addDays(t, 3), "« Non » ne ramène pas à trois jours"); check(got[list[1].id].b === 0 && got[list[1].id].d === addDays(t, 5), "« En partie » ne laisse pas cinq jours");
+    check(!memoBatch().length || n === MEMO_CAP, "cartes encore dues"); check(!$(".card.memo", app) && !$(".card.souv", app), "la mémoire revient le même jour");
+    const box = document.createElement("div"); box.innerHTML = souvCard(sv); app.append(box); const p0 = plumes(); click(box.querySelector('[data-act="souv-ok"]')); check(await until(() => !app.contains(box)), "souvenir resté affiché");
+    check(player().souv.day === t && plumes() === p0 + SOUV_XP, "souvenir non compté"); check(!souvenir(), "souvenir encore proposé"); });
   await step("fiche livre", async () => { const b = S.books.find(x => x.status === "en_cours"); openBook = b.id; showBook(); await wait(400); clean("la fiche livre"); click('[data-act="sort-entries"]'); await wait(150); const k = b.kind === "prepa" ? "plaisir" : "prepa"; click(`[data-act="kind"][data-kind="${k}"]`); await wait(300); check(S.books.find(x => x.id === b.id).kind === k, "type de livre non enregistré"); closeBook(); await wait(420); check(bookview.hidden, "fiche restée ouverte"); });
   await step("séance de lecture", async () => { setSession(null); const n = S.readings.length; click('[data-act="read"]'); await wait(400); check(!readingEl.hidden, "mode lecture fermé");
     setSession({ ...session(), start: Date.now() - 12 * 60000 }); click('[data-act="finish-reading"]'); await wait(450); check(dlg.open, "formulaire non ouvert");
-    const b = S.books.find(x => x.id === session().bookId), end = b.current_page + 3; $("#lp").value = end; $("#ls").value = "Une phrase honnête sur les trois pages lues ce soir, pour le test."; $("#ls").dispatchEvent(new Event("input", { bubbles: true }));
+    const b = S.books.find(x => x.id === session().bookId), end = b.current_page + 5; click('.quickp [data-n="5"]'); check(+$("#lp").value === end && $('.quickp [data-n="5"][aria-pressed="true"]'), "raccourci +5 inactif"); $("#ls").value = "Une phrase honnête sur les cinq pages lues ce soir, pour le test."; $("#ls").dispatchEvent(new Event("input", { bubbles: true }));
     $("#flog").requestSubmit(); await wait(900); check(S.readings.length === n + 1, "lecture non enregistrée"); check(!session(), "séance non close"); check(S.readings.find(r => r.book_id === b.id && r.page_end === end)?.duration_min >= 12, "durée non enregistrée"); check(!dlg.open, "formulaire resté ouvert"); });
   await step("nouveau livre", async () => { const n = S.books.length; click('[data-act="add-book"]'); await wait(400); click("#amanual"); $("#at").value = "Livre de test"; $("#ap").value = "120"; $("#fadd").requestSubmit(); await wait(700); check(S.books.length === n + 1, "livre non ajouté"); });
   await step("recherche et citations", async () => { tab = "books"; render(); await wait(300); const q = $("#libq"); q.value = "combray"; q.dispatchEvent(new Event("input")); await wait(400); check($(".shit", app), "aucun résultat"); click($(".shit", app)); await wait(500); check(!bookview.hidden, "résultat non ouvert"); closeBook(); await wait(420);
@@ -1677,7 +1827,10 @@ async function selfTest() {
     $("#libqx").click(); await wait(200); libFilter = "citations"; render(); await wait(300); check($(".qall blockquote", app), "page des citations vide"); clean("les citations"); libFilter = "en_cours"; });
   await step("export", async () => { let got = null; const cs = navigator.canShare, sh = navigator.share; navigator.canShare = () => true; navigator.share = async d => { got = d; };
     try { await exportAll(); } finally { navigator.canShare = cs; navigator.share = sh; } check(got?.files?.length === 2, "fichiers absents"); const txt = await got.files[0].text(); check(JSON.parse(txt).books.length && !txt.includes(S.config.secret), "JSON invalide ou secret exporté"); });
-  await step("profil et bulle", async () => { tab = "me"; render(); await wait(300); const hit = $(".trend .tap", app); hit.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch" })); await wait(100); check($(".viztip:not([hidden])", app), "bulle absente"); });
+  await step("profil et bulle", async () => { tab = "me"; render(); await wait(300);
+    click('[data-act="me-view"][data-v="jours"]'); await wait(200); check($('#charts [data-v="jours"][aria-pressed="true"]', app) && $("#charts .cbody svg", app)?.getAttribute("aria-label").includes("par jour"), "vue 14 jours absente");
+    click('[data-act="me-view"][data-v="semaines"]'); await wait(200); check($("#charts .cbody svg", app)?.getAttribute("aria-label").includes("semaine"), "vue 8 semaines absente"); check($("details.more", app), "« Par appli » absent"); clean("le profil");
+    const hit = $(".trend .tap", app); hit.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch" })); await wait(100); check($(".viztip:not([hidden])", app), "bulle absente"); });
   errors.push(...(window.__stErrors || []));
   if (errors.length) log.push(["ÉCHEC", "erreurs JS : " + errors.join(" | ")]);
   const ok = log.every(l => l[0] === "ok"); document.body.dataset.selftest = ok ? "ok" : "fail";
