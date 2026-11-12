@@ -1127,7 +1127,7 @@ const owns = id => { const it = item(id); return !it || it.price === 0 || player
 // Ce que porte l'hippo : ses pixels s'ajoutent au dessin, son pelage remplace les couleurs.
 // `eq` : une tenue d'essayage (le placard) ; la pièce essayée s'affiche même si elle n'est pas achetée.
 function outfitLayers(px, only, eq) {
-  const e = eq || player().equipped, trial = eq ? tryOn : null, out = { above: "", below: "", hat: "", ears: "front" };
+  const e = eq || (only || !S ? {} : player().equipped), trial = eq ? tryOn : null, out = { above: "", below: "", hat: "", ears: "front" };   // écran de connexion : rien n'est encore chargé
   const list = only ? [only] : ["acc", "glass", "hat"].map(c => e[c] && item(e[c])).filter(it => it && (owns(it.id) || it.id === trial));
   for (const it of list) { if (!it.px) continue; const art = it.px(px);
     if (it.layer === "below") out.below += art; else if (it.cat === "hat") { out.hat = art; out.ears = it.ears || "front"; } else out.above += art; }
@@ -1789,6 +1789,7 @@ async function selfTest() {
   const until = async (cond, ms = 5000) => { const t0 = Date.now(); while (!cond() && Date.now() - t0 < ms) await wait(50); return cond(); };
   const step = async (name, fn) => { try { await fn(); log.push(["ok", name]); } catch (e) { log.push(["ÉCHEC", `${name} — ${e.message}`]); } };
   confirm = () => true; navigator.vibrate = () => true;
+  await step("écran de connexion", async () => { const s0 = S; S = null; try { viewLogin(); check($("#login", app), "formulaire de connexion absent"); } finally { S = s0; } render(); await wait(300); });
   await step("onglets", async () => { for (const t of ["home", "books", "goals", "me"]) { tab = t; render(); await wait(350); check($("section.view", app), `vue ${t}`); clean(`l'onglet ${t}`); } check($(".trend svg", app), "tendances absentes"); tab = "home"; render(); await wait(300); });
   await step("réglages", async () => { click('[data-act="settings"]'); await wait(400); check(!settingsEl.hidden, "réglages fermés"); clean("les réglages"); closeSettings(); await wait(420); check(settingsEl.hidden, "réglages restés ouverts"); });
   await step("apparence", async () => { const before = { ...appearance }; click('[data-act="settings"]'); await wait(400); check($(".theme-card", settingsEl), "thèmes absents");
