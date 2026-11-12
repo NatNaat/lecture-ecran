@@ -1,12 +1,12 @@
 {
-  "name": "Pages contre minutes",
+  "name": "Pages",
   "short_name": "Pages",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F4F3F7",
-  "theme_color": "#4A4670",
+  "background_color": "#131313",
+  "theme_color": "#131313",
   "icons": [
     {
       "src": "icon-180.png",

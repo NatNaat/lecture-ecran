@@ -1,94 +1,27 @@
-# Installation — Pages contre minutes
+# Installation — Pages
 
-Compte 30 à 40 minutes, une seule fois. Tout est gratuit.
+Un suivi de lectures : livres, pages lues, résumés facultatifs, citations, série et hippo. Compte 15 minutes, une seule fois. Tout est gratuit.
+
+(Jusqu'au 12/11/2026, l'app échangeait des pages contre du temps d'écran avec des raccourcis iOS et envoyait une notification le soir. Tout cela a été retiré ; l'historique reste dans git.)
 
 ## 1. La base (Supabase) — 10 min
 
 1. Crée un compte sur <https://supabase.com> puis un projet (région : Paris ou Francfort). Le mot de passe de base demandé ne resservira pas.
 2. **SQL Editor › New query** : colle tout `supabase/schema.sql`, **Run**. Résultat attendu : « Success ».
-3. Nouvelle requête : colle `supabase/tests.sql`, **Run**. Résultat attendu : une *erreur* dont le texte est
+3. Exécute ensuite, dans l'ordre, les fichiers `supabase/migration-*.sql` (le dernier, `migration-2026-11-12-suivi.sql`, fait de l'app un simple suivi de lectures).
+4. Nouvelle requête : colle `supabase/tests.sql`, **Run**. Résultat attendu : une *erreur* dont le texte est
    `TOUS LES TESTS PASSENT (rien n'a été conservé)`. C'est voulu : l'erreur finale annule les données de test.
-   Tout autre message = une règle ne marche pas, dis-le-moi.
-4. **Authentication › Users › Add user** : ton email + un mot de passe, coche *Auto Confirm User*.
-5. **Authentication › Sign In / Providers** : désactive *Allow new users to sign up*. (Même sans ça, seul le premier compte connecté à la web app devient propriétaire des données.)
-6. **Project Settings › API** : copie *Project URL* et la clé *anon public* dans `config.js`.
+5. **Authentication › Users › Add user** : ton email + un mot de passe, coche *Auto Confirm User*.
+6. **Authentication › Sign In / Providers** : désactive *Allow new users to sign up*. (Même sans ça, seul le premier compte connecté à la web app devient propriétaire des données.)
+7. **Project Settings › API** : copie *Project URL* et la clé *anon public* dans `config.js`.
 
 ## 2. La web app — 5 min
 
 1. Publication sur GitHub Pages (dépôt public ; il ne contient que la clé anon, faite pour être publique) :
-   crée un dépôt vide `lecture-ecran` sur GitHub, puis dans ce dossier :
-   ```bash
-   git remote add origin https://github.com/NatNaat/lecture-ecran.git && git push -u origin main
-   ```
-   puis sur GitHub : **Settings › Pages › Deploy from a branch › main / (root)**.
-2. Sur l'iPhone, ouvre `https://NatNaat.github.io/lecture-ecran/` dans **Safari**, connecte-toi, puis **Partager › Sur l'écran d'accueil**.
+   **Settings › Pages › Deploy from a branch › main / (root)**.
+2. Sur l'iPhone, ouvre `https://natnaat.github.io/lecture-ecran/` dans **Safari**, connecte-toi, puis **Partager › Sur l'écran d'accueil**.
 3. Onglet **Livres** › Ajouter : le livre que tu lis, avec la page où tu en es.
-4. Onglet **Profil** › Réglages : vérifie la liste des applis bloquées (le nom doit être exactement celui que tu donneras aux automatisations).
 
-## 3. Le raccourci « Portier » — 5 min
+## 3. Garder la base éveillée — rien à faire
 
-1. Envoie `shortcuts/Portier.shortcut` sur l'iPhone (AirDrop, ou dépose-le dans iCloud Drive et ouvre-le dans Fichiers) › **Ajouter le raccourci**.
-2. Ouvre-le en édition (⋯). Dans le bloc **Dictionnaire** du haut, `url` et `cle` sont déjà remplies : remplace seulement `COLLE_ICI_LE_SECRET` par le secret affiché dans la web app › Profil › Raccourci iPhone.
-3. Test : lance le raccourci à la main (sans entrée). Tu es renvoyé à l'écran d'accueil et un menu s'affiche : « est bloqué. Solde : … » avec *J'ai lu / Utiliser mon solde / Annuler*. Le nom de l'appli est vide, c'est normal : ce sont les automatisations qui le fournissent.
-   À la première exécution iOS demande d'autoriser la connexion à supabase.co : **Toujours autoriser**.
-
-Si l'import échoue ou qu'une action apparaît cassée, reconstruis-le à la main : voir l'annexe en bas.
-
-## 4. Les automatisations — 1 min par appli
-
-Raccourcis › **Automatisation › +** › **App**. Pour chaque appli bloquée, crée-en **deux** :
-
-| Déclencheur | Réglage | Action |
-|---|---|---|
-| TikTok · **Est ouverte** | **Exécuter immédiatement**, *Notifier lors de l'exécution* : non | *Exécuter le raccourci* › Portier › (flèche ›) **Entrée** : `TikTok` |
-| TikTok · **Est fermée** | idem | *Exécuter le raccourci* › Portier › **Entrée** : `fermeture TikTok` |
-
-L'entrée est un bloc **Texte** contenant exactement le nom listé dans la web app.
-
-## 5. Verrouiller les contournements — 5 min, avec un proche
-
-Demande à quelqu'un de définir le **code Temps d'écran** (Réglages › Temps d'écran › Verrouiller les réglages) sans te le donner, puis :
-
-- **Restrictions relatives au contenu › Achats › Suppression d'apps : Ne pas autoriser** — tu ne peux plus supprimer Raccourcis ni réinstaller TikTok « propre ».
-- **Contenu web › Limiter les sites pour adultes › Ne jamais autoriser** : ajoute `tiktok.com`, `instagram.com`, `youtube.com`… pour fermer la porte Safari.
-- Dans la web app (Profil), fais chaque lundi le **contrôle de la semaine** : tu reportes le temps réel lu dans Réglages › Temps d'écran ; tout écart de plus de 10 min devient une dette doublée. C'est la parade à « je désactive l'automatisation cinq minutes » — iOS ne permet pas de verrouiller l'app Raccourcis elle-même.
-
-## 6. La notification du soir — 10 min, une seule fois
-
-À l'heure de ton **rendez-vous lecture** (web app › Réglages), l'iPhone reçoit « Rendez-vous lecture — Swann, p. 209. Cinq pages suffisent pour commencer. » ; un toucher ouvre directement le mode lecture. Rien si l'objectif du jour est déjà atteint. Le lundi, un second rappel pour le contrôle hebdo s'il n'est pas fait.
-
-1. **Fonction d'envoi** — Supabase › **Edge Functions › Deploy a new function › Via Editor**. Nom : `rappel`. Remplace le code par tout le contenu de `supabase/functions/rappel/index.ts`, puis **Deploy**. Laisse le réglage « Verify JWT » tel quel.
-2. **Clé privée** — Edge Functions › **Secrets** › ajoute `VAPID_PRIVATE_KEY` = la valeur `privateKey` du fichier local `supabase/.vapid.json` (ce fichier n'est jamais envoyé sur GitHub ; garde-le).
-3. **Base** — SQL Editor : exécute `supabase/migration-2026-09-27-rappels.sql`. Les trois tests en bas doivent répondre sans erreur. Si la ligne `create extension pg_cron` échoue, active **pg_cron** et **pg_net** dans Database › Extensions et relance.
-4. **iPhone** — ouvre l'app depuis l'écran d'accueil › Réglages › Notification du soir › **Activer**, accepte. Puis **Tester** et quitte l'app : la notification arrive en quelques secondes. La toucher doit ouvrir le mode lecture.
-5. Quand ça marche, supprime l'automatisation **Rappel** dans Raccourcis (sinon tu aurais deux rappels). Le raccourci Rappel ne sert plus.
-
-Pour changer l'heure, il suffit de changer le rendez-vous dans l'app : le serveur la lit à chaque passage. Pour vérifier les envois : SQL Editor › `select * from push_log order by sent_at desc;`.
-
-## 7. Garder la base éveillée — rien à faire
-
-Un projet Supabase gratuit s'endort après 7 jours sans activité, et le Portier ne pourrait plus vérifier ton solde. La tâche GitHub `.github/workflows/keepalive.yml` appelle la base chaque matin (onglet **Actions** du dépôt). GitHub met en pause les tâches planifiées d'un dépôt sans aucun commit pendant 60 jours : si tu reçois un mail de GitHub à ce sujet, rouvre l'onglet Actions et clique **Enable workflow**. La tâche `verif.yml` parcourt toute l'app en mode démo à chaque envoi : une croix rouge sur GitHub signale une régression.
-
-## Limites connues
-
-- Le blocage vit dans Raccourcis : il ne peut pas être aussi étanche que l'API Temps d'écran (réservée aux comptes développeur payants).
-- Si Supabase est injoignable alors que tu as du réseau, le raccourci s'arrête sur une erreur et l'appli reste ouverte. Sans réseau du tout, tu es bloqué.
-- À la fin du crédit, le minuteur sonne mais ne te sort pas de l'appli : chaque minute en plus est comptée double à la fermeture.
-- Un projet Supabase gratuit s'endort après 7 jours sans aucune requête : la tâche du § 7 l'en empêche. S'il s'endort quand même, réactivation en un clic sur supabase.com.
-- Les notifications iOS ne s'ouvrent pas toujours au bon endroit (bug WebKit connu) : si le toucher te laisse sur l'accueil, l'app ouvre quand même le mode lecture si tu y reviens dans les 20 minutes qui suivent le rappel.
-- Schémas d'URL pour rouvrir l'appli après déblocage : connus pour TikTok, Instagram, YouTube, X, Snapchat, Reddit. Pour une autre appli, rien ne se rouvre tout seul : tu la relances à la main (ou ajoute son schéma dans `app_config.app_urls`).
-
-## Annexe — construire « Portier » à la main
-
-Toutes les requêtes sont des **Obtenir le contenu de l'URL** : méthode **POST**, corps **JSON**, en-tête `apikey` = ta clé anon, vers `URL/rest/v1/rpc/NOM`. Tous les champs JSON sont de type Texte, et chaque requête contient `p_secret`.
-
-1. *Si* **Entrée de raccourci** *contient* `fermeture` → requête `close_session` (`p_app` = Entrée de raccourci) → *Arrêter ce raccourci*. *Fin de si.*
-2. *Obtenir l'adresse IP actuelle* (locale). *Si* elle *n'a aucune valeur* → *Aller à l'écran d'accueil* → *Afficher l'alerte* « Pas de réseau » → *Arrêter*. *Fin de si.*
-3. Requête `gate_status` (`p_app` = Entrée de raccourci) → variable **Etat**. *Si* `Etat.state` *est* `open` → *Arrêter*. *Fin de si.*
-4. *Aller à l'écran d'accueil*.
-5. *Choisir dans le menu*, invite = `Etat.prompt`, éléments : **J'ai lu** / **Utiliser mon solde** / **Annuler**.
-   - **J'ai lu** : *Choisir dans la liste* `Etat.books` → *Demander* un **nombre** (page atteinte) → *Demander* un **texte** (résumé) → requête `log_reading` (`p_book`, `p_page_end`, `p_summary`) → variable **Lecture**. *Si* `Lecture.status` *est* `ok` → alerte `Lecture.message` ; *sinon* → alerte `Lecture.error` → *Arrêter*.
-   - **Utiliser mon solde** : rien.
-   - **Annuler** : *Arrêter ce raccourci*.
-6. *Demander* un **nombre** (minutes) → requête `start_session` (`p_app`, `p_minutes`) → variable **Session**.
-7. *Si* `Session.status` *est* `ok` → *Démarrer le minuteur* pour `Session.minutes` minutes → *Ouvrir l'URL* `Session.open_url` ; *sinon* → alerte `Session.error`.
+Un projet Supabase gratuit s'endort après 7 jours sans activité. La tâche GitHub `.github/workflows/keepalive.yml` appelle la base chaque matin (onglet **Actions** du dépôt). GitHub met en pause les tâches planifiées d'un dépôt sans aucun commit pendant 60 jours : si tu reçois un mail de GitHub à ce sujet, rouvre l'onglet Actions et clique **Enable workflow**. La tâche `verif.yml` parcourt toute l'app en mode démo à chaque envoi : une croix rouge sur GitHub signale une régression.

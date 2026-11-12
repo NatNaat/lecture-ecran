@@ -1,4 +1,4 @@
-# Pages contre minutes
+# Pages
 
 <!-- impeccable:product-schema 1 -->
 
@@ -12,27 +12,27 @@ Un seul utilisateur : Anatole, étudiant en prépa D2 à Rennes, sur iPhone (PWA
 
 ## Product Purpose
 
-Échanger de la lecture contre du temps d'écran : 1 page lue et résumée = 1 minute sur une appli bloquée (TikTok, Instagram, YouTube). Le blocage vit dans un raccourci iOS ; cette web app est la bibliothèque, le carnet de résumés, le tableau de bord et la maison de la mascotte.
+Un suivi de mes lectures : les livres en cours, finis ou abandonnés, les pages lues chaque jour, un résumé quand j'en ai envie, les citations à garder, et de quoi ne pas tout oublier (révision espacée des livres prépa, souvenirs des livres plaisir). L'hippo, la série, les plumes et le placard rendent le rituel agréable.
 
-Réussite, confirmée par lui (23/09/2026) : **lire plus, tous les jours** (la série et l'objectif quotidien tiennent) et **passer réellement moins de temps sur les applis bloquées** (le contrôle hebdomadaire le montre). Les résumés utiles à la prépa et le plaisir d'ouvrir l'app sont des bénéfices, pas le critère.
+Jusqu'au 12/11/2026, l'app s'appelait « Pages contre minutes » et échangeait la lecture contre du temps d'écran (1 page résumée = 1 minute sur une appli bloquée par un raccourci iOS, contrôle hebdo, dette). Il a tout retiré, raccourcis et notification du soir compris : ça ne le poussait pas vraiment à lire. Réussite aujourd'hui : **lire régulièrement et garder une trace de ce qu'il lit**.
 
 ## Positioning
 
-Un pacte avec soi-même dont les règles sont **hors de portée** : le solde, les validations et la dette vivent côté serveur (Supabase) et le portier est un raccourci iOS qu'on déclenche à l'ouverture de l'appli bloquée. Chaque minute gagnée est adossée à un résumé rattaché à une œuvre et à un intervalle de pages précis — pas à un simple minuteur ni à une déclaration sur l'honneur.
+Un carnet de lecture personnel, pas un réseau social ni un outil de contrôle : chaque séance est rattachée à une œuvre et à un intervalle de pages précis, et le fil de lecture d'un livre se relit comme un journal.
 
 ## Operating Context
 
-- **Chaîne** : automatisations Raccourcis iOS (« app ouverte / fermée ») → raccourci `Portier` (`shortcuts/`, généré et signé par `build.py`) → fonctions SQL Supabase (`supabase/schema.sql`) ; la PWA (`index.html`, mode démo `?demo`) lit la même base. Raccourci `Rappel` lancé par une automatisation à 20 h.
-- **Rituels** : déclarer une lecture (page atteinte + résumé, dictée possible) ; le soir, rappel si l'objectif n'est pas atteint ; le lundi, contrôle hebdomadaire (reporter le temps d'écran réel d'iOS, écart = dette doublée) ; le dimanche, bilan de la semaine ; à J+7 et J+30, relire un ancien résumé.
+- **Chaîne** : la PWA (`index.html`, mode démo `?demo`) lit et écrit la base Supabase (`supabase/schema.sql` + migrations). Plus de raccourcis iOS ni de notification.
+- **Rituels** : lancer une séance avec « Lire » (chrono) ou noter après coup « J'ai lu » (page atteinte, résumé facultatif) ; le dimanche, bilan de la semaine ; chaque jour au plus un moment de mémoire (révision prépa ou souvenir).
 - **Hébergement** : GitHub Pages (`natnaat.github.io/lecture-ecran`), Supabase offre gratuite ; un seul fichier `index.html`, sans build ; service worker qui revalide toujours.
-- **Vocabulaire** : réserve d'écran (minutes), dette, objectif du jour, série (avec gel), plumes (monnaie), placard (cosmétiques), quêtes de la semaine, succès, niveau, fil de lecture, citation (ligne « > » d'un résumé), contrôle hebdo.
+- **Vocabulaire** : objectif du jour, série (avec gel), plumes (monnaie), placard (cosmétiques), quêtes de la semaine, succès, niveau, fil de lecture, citation (ligne « > » d'un résumé), révision prépa, souvenir.
 
 ## Capabilities and Constraints
 
-- Règles côté serveur uniquement ; la page courante d'un livre n'est jamais modifiable à la main ; le secret des raccourcis ne s'affiche que dans Réglages.
+- La page courante d'un livre avance seulement par les lectures enregistrées (fonction `log_reading`) ; le résumé est facultatif et s'ajoute ou se corrige après coup.
 - Recherche de livres : Google Books, BnF, Open Library ; couvertures haute résolution avec repli.
-- Gamification recalculée depuis les lectures (rien à stocker, rien à tricher) ; seuls achats, équipement, gels, cadeaux et relectures sont enregistrés (`app_config.player`).
-- Gratuit, sans compte développeur Apple : pas d'API Temps d'écran, donc pas de blocage plus étanche que Raccourcis. Hors ligne = bloqué.
+- Gamification recalculée depuis les lectures (rien à stocker) ; seuls achats, équipement, gels, cadeaux et mémoire sont enregistrés (`app_config.player`).
+- Les anciennes tables du temps d'écran (`sessions`, `ledger`, `audits`, `push_*`) restent dans la base avec leur historique ; seul le succès « Bon élève » lit encore `audits`, et il ne s'affiche que s'il a été gagné.
 - Toute évolution touchant la base passe par une migration `supabase/migration-<date>-*.sql` que lui seul exécute.
 - Non décidé : rien d'ouvert à ce jour.
 
@@ -40,7 +40,7 @@ Un pacte avec soi-même dont les règles sont **hors de portée** : le solde, le
 
 - **Même monde que son Cockpit D2** : Bricolage Grotesque + IBM Plex Sans, mode sombre, et **la même mascotte hippo en pixel art**. Depuis la refonte du 12/11/2026 (la même que le Cockpit, esprit Arc/Dia, pensée pour le téléphone) : thème Graphite par défaut avec accent neutre (le mauve reste à l'hippo), cadres de 1 px, rayons courts (8 px, 10 px pour les cartes, 16 px pour ce qui flotte), boutons plats sans relief, aucune pilule, dock flottant en bas avec un fond qui glisse sous l'onglet actif, sous-onglets soulignés, ressorts discrets. Les règles sont dans le bloc `REFONTE NOV. 2026` à la fin de la feuille de style. Confirmé le 23/09/2026 : l'hippo et la gamification sont **l'identité de l'app**, à développer sobrement. L'hippo n'a pas de nom (« ton hippo »).
 - Ton : un objet à soi, pas un produit. Sobre : il a fait retirer 3D, flou, halos et modèles téléchargés ; une chose à la fois, jamais de texte qui n'ajoute rien.
-- Familles de couleurs fixées par lui : série ambre, livres sauge, écran sarcelle, écriture/niveau prune, dette corail, pages lavande.
+- Familles de couleurs fixées par lui : série ambre, livres sauge, temps de lecture sarcelle, écriture/niveau prune, pages lavande.
 
 ## Evidence on Hand
 
@@ -48,8 +48,8 @@ Données réelles dans sa base Supabase (en usage depuis le 18/09/2026) ; jeu de
 
 ## Product Principles
 
-1. La règle vit ailleurs que dans la main qui veut tricher.
-2. Une minute d'écran a toujours une page et un résumé derrière elle.
+1. Noter une lecture doit prendre quelques secondes ; écrire davantage reste un choix.
+2. Chaque séance a une œuvre et des pages derrière elle.
 3. Les livres sont les héros ; les chiffres et les réglages sont rangés au cagibi.
 4. L'hippo porte l'émotion, jamais l'information : rien ne repose sur lui pour comprendre.
 5. Chaque écran doit se lire d'un coup d'œil, le soir, fatigué.
