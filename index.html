@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pages contre minutes</title>
-<meta name="theme-color" content="#F4F3F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#15141B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F7F7F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pages">
@@ -19,7 +19,7 @@
 <style>
 /* Même monde que le Cockpit D2 : lavande, Bricolage Grotesque + IBM Plex Sans, et le même hippo. */
 :root {
-  color-scheme: light; --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
+  color-scheme: light; --bg: #F7F7F5; --surface: #FFFFFF; --surface-2: #EEEEEB; --ink: #1A1A1A; --ink-2: #3F3F3D; --muted: #6B6B68; --line: #E3E3DF; --line-strong: #C9C9C4;
   --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
   --ok: #3A7356; --ok-soft: #E1EFE7; --warn: #886320; --warn-soft: #F5ECD6; --warn-ink: #FFFFFF; --bad: #A64839; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2C717D; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
   --viz-read: #5A50B5; --viz-screen: #0E9C8E;
@@ -29,11 +29,11 @@
   --r: 16px; --tab: 64px; --ease: cubic-bezier(.2, .8, .2, 1); --ease-in: cubic-bezier(.4, 0, 1, 1);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  color-scheme: dark; --viz-read: #8E84EA; --viz-screen: #1FA89A; --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  color-scheme: dark; --viz-read: #8E84EA; --viz-screen: #1FA89A; --bg: #131313; --surface: #1A1A1A; --surface-2: #242424; --ink: #E8E8E6; --ink-2: #C4C4C1; --muted: #8C8C89; --line: #262626; --line-strong: #3A3A3A;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
   --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --warn-ink: #1D1B26; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
 :root[data-theme="dark"] {
-  color-scheme: dark; --viz-read: #8E84EA; --viz-screen: #1FA89A; --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  color-scheme: dark; --viz-read: #8E84EA; --viz-screen: #1FA89A; --bg: #131313; --surface: #1A1A1A; --surface-2: #242424; --ink: #E8E8E6; --ink-2: #C4C4C1; --muted: #8C8C89; --line: #262626; --line-strong: #3A3A3A;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
   --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --warn-ink: #1D1B26; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
 
@@ -382,6 +382,114 @@ mark { background: var(--warn-soft); color: inherit; font-weight: 600; text-deco
 .login { max-width: 420px; margin: 0 auto; padding: 14vh 18px 0; } .login h1 { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
 #selftest { position: fixed; inset: auto 8px calc(var(--tab) + 8px); z-index: 60; margin: 0; padding: 10px; border-radius: 10px; background: var(--ink); color: var(--bg); font: 11px/1.5 ui-monospace, monospace; white-space: pre-wrap; }
 .toast { position: fixed; left: 50%; bottom: calc(var(--tab) + env(safe-area-inset-bottom) + 14px); transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font: 600 14px var(--body); animation: toastin .28s var(--ease) both; } .toast.out { animation: toastout .2s var(--ease-in) both; } @keyframes toastin { from { opacity: 0; transform: translate(-50%, 10px); } } @keyframes toastout { to { opacity: 0; transform: translate(-50%, 6px); } }
+/* ===================== REFONTE NOV. 2026 : comme le Cockpit D2 (Arc/Dia) — plat, sobre, pensé pour le téléphone ===================== */
+:root {
+  --r: 10px; --radius-chrome: 8px; --radius-frame: 16px; --raise: var(--surface);
+  /* ressort : léger dépassement puis retour (le même que le Cockpit) */
+  --spring: linear(0, .009 1%, .037 2.1%, .142 4.4%, .313 7.1%, .52 10.2%, .706 13.6%, .85 17.3%, .945 21.2%, 1.001 25.4%, 1.026 29.9%, 1.031 34.8%, 1.024 40.5%, 1.011 47.6%, 1.001 56.9%, .997 70%, 1);
+  --sheet-ease: cubic-bezier(.32, .72, 0, 1);   /* feuilles du bas : la courbe d'iOS, sans rebond qui découvrirait le bas */
+  --hover: color-mix(in oklab, var(--ink) 7%, transparent);
+  --ring: color-mix(in oklab, var(--ink) 10%, transparent);
+  --dock-b: max(12px, calc(env(safe-area-inset-bottom) - 10px));   /* le dock flotte juste au-dessus de la barre d'accueil */
+  --dock-h: 62px;
+}
+
+/* ---------- barre du haut : titres calmes, boutons plats ---------- */
+main { padding-bottom: calc(var(--dock-b) + var(--dock-h) + 28px); }
+.topbar { min-height: 44px; margin-bottom: 14px; }
+.topbar h1 { font-size: 22px; font-weight: 700; letter-spacing: -.015em; }
+.gear { border: 0; border-radius: var(--radius-chrome); background: transparent; box-shadow: none; color: var(--ink-2); }
+.gear svg.i { width: 19px; height: 19px; stroke-width: 1.8; }
+.gear:active { background: var(--hover); }
+.back { color: var(--ink-2); }
+/* tuiles épinglées : série et plumes */
+.streakpill, .plumes { min-height: 34px; gap: 6px; padding: 0 10px 0 8px; border-radius: var(--radius-chrome); background: var(--hover); color: var(--ink); font: 600 14px var(--body); font-variant-numeric: tabular-nums; }
+.streakpill svg.i { width: 16px; height: 16px; color: var(--warn); }
+.streakpill.risk { background: var(--hover); color: var(--bad); } .streakpill.risk svg.i { color: var(--bad); }
+/* l'accueil : la date sur une ligne, les tuiles et les réglages à droite ; sur le décor, tuiles pleines pour rester lisibles */
+.hero { align-items: center; margin-bottom: 0; }
+.hero .greet { margin: 0; font: 600 15px var(--body); color: var(--ink-2); } .hero .greet::first-letter { text-transform: uppercase; }
+.hp-home.stage-nuit .hero .greet, .hp-home.stage-etagere .hero .greet, .hp-home.stage-jardin .hero .greet, .hp-home.stage-salle .hero .greet, .hp-home.stage-mes-livres .hero .greet { color: var(--ink); }
+.hero .right { gap: 6px; }
+.hero .gear, .hero .streakpill, .hero .plumes { background: var(--surface); box-shadow: 0 0 0 1px var(--ring); }
+.hero .gear { width: 34px; height: 34px; }
+.hp-bubble { border-width: 1px; border-radius: 12px; }
+.hp-bubble::after { width: 11px; height: 11px; border-right-width: 1px; border-top-width: 1px; }
+.hp-home .hp-bubble::after { bottom: -6.5px; }
+
+/* ---------- le dock : flotte en bas, l'onglet actif glisse ---------- */
+nav.tabs { left: 12px; right: 12px; bottom: var(--dock-b); max-width: 520px; margin-inline: auto; padding: 5px; border: 0; border-radius: var(--radius-frame); background: var(--surface); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .4), 0 0 0 1px var(--ring); }
+nav.tabs div { position: relative; max-width: none; gap: 4px; }
+nav.tabs button { position: relative; z-index: 1; min-height: 52px; padding: 6px 4px 5px; gap: 3px; align-content: center; border-radius: 11px; font: 600 11.5px var(--body); color: var(--muted); transition: transform .45s var(--spring), color .15s; }
+nav.tabs button:active { transform: scale(.94); transition-duration: .08s; }
+nav.tabs svg.i, nav.tabs button[aria-current="page"] svg.i { width: 21px; height: 21px; padding: 0; border-radius: 0; background: none; stroke-width: 1.8; animation: none; transform: none; }
+nav.tabs button[aria-current="page"] { color: var(--ink); }
+.tab-ind { position: absolute; left: 0; top: 0; z-index: 0; width: 0; height: 0; border-radius: 11px; background: var(--hover); opacity: 0; pointer-events: none; }
+.tab-ind.ready { transition: transform .5s var(--spring), width .5s var(--spring), height .5s var(--spring), opacity .2s; }
+.toast { bottom: calc(var(--dock-b) + var(--dock-h) + 12px); border-radius: 10px; }
+
+/* ---------- cadres fins, rayons courts ---------- */
+.card, .list, .figures div, .bdg, .entry, .mcard, .witem, .hp-gallery figure, .theme-card, .bookpick, .droplist, .stage.big, .stage:has(.hp-unit.big), .trybar, .quickp button, .edchips button, .cvgrid button { border-width: 1px; }
+.card, .list, .entry, .mcard, .figures div, .bdg, .witem, .hp-gallery figure, .theme-card, .bookpick, .droplist, .trybar { border-radius: var(--r); }
+.quickp button, .edchips button, .cvgrid button { border-radius: var(--radius-chrome); }
+.cov .img { border: 0; border-radius: 6px; box-shadow: 0 0 0 1px var(--ring); }
+.bigcover { border: 0; border-radius: 8px; box-shadow: 0 0 0 1px var(--ring), 0 12px 28px -14px rgba(0, 0, 0, .5); }
+.quest .ic, .reserve .ic { border-radius: var(--radius-chrome); }
+.level .badge { border-radius: var(--r); }
+.cal div { border-radius: 6px; }
+.tag { border-radius: 6px; }
+.souvq { border-radius: var(--radius-chrome); }
+.entry blockquote, .mtext blockquote, .quotes blockquote { border-radius: 6px; }
+code.copy { border-radius: var(--radius-chrome); }
+.goal p:empty { display: none; }
+.goal h2 + p:empty + .btn { margin-top: 12px; }
+
+/* ---------- boutons plats ---------- */
+.btn { min-height: 48px; border: 0; border-radius: var(--radius-chrome); font: 600 15px var(--body); letter-spacing: 0; transition: transform .45s var(--spring), background-color .15s, opacity .15s; }
+.btn:active { transform: scale(.97); border-bottom-width: 0; transition-duration: .08s; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
+.btn.sm { min-height: 40px; border-radius: var(--radius-chrome); font-size: 14px; }
+.btn:disabled { transform: none; }
+
+/* ---------- sous-onglets soulignés (filtres de la bibliothèque, rayons du placard) ---------- */
+.chips { gap: 2px; margin: 0 -16px 16px; padding: 0 16px; box-shadow: inset 0 -1px var(--line); }
+.chip { min-height: 42px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; color: var(--muted); font: 600 14px var(--body); }
+.chip[aria-pressed="true"] { background: none; color: var(--ink); border-bottom-color: var(--ink); }
+.chip:active { transform: none; color: var(--ink); }
+.wtop .chips { padding-bottom: 0; }
+.wtop.stuck { box-shadow: none; }
+
+/* ---------- segments : un rail, le choix posé dessus ---------- */
+.seg2 { padding: 3px; gap: 2px; border-radius: 10px; background: var(--hover); }
+.seg2 button { border-radius: 7px; color: var(--muted); }
+.seg2 button[aria-pressed="true"] { background: var(--raise); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 1px var(--ring); }
+.seg2.sm { border-radius: 9px; } .seg2.sm button { border-radius: 6px; }
+
+/* ---------- saisie : boîtes pleines, sans contour épais ---------- */
+input, textarea, select { border: 1px solid transparent; border-radius: var(--radius-chrome); background: var(--surface-2); }
+input:focus, textarea:focus, select:focus { border-color: color-mix(in oklab, var(--ink) 30%, transparent); }
+.searchbox { border: 1px solid transparent; border-radius: 10px; background: var(--hover); }
+.searchbox:focus-within { border-color: color-mix(in oklab, var(--ink) 22%, transparent); }
+.searchbox input { background: none; border: 0; }
+
+/* ---------- ce qui flotte prend le rayon du cadre ---------- */
+dialog::backdrop { background: rgba(0, 0, 0, .42); }
+dialog .sheet { border-top: 0; border-radius: var(--radius-frame) var(--radius-frame) 0 0; box-shadow: 0 0 0 1px var(--ring), 0 -24px 60px -24px rgba(0, 0, 0, .5); }
+dialog[open] .sheet { animation: sheetin .5s var(--sheet-ease); }
+dialog .sheet::before { width: 36px; height: 5px; border-radius: 3px; }
+.droplist { box-shadow: 0 0 0 1px var(--ring), 0 18px 40px -16px rgba(0, 0, 0, .5); }
+.theme-card[aria-pressed="true"] { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.tc-btn { border-radius: 3px; } .tc-pill { border-radius: 3px; }
+
+/* ---------- ressorts ---------- */
+.enter { animation: vtin .5s var(--spring) both; }
+@keyframes vtin { from { opacity: 0; transform: translateY(12px); } }
+#settings, #wardrobe, #bookview { animation: slidein .5s var(--spring) both; }
+#reading { animation: rdin .55s var(--spring) both; }
+.gear, .chip, .plumes, .streakpill, .iconbtn, .bookpick, .seg2 button, .cov .img, .hit, .bookopt, .back, .sortbtn, .quickp button, .theme-card { transition: transform .45s var(--spring), background-color .15s, color .15s, border-color .15s, box-shadow .15s; }
+.gear:active, .plumes:active, .streakpill:active, .iconbtn:active, .seg2 button:active, .back:active, .sortbtn:active, .quickp button:active, .theme-card:active { transform: scale(.94); transition-duration: .08s; }
+.cov:active .img, .bookpick:active, .hit:active, .bookopt:active { transform: scale(.97); transition-duration: .08s; }
+/* ===================== /REFONTE NOV. 2026 ===================== */
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
@@ -409,6 +517,9 @@ const $ = (s, el = document) => el.querySelector(s);
 // Contrastes vérifiés par calcul (texte ≥ 4,5:1). Les couleurs de famille (série, livres, écran, plumes, dette) et celles des graphiques
 // ne dépendent que du mode, pour rester reconnaissables d'un thème à l'autre ; l'hippo garde son pelage.
 const THEMES = {
+  graphite:{ nom:'Graphite',
+    clair:{ bg:'#F7F7F5', surface:'#FFFFFF', surface2:'#EEEEEB', ink:'#1A1A1A', ink2:'#3F3F3D', muted:'#6B6B68', line:'#E3E3DF', lineStrong:'#C9C9C4', accent:'#1F1F1F', accentInk:'#FFFFFF', pink:'#E79AA8' },
+    sombre:{ bg:'#131313', surface:'#1A1A1A', surface2:'#242424', ink:'#E8E8E6', ink2:'#C4C4C1', muted:'#8C8C89', line:'#262626', lineStrong:'#3A3A3A', accent:'#ECECEA', accentInk:'#131313', pink:'#E79AA8' } },
   mauve:{ nom:'Mauve',
     clair:{ bg:'#F4F3F7', surface:'#FFFFFF', surface2:'#E9E7F0', ink:'#1D1B26', ink2:'#514E63', muted:'#65627A', line:'#DCDAE6', lineStrong:'#B9B6CC', accent:'#4A4670', accentInk:'#FFFFFF', pink:'#E79AA8' },
     sombre:{ bg:'#15141B', surface:'#1D1C25', surface2:'#282633', ink:'#EDECF3', ink2:'#C5C2D6', muted:'#918EA6', line:'#312F3E', lineStrong:'#4B4860', accent:'#B4B0CC', accentInk:'#15141B', pink:'#E79AA8' } },
@@ -437,13 +548,14 @@ const MODE_TOKENS = {
 };
 const mixHex = (a, b, t) => "#" + [0, 2, 4].map(i => Math.round(parseInt(a.slice(1 + i, 3 + i), 16) * t + parseInt(b.slice(1 + i, 3 + i), 16) * (1 - t)).toString(16).padStart(2, "0")).join("").toUpperCase();
 function themeVars(id, mode) {
-  const p = (THEMES[id] || THEMES.mauve)[mode], soft = id === "mauve" ? (mode === "clair" ? "#E4E1F2" : "#2E2B3F") : mixHex(p.accent, p.surface, mode === "clair" ? .14 : .18);
+  const p = (THEMES[id] || THEMES.graphite)[mode], soft = id === "mauve" ? (mode === "clair" ? "#E4E1F2" : "#2E2B3F") : mixHex(p.accent, p.surface, mode === "clair" ? .14 : .18);
   return { "--bg": p.bg, "--surface": p.surface, "--surface-2": p.surface2, "--ink": p.ink, "--ink-2": p.ink2, "--muted": p.muted, "--line": p.line, "--line-strong": p.lineStrong,
-    "--accent": p.accent, "--accent-ink": p.accentInk, "--accent-soft": soft, "--focus": p.accent, "--pink": p.pink, ...MODE_TOKENS[mode] };
+    "--accent": p.accent, "--accent-ink": p.accentInk, "--accent-soft": soft, "--focus": p.accent, "--pink": p.pink,
+    "--raise": mode === "clair" ? p.surface : mixHex(p.ink, p.surface2, .1), ...MODE_TOKENS[mode] };   // --raise : le segment choisi, au-dessus de son rail
 }
 const LS_APP = "pcm:apparence";
 const localApp = () => { try { return JSON.parse(localStorage.getItem(LS_APP) || "null") || {}; } catch { return {}; } };
-let appearance = { theme: THEMES[localApp().theme] ? localApp().theme : "mauve", mode: ["auto", "clair", "sombre"].includes(localApp().mode) ? localApp().mode : "auto" };
+let appearance = { theme: THEMES[localApp().theme] ? localApp().theme : "graphite", mode: ["auto", "clair", "sombre"].includes(localApp().mode) ? localApp().mode : "auto" };
 const effectiveMode = mode => mode === "clair" || mode === "sombre" ? mode : matchMedia("(prefers-color-scheme: dark)").matches ? "sombre" : "clair";
 let themeSig = "";
 function applyAppearance(animate = false) {
@@ -1166,7 +1278,7 @@ function bilanCard() {   // visible le dimanche seulement (en démo : ?bilan)
   if (!w.pages) say.push("Semaine blanche : lundi, on repart de la première page.");
   else { say.push(w.pages > w.prev ? `Mieux que la semaine dernière, +${w.pages - w.prev} pages.` : w.prev ? `${w.prev - w.pages} pages de moins que la semaine dernière.` : "Une semaine de plus dans les livres.");
     if (w.best) say.push(`Meilleur jour : ${w.best.day}, ${w.best.pages} pages.`); if (w.finished) say.push(`${plural(w.finished, "livre")} fini${w.finished > 1 ? "s" : ""}.`); }
-  return `<div class="card bilan"><div class="lead"><h2>Bilan de la semaine</h2><span class="small muted">dimanche</span></div>
+  return `<div class="card bilan"><div class="lead"><h2>Bilan de la semaine</h2></div>
     <div class="figures"><div class="accent"><b class="num">${w.pages}</b><span>pages</span></div><div class="teal"><b class="num">${w.minutes}</b><span>min gagnées</span></div><div class="warn"><b class="num">${w.days} / 7</b><span>jours lus</span></div></div><p class="small" style="margin-top:10px">${say.join(" ")}</p></div>`;
 }
 // ───── Mémoire : ne pas oublier ce qu'on a lu ─────
@@ -1204,8 +1316,7 @@ function excerpt(s, max = 170) {   // le début du résumé, coupé à la fin d'
 function memoryCard() {
   const batch = memoBatch();
   if (batch.length) return `<div class="card memo"><div class="lead"><h2>Révision prépa</h2><span class="tag plum">${plural(batch.length, "carte")}</span></div>
-    <p class="small muted">Retrouver de tête ce que tu as lu, sans rien écrire. Environ ${plural(Math.ceil(batch.length / 2), "minute")}.</p>
-    <button class="btn sm" data-act="memo">Commencer · +${MEMO_XP} ${PLUME} par carte</button></div>`;
+    <button class="btn sm" data-act="memo">Commencer</button></div>`;
   if (Object.values(player().memo).some(m => m.l === todayKey())) return "";
   const r = souvenir(); return r ? souvCard(r) : "";
 }
@@ -1213,7 +1324,7 @@ function souvCard(r) {
   const b = S.books.find(x => x.id === r.book_id);
   return `<div class="card souv"><div class="lead"><h2>Souvenir</h2><span class="small muted">${agoLbl(r.created_at)}</span></div>
     <button class="souvq" data-act="open-entry" data-b="${esc(r.book_id)}" data-id="${esc(r.id)}"><small>${esc(b ? b.title : "")} · p. ${r.page_start} → ${r.page_end}</small><span>${esc(excerpt(bodyOf(r.summary)))}</span><i>Relire en entier ›</i></button>
-    <button class="btn sm ghost" data-act="souv-ok" data-id="${esc(r.id)}">Ça me revient · +${SOUV_XP} ${PLUME}</button></div>`;
+    <button class="btn sm ghost" data-act="souv-ok" data-id="${esc(r.id)}">Ça me revient</button></div>`;
 }
 async function souvenirOk(id) {
   const sv = player().souv, seen = { ...(sv.seen || {}) }; seen[id] = (seen[id] || 0) + 1;
@@ -1310,7 +1421,16 @@ function render() {
   if (tab === "me") wireTips(app);
   if (tab === "books") wireLibSearch();
   if (fresh) { lockY = 0; if (!lockers.size) window.scrollTo(0, 0); }
+  placeInd();
 }
+// ───── REFONTE NOV. 2026 · dock : l'onglet actif est marqué par un fond qui glisse d'un onglet à l'autre ─────
+const tabInd = document.createElement("i"); tabInd.className = "tab-ind"; tabInd.setAttribute("aria-hidden", "true"); tabs.firstElementChild.prepend(tabInd);
+function placeInd() {
+  const sel = tabs.querySelector('[aria-current="page"]'); if (!sel || tabs.hidden) return;
+  Object.assign(tabInd.style, { width: sel.offsetWidth + "px", height: sel.offsetHeight + "px", transform: `translate(${sel.offsetLeft}px, ${sel.offsetTop}px)`, opacity: "1" });
+  if (!tabInd.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => tabInd.classList.add("ready")));
+}
+addEventListener("resize", () => { tabInd.classList.remove("ready"); placeInd(); });
 const coverBox = (b, cls = "img") => `<span class="${cls}" style="${cloth(b)}"><span class="ph" style="background:var(--bg)">${esc(b.title)}</span>${b.cover_url ? coverImg(b) : ""}</span>`;
 function covCard(b) {
   const pct = b.total_pages ? Math.min(1, b.current_page / b.total_pages) : null, st = { en_cours: "", fini: "Fini", abandonne: "Abandonné" }[b.status];
@@ -1322,23 +1442,23 @@ function viewHome() {
   const ses = session(), active = S.sessions.filter(s => new Date(s.expires_at) > new Date()), cur = S.books.filter(b => b.status === "en_cours"), quests = questsFor(mondayOf(todayKey())), next = quests.find(q => !q.done);
   const circ = 2 * Math.PI * 42;
   return `<section class="view">
-  <div class="hp-home ${sceneClass()}" style="${sceneStyle(null, true)}"><div class="hero"><div><p class="greet">${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" })}</p><h1>${DEMO ? "Démo" : "Accueil"}</h1></div>
+  <div class="hp-home ${sceneClass()}" style="${sceneStyle(null, true)}"><div class="hero"><div><h1 class="sr-only">Accueil</h1><p class="greet">${DEMO ? "Démo · " : ""}${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" })}</p></div>
     <div class="right">${st.cur ? `<button class="streakpill ${st.atRisk ? "risk" : ""}" data-act="tab" data-tab="goals" aria-label="${st.cur} jours d'affilée${st.atRisk ? ", pas encore lu aujourd'hui" : ""}">${ICONS.flame}${st.cur} j.</button>` : ""}<button class="plumes num" data-act="wardrobe" aria-label="${plumes()} plumes, ouvrir le placard">${PLUME}${plumes()}</button>${GEAR}</div></div>
     <div class="hp-bubble" role="status">${esc(mood.say)}</div><button class="hp-unit ${mood.cls}" style="${skinStyle()}" data-act="poke" aria-label="Ton hippo">${hippoSVG()}</button></div>
   <div class="sheet"><div class="card"><div class="goal"><div class="ring ${pct >= 1 ? "done" : ""}" role="img" aria-label="${tp} pages sur ${goal}"><svg viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="42"/><circle class="val" cx="48" cy="48" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" data-off="${circ * (1 - pct)}"/></svg><b class="num"><span>${tp}</span><small>/ ${goal} p.</small></b></div>
-    <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${ses ? `Séance en cours depuis ${plural(Math.max(1, sessionMin(ses)), "minute")}.` : pct >= 1 ? "Chaque page en plus compte quand même." : tp ? `Encore ${plural(goal - tp, "page")} à lire et résumer.` : pastRdv() ? "Cinq pages suffisent pour commencer." : `Rendez-vous à ${rdvLabel()}. Cinq pages suffisent.`}</p>
+    <div><h2 style="margin:0">${pct >= 1 ? "Objectif atteint" : "Objectif du jour"}</h2><p>${ses ? `Séance en cours depuis ${plural(Math.max(1, sessionMin(ses)), "minute")}.` : pct >= 1 || tp ? "" : pastRdv() ? "Cinq pages suffisent pour commencer." : `Rendez-vous à ${rdvLabel()}. Cinq pages suffisent.`}</p>
     ${cur.length ? `<button class="btn wide" data-act="read">${ICONS.read}${ses ? "Reprendre" : "Lire"}</button><button class="link inl declare" data-act="log">J'ai déjà lu</button>` : `<button class="btn wide" data-act="add-book">${ICONS.plus}Ajouter un livre</button>`}</div></div></div>
   ${bilanCard()}${memoryCard()}
   <div class="reserve ${bal < 0 ? "debt" : ""}"><div class="ic">${bal < 0 ? ICONS.alert : ICONS.clock}</div><div><b class="big num">${bal < 0 ? "−" + -bal : bal} min</b><p>${bal < 0 ? `de dette : ${plural(-bal, "page")} à lire` : "de réserve d'écran"}${auditDue() ? ` · <button class="link inl" data-act="goto-audit">contrôle hebdo à faire</button>` : ""}</p></div>
     ${active.map(s => `<span class="tag warn">${esc(s.app)} · <span data-exp="${esc(s.expires_at)}">…</span></span>`).join("")}</div>
   <div class="section"><div class="lead"><h2>En cours</h2><button class="link" data-act="add-book">+ Ajouter</button></div>
-    ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours. Ajoute celui que tu lis : c'est lui que le raccourci te proposera.</p>`}</div>
+    ${cur.length ? `<div class="covers">${cur.map(covCard).join("")}</div>` : `<p class="quiet">Aucun livre en cours.</p>`}</div>
   ${next ? `<div class="section quests"><div class="lead"><h2>Quête de la semaine</h2><button class="link" data-act="tab" data-tab="goals">Toutes ›</button></div>${questRow(next)}</div>` : ""}
   </div></section>`;
 }
 function questRow(q) { return `<div class="quest ${q.done ? "done" : ""}"><div class="ic tint-${q.done ? "ok" : q.tint}">${q.done ? ICONS.check : ICONS[q.icon]}</div><div><b>${esc(q.label)}</b><div class="bar thin ${q.done ? "ok" : q.tint === "accent" ? "" : q.tint}"><i data-p="${q.cur / q.max}"></i></div><small>${q.cur} / ${q.max}</small></div><span class="xp num">${q.done ? "✓ " : "+"}${q.xp} XP</span></div>`; }
 function viewBooks() {
-  return `<section class="view"><div class="topbar"><h1>Bibliothèque<span class="sub">${plural(S.books.length, "livre")}, ${S.readings.reduce((a, r) => a + r.pages, 0)} pages résumées</span></h1><div class="right"><button class="gear" data-act="add-book" aria-label="Ajouter un livre">${ICONS.plus}</button>${GEAR}</div></div>
+  return `<section class="view"><div class="topbar"><h1>Bibliothèque</h1><div class="right"><button class="gear" data-act="add-book" aria-label="Ajouter un livre">${ICONS.plus}</button>${GEAR}</div></div>
   <div class="searchbox lib"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><label for="libq" class="sr-only">Chercher dans tes livres, résumés et citations</label><input id="libq" type="search" enterkeyhint="search" autocomplete="off" placeholder="Chercher dans tes résumés" value="${esc(libQuery)}"><button type="button" id="libqx" aria-label="Effacer la recherche" ${libQuery ? "" : "hidden"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
   <div id="libres" aria-live="polite">${libQuery.trim().length >= 2 ? searchResults(libQuery) : libBody()}</div></section>`;
 }
@@ -1348,7 +1468,7 @@ function libBody() {
   if (libFilter === "citations" && !nq) libFilter = "en_cours";
   const list = S.books.filter(b => b.status === libFilter);
   return `<div class="chips">${Object.entries(lists).map(([k, v]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${k === libFilter}">${v} · ${S.books.filter(b => b.status === k).length}</button>`).join("")}${nq ? `<button class="chip" data-act="filter" data-v="citations" aria-pressed="${libFilter === "citations"}">Citations · ${nq}</button>` : ""}</div>
-  ${libFilter === "citations" ? allQuotes() : list.length ? `<div class="grid">${list.map(covCard).join("")}</div>` : `<p class="empty">${libFilter === "en_cours" ? "Rien en cours. Ajoute un livre pour commencer à gagner des minutes." : "Rien ici pour l'instant."}</p>`}`;
+  ${libFilter === "citations" ? allQuotes() : list.length ? `<div class="grid">${list.map(covCard).join("")}</div>` : `<p class="empty">${libFilter === "en_cours" ? "Rien en cours." : "Rien ici pour l'instant."}</p>`}`;
 }
 // ───────────── Recherche et citations ─────────────
 let libQuery = "", libTimer = 0, libChipsX = 0;
@@ -1401,10 +1521,10 @@ function wireLibSearch() {
 function viewGoals() {
   const st = streakInfo(), lv = levelInfo(), quests = questsFor(mondayOf(todayKey())), bd = badges(), days = readingDays();
   const start = addDays(mondayOf(todayKey()), -21), cells = Array.from({ length: 28 }, (_, i) => addDays(start, i));
-  return `<section class="view"><div class="topbar"><h1>Objectifs<span class="sub">Niveau ${lv.n} · ${esc(lv.name)}</span></h1>${GEAR}</div>
+  return `<section class="view"><div class="topbar"><h1>Objectifs</h1>${GEAR}</div>
   <div class="section" style="margin-top:4px"><div class="lead"><h2 style="font-size:15px">Niveau</h2><button class="plumes num" data-act="wardrobe">${PLUME}${plumes()} · placard</button></div><div class="level"><div class="badge num">${lv.n}</div><div><b>${esc(lv.name)}</b><span class="num">${lv.xp} XP · encore ${lv.hi - lv.xp} avant le niveau ${lv.n + 1}</span><div class="bar thin plum" style="margin-top:6px"><i data-p="${lv.pct}"></i></div></div></div>${nextGoal() ? `<p class="note goal-next">${esc(nextGoal())}</p>` : ""}</div>
   <div class="card"><div class="lead"><h2>Série</h2><span class="tag ${st.cur ? "warn" : ""}">${ICONS.flame}${st.cur} j.</span></div>
-    <p class="small muted">${st.today ? "Lecture du jour faite : la série tient." : st.cur ? (freezesLeft() ? "Pas encore lu aujourd'hui : un gel de série te couvrirait." : "Pas encore lu aujourd'hui : la série tombe à minuit.") : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.${freezesLeft() ? ` ${freezesLeft()} gel${freezesLeft() > 1 ? "s" : ""} en réserve.` : ""}</p>
+    <p class="small muted">${st.today ? "" : st.cur ? (freezesLeft() ? "Pas encore lu aujourd'hui : un gel de série te couvrirait." : "Pas encore lu aujourd'hui : la série tombe à minuit.") : "Lis et résume un jour de suite pour lancer une série."} Record : ${st.best} jour${st.best > 1 ? "s" : ""}.${freezesLeft() ? ` ${freezesLeft()} gel${freezesLeft() > 1 ? "s" : ""} en réserve.` : ""}</p>
     <div class="cal">${["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="lbl">${d}</div>`).join("")}${cells.map(k => `<div class="${days.has(k) ? "on" : (S.config.player?.freezesUsed || []).includes(k) ? "frz" : ""} ${k === todayKey() ? "today" : ""} num" title="${k}${(S.config.player?.freezesUsed || []).includes(k) ? " (gel de série)" : ""}">${+k.slice(8)}</div>`).join("")}</div></div>
   <div class="card"><div class="lead"><h2>Quêtes de la semaine</h2><span class="small muted">${quests.filter(q => q.done).length} / ${quests.length}</span></div>${quests.map(questRow).join("")}</div>
   <div class="section"><div class="lead"><h2>Succès</h2><span class="small muted">${bd.filter(b => b.at).length} / ${bd.length}</span></div>
@@ -1458,9 +1578,7 @@ function trendBody() {
     <h3>Lecture et écran, en minutes</h3>
     <div class="legend"><span><i class="sw" style="background:var(--viz-read)"></i>lecture</span><span><i class="sw" style="background:var(--viz-screen)"></i>écran accordé</span><span><i class="ln"></i>écran relevé (contrôle)</span></div>
     <div class="viz">${mins}</div>
-    ${ws.some(w => w.read) ? "" : `<p class="note">Les minutes de lecture se remplissent avec le bouton Lire (le chrono des séances).</p>`}
-    ${lastReal ? "" : `<p class="note">Le trait « écran relevé » apparaît après ton premier contrôle hebdo.</p>`}
-    <details class="vtable"><summary>Voir les chiffres</summary><table><tr><th>Semaine</th><th class="n">Pages</th><th class="n">Lecture</th><th class="n">Écran</th><th class="n">Relevé</th></tr><tr><th></th><th></th><th class="n">min</th><th class="n">min</th><th class="n">min</th></tr>${[...ws].reverse().map(w => `<tr><td>${w === cur ? "en cours" : weekLbl(w.key)}</td><td class="n">${w.pages}</td><td class="n">${w.read || "—"}</td><td class="n">${w.screen || "—"}</td><td class="n">${w.real != null ? w.real : "—"}</td></tr>`).join("")}</table></details>`;
+            <details class="vtable"><summary>Voir les chiffres</summary><table><tr><th>Semaine</th><th class="n">Pages</th><th class="n">Lecture</th><th class="n">Écran</th><th class="n">Relevé</th></tr><tr><th></th><th></th><th class="n">min</th><th class="n">min</th><th class="n">min</th></tr>${[...ws].reverse().map(w => `<tr><td>${w === cur ? "en cours" : weekLbl(w.key)}</td><td class="n">${w.pages}</td><td class="n">${w.read || "—"}</td><td class="n">${w.screen || "—"}</td><td class="n">${w.real != null ? w.real : "—"}</td></tr>`).join("")}</table></details>`;
 }
 // Le graphique du profil : 14 jours ou 8 semaines, au choix (mémorisé sur l'appareil).
 let meView = pref("meView", "semaines");
@@ -1490,10 +1608,10 @@ function viewMe() {
   const wk = lastMonday(), wkKey = dayKey(wk), c = S.config, todo = c.apps.filter(a => !S.audits.some(x => x.week_start === wkKey && x.app === a)), due = todo.length > 0 && S.sessions.length > 0, nApps = Object.keys(perApp).length;
   // Le contrôle hebdo passe en tête tant qu'il reste à faire ; fait, il rejoint le bas de la page avec son historique.
   const audit = `<div class="card" id="audit"><div class="lead"><h2>Contrôle de la semaine du ${fmtDate(wk)}</h2>${todo.length ? (due ? `<span class="tag warn">à faire</span>` : "") : `<span class="tag ok">${ICONS.check}fait</span>`}</div>
-    ${todo.length ? `<p class="small muted">Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière : relève le temps de chaque appli. Un écart de plus de 10 min avec les sessions comptées devient une dette doublée.</p>
-    ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="btn sm ghost" style="flex:0 0 100px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}<div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : `<p class="small muted">Toutes les applis sont contrôlées pour cette semaine.</p>`}
+    ${todo.length ? `<p class="small muted">Réglages iOS › Temps d'écran › Voir toute l'activité › semaine dernière.</p>
+    ${todo.map(a => `<label for="au-${esc(a)}">${esc(a)}, minutes réelles</label><div class="row"><input id="au-${esc(a)}" type="number" inputmode="numeric" min="0" placeholder="ex. 95"><button class="btn sm ghost" style="flex:0 0 100px" data-act="audit" data-app="${esc(a)}">Valider</button></div>`).join("")}<div class="err" id="audit-err"></div><div class="okmsg" id="audit-ok"></div>` : ""}
     ${S.audits.length ? `<details style="margin-top:10px"><summary class="small muted">Historique</summary><table style="margin-top:8px"><tr><th>Semaine</th><th>Appli</th><th class="n">Réel</th><th class="n">Compté</th><th class="n">Non déclaré</th></tr>${[...S.audits].sort((a, b) => b.week_start.localeCompare(a.week_start)).map(a => `<tr><td>${fmtDate(a.week_start)}</td><td>${esc(a.app)}</td><td class="n">${a.real_minutes}</td><td class="n">${a.logged_minutes}</td><td class="n">${a.undeclared || "—"}</td></tr>`).join("")}</table></details>` : ""}</div>`;
-  return `<section class="view"><div class="topbar"><h1>Profil<span class="sub">${plural(S.books.length, "livre")}${S.readings.length ? ` · lecteur depuis le ${fmtDate(earliest(S.readings))}` : ""}</span></h1>${GEAR}</div>
+  return `<section class="view"><div class="topbar"><h1>Profil</h1>${GEAR}</div>
   ${due ? audit : ""}
   <div class="figures"><div class="accent"><b class="num">${p7}</b><span>pages sur 7 jours</span></div><div class="teal"><b class="num">${m7}</b><span>min d'écran sur 7 jours</span></div><div><b class="num">${m7 ? (p7 / m7).toFixed(1).replace(".", ",") : "—"}</b><span>page par minute d'écran</span></div></div>
   <div class="card trend" id="charts"><div class="lead"><h2>Évolution</h2><div class="seg2 sm" role="group" aria-label="Période du graphique">${[["jours", "14 jours"], ["semaines", "8 semaines"]].map(([v, l]) => `<button type="button" data-act="me-view" data-v="${v}" aria-pressed="${meView === v}">${l}</button>`).join("")}</div></div><div class="cbody">${chartsBody(d14)}</div></div>
@@ -1538,10 +1656,12 @@ function paintAppearance() {
 }
 async function setAppearance(patch) {
   appearance = { ...appearance, ...patch }; applyAppearance(true); paintAppearance(); haptic();
-  try { await savePlayer({ apparence: { theme: appearance.theme, mode: appearance.mode } }); } catch {}
+  try { await savePlayer({ apparence: { theme: appearance.theme, mode: appearance.mode, v: 2 } }); } catch {}
 }
 // Le choix suit le compte : appliqué sur un autre appareil dès le chargement.
-function syncAppearance() { const a = player().apparence; if (a && THEMES[a.theme] && (a.theme !== appearance.theme || a.mode !== appearance.mode)) { appearance = { theme: a.theme, mode: a.mode }; applyAppearance(true); } }
+function syncAppearance() { const a = player().apparence;
+  if (!a || !a.v) { appearance = { theme: "graphite", mode: a && ["auto", "clair", "sombre"].includes(a.mode) ? a.mode : appearance.mode }; applyAppearance(true); savePlayer({ apparence: { ...appearance, v: 2 } }).catch(() => {}); return; }
+  if (THEMES[a.theme] && (a.theme !== appearance.theme || a.mode !== appearance.mode)) { appearance = { theme: a.theme, mode: a.mode }; applyAppearance(true); } }
 function closeSettings() { leave(settingsEl, () => { settingsEl.hidden = true; settingsEl.innerHTML = ""; }); }
 function updateCountdowns() { document.querySelectorAll("[data-exp]").forEach(el => { const s = Math.max(0, Math.round((new Date(el.dataset.exp) - Date.now()) / 1000)); el.textContent = s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "terminé"; }); }
 function viewLogin(msg = "") {
@@ -1564,7 +1684,7 @@ function showBook() {
     <dl class="stats"><div><dt>Séances</dt><dd class="num">${rs.length}</dd></div><div><dt>Résumées</dt><dd class="num">${summed} p.</dd></div><div><dt>Par séance</dt><dd class="num">${avg ? avg + " p." : "—"}</dd></div><div><dt>${left !== null && b.status === "en_cours" ? "Reste" : "Jours lus"}</dt><dd class="num">${left !== null && b.status === "en_cours" ? `${left} p.` : days}</dd></div></dl>
     ${b.status === "en_cours" && b.total_pages ? `<div class="setrow bare"><div><b><label for="tgt" style="margin:0;font:inherit;color:inherit">Finir avant le</label></b><span class="${pace(b)?.late ? "bad" : ""}">${pace(b) ? (pace(b).late ? "date dépassée" : `≈ ${pace(b).txt}`) : "aucune date fixée"}</span></div><input id="tgt" type="date" value="${b.target_date || ""}" min="${todayKey()}"></div>` : ""}${b.status === "en_cours" ? `<div class="setrow bare"><div><b>Type</b><span>${b.kind === "prepa" ? `1 page = ${fmtFactor()} min` : "1 page = 1 min"}</span></div>${kindSeg(b.kind, "kind")}</div>` : ""}<div class="inkrow">${b.status === "en_cours" ? `<button class="btn full" data-act="read" data-id="${esc(b.id)}">${ICONS.read}Lire</button><button class="btn ghost" data-act="log" data-id="${esc(b.id)}">${ICONS.pen}J'ai lu</button>` : `<button class="btn" data-act="status" data-v="en_cours">Reprendre</button>`}<button class="btn ghost" data-act="export" ${rs.length ? "" : "disabled"}>Exporter</button></div>
     ${quotesBlock(rs)}<div class="filhead"><h2>Fil de lecture</h2>${rs.length > 1 ? `<button class="sortbtn" data-act="sort-entries">${bookSort === "recent" ? "Récent d'abord" : "Ordre du livre"}<svg viewBox="0 0 24 24"><path d="M8 5v14M8 19l-3-3M8 19l3-3M16 19V5M16 5l-3 3M16 5l3 3"/></svg></button>` : ""}</div>
-    ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${fmtSummary(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé. Le premier s'écrira ici après ta prochaine lecture.</p>`}
+    ${rs.length ? `<ol class="fil">${order.map(r => { const n = rs.indexOf(r) + 1; return `<li class="entry" id="e-${esc(r.id)}"><span class="no">${n}</span><div class="fol"><span class="rg">p. ${r.page_start} → ${r.page_end}<small>${plural(r.pages, "page")}</small></span><time>${fmtDateTime(r.created_at)}</time><button class="iconbtn" data-act="edit" data-id="${esc(r.id)}" aria-label="Corriger le résumé de la séance ${n}"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></button></div><div class="txt">${fmtSummary(r.summary)}</div></li>`; }).join("")}</ol>` : `<p class="quiet">Pas encore de résumé.</p>`}
     <h2 style="margin-top:26px;font-size:18px">Ranger</h2>
     <div class="inkrow tidy"><button class="btn ghost sm" data-act="cover">Couverture</button>${b.status === "en_cours" ? `<button class="btn ghost sm" data-act="status" data-v="fini">Marquer fini</button><button class="btn ghost sm" data-act="status" data-v="abandonne">Abandonner</button>` : ""}${rs.length ? "" : `<button class="btn ghost sm" data-act="del-book">Retirer</button>`}</div>
     <p class="facts">Commencé le ${fmtDate(b.started_at)}${b.finished_at ? ` · fini le ${fmtDate(b.finished_at)}` : ""}</p></div>`;

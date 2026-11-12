@@ -38,7 +38,7 @@ Un pacte avec soi-même dont les règles sont **hors de portée** : le solde, le
 
 ## Brand Commitments
 
-- **Même monde que son Cockpit D2** : lavande, Bricolage Grotesque + IBM Plex Sans, mode sombre, et **la même mascotte hippo en pixel art**. Confirmé le 23/09/2026 : l'hippo et la gamification sont **l'identité de l'app**, à développer sobrement. L'hippo n'a pas de nom (« ton hippo »).
+- **Même monde que son Cockpit D2** : Bricolage Grotesque + IBM Plex Sans, mode sombre, et **la même mascotte hippo en pixel art**. Depuis la refonte du 12/11/2026 (la même que le Cockpit, esprit Arc/Dia, pensée pour le téléphone) : thème Graphite par défaut avec accent neutre (le mauve reste à l'hippo), cadres de 1 px, rayons courts (8 px, 10 px pour les cartes, 16 px pour ce qui flotte), boutons plats sans relief, aucune pilule, dock flottant en bas avec un fond qui glisse sous l'onglet actif, sous-onglets soulignés, ressorts discrets. Les règles sont dans le bloc `REFONTE NOV. 2026` à la fin de la feuille de style. Confirmé le 23/09/2026 : l'hippo et la gamification sont **l'identité de l'app**, à développer sobrement. L'hippo n'a pas de nom (« ton hippo »).
 - Ton : un objet à soi, pas un produit. Sobre : il a fait retirer 3D, flou, halos et modèles téléchargés ; une chose à la fois, jamais de texte qui n'ajoute rien.
 - Familles de couleurs fixées par lui : série ambre, livres sauge, écran sarcelle, écriture/niveau prune, dette corail, pages lavande.
 
